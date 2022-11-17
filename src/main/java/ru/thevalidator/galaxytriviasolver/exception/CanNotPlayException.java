@@ -9,4 +9,8 @@ package ru.thevalidator.galaxytriviasolver.exception;
  */
 public class CanNotPlayException extends Exception {
 
+    public CanNotPlayException(String message) {
+        super(message);
+    }
+    
 }
