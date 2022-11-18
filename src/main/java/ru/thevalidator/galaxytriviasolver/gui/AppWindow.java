@@ -81,7 +81,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
     @Override
     public void handleStop() {
         startButton.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
-        startButton.setText("СТАРТ");
+        startButton.setText("START");
         recoveryCodeField.setEnabled(true);
         Color color = Color.lightGray;
         appendToPane("stopped", color);
@@ -89,9 +89,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
 
     @Override
     public void handleMessage(String message, Color color) {
-        logTextPane.setEditable(true);
         appendToPane(message, color);
-        logTextPane.setEditable(false);
     }
 
     @Override
@@ -240,13 +238,9 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         jScrollPane1.setMaximumSize(new java.awt.Dimension(440, 180));
         jScrollPane1.setMinimumSize(new java.awt.Dimension(440, 180));
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(440, 180));
 
-        logTextPane.setEditable(false);
         logTextPane.setBackground(new java.awt.Color(51, 51, 51));
-        logTextPane.setForeground(new java.awt.Color(204, 204, 204));
-        logTextPane.setMaximumSize(new java.awt.Dimension(440, 180));
-        logTextPane.setMinimumSize(new java.awt.Dimension(440, 180));
-        logTextPane.setPreferredSize(new java.awt.Dimension(440, 180));
         jScrollPane1.setViewportView(logTextPane);
 
         totalGamesLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -348,7 +342,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 443, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(mainPanelLayout.createSequentialGroup()
                             .addGap(17, 17, 17)
@@ -427,8 +421,8 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
                         .addComponent(totalGamesValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(6, 6, 6)
                         .addComponent(averageValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 54, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(29, 29, 29))
         );
 
@@ -748,6 +742,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
     private void appendToPane(String msg, Color c) {
         try {
             synchronized (this) {
+                logTextPane.setEditable(true);
                 StyleContext sc = StyleContext.getDefaultStyleContext();
                 AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, c);
                 aset = sc.addAttribute(aset, StyleConstants.Alignment, StyleConstants.ALIGN_JUSTIFIED);
@@ -755,6 +750,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
                 logTextPane.setCaretPosition(len);
                 logTextPane.setCharacterAttributes(aset, false);
                 logTextPane.replaceSelection("[" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yy HH:mm.ss")) + "] -> " + msg + "\n");
+                logTextPane.setEditable(false);
                 logTextPane.repaint();
                 //TODO: clean history
             }
