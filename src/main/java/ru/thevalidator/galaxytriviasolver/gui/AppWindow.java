@@ -7,7 +7,6 @@ import java.awt.AWTException;
 import java.awt.CheckboxMenuItem;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Frame;
 import java.awt.Menu;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
@@ -36,7 +35,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.thevalidator.galaxytriviasolver.bot.Bot;
 import ru.thevalidator.galaxytriviasolver.bot.GameResult;
-//import ru.thevalidator.galaxytriviasolver.bot.Topic;
 import ru.thevalidator.galaxytriviasolver.bot.impl.BotImpl;
 import ru.thevalidator.galaxytriviasolver.model.Observer;
 import ru.thevalidator.galaxytriviasolver.web.AbstractLocator;
@@ -74,7 +72,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
     @Override
     public void handleStart() {
         startButton.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
-        startButton.setText("СТОП");
+        startButton.setText("STOP");
         recoveryCodeField.setEnabled(false);
         Color color = Color.lightGray;
         appendToPane("started", color);
@@ -91,7 +89,9 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
 
     @Override
     public void handleMessage(String message, Color color) {
+        logTextPane.setEditable(true);
         appendToPane(message, color);
+        logTextPane.setEditable(false);
     }
 
     @Override
@@ -194,7 +194,6 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
 
         mainPanel.setMinimumSize(new java.awt.Dimension(500, 400));
         mainPanel.setPreferredSize(new java.awt.Dimension(500, 400));
-        mainPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         startButton.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
         startButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -207,8 +206,6 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
                 startButtonActionPerformed(evt);
             }
         });
-        mainPanel.add(startButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(69, 106, -1, -1));
-        startButton.getAccessibleContext().setAccessibleName("start");
 
         recoveryCodeField.setBackground(new java.awt.Color(51, 51, 51));
         recoveryCodeField.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -226,7 +223,6 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
                 recoveryCodeFieldActionPerformed(evt);
             }
         });
-        mainPanel.add(recoveryCodeField, new org.netbeans.lib.awtextra.AbsoluteConstraints(69, 20, -1, 26));
 
         recoveryCodeLabel.setBackground(new java.awt.Color(0, 0, 0));
         recoveryCodeLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -237,23 +233,21 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         recoveryCodeLabel.setMaximumSize(new java.awt.Dimension(40, 20));
         recoveryCodeLabel.setMinimumSize(new java.awt.Dimension(40, 20));
         recoveryCodeLabel.setPreferredSize(new java.awt.Dimension(40, 20));
-        mainPanel.add(recoveryCodeLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(17, 23, -1, -1));
-        recoveryCodeLabel.getAccessibleContext().setAccessibleName("recioveryCode");
 
         jScrollPane1.setBorder(null);
         jScrollPane1.setForeground(new java.awt.Color(51, 51, 51));
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         jScrollPane1.setMaximumSize(new java.awt.Dimension(440, 180));
         jScrollPane1.setMinimumSize(new java.awt.Dimension(440, 180));
 
+        logTextPane.setEditable(false);
         logTextPane.setBackground(new java.awt.Color(51, 51, 51));
         logTextPane.setForeground(new java.awt.Color(204, 204, 204));
         logTextPane.setMaximumSize(new java.awt.Dimension(440, 180));
         logTextPane.setMinimumSize(new java.awt.Dimension(440, 180));
         logTextPane.setPreferredSize(new java.awt.Dimension(440, 180));
         jScrollPane1.setViewportView(logTextPane);
-
-        mainPanel.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 190, -1, -1));
 
         totalGamesLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         totalGamesLabel.setForeground(new java.awt.Color(204, 204, 204));
@@ -263,7 +257,6 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         totalGamesLabel.setMaximumSize(new java.awt.Dimension(100, 16));
         totalGamesLabel.setMinimumSize(new java.awt.Dimension(100, 16));
         totalGamesLabel.setPreferredSize(new java.awt.Dimension(100, 16));
-        mainPanel.add(totalGamesLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(311, 99, 100, -1));
 
         winsCountLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         winsCountLabel.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
@@ -272,7 +265,6 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         winsCountLabel.setMaximumSize(new java.awt.Dimension(50, 16));
         winsCountLabel.setMinimumSize(new java.awt.Dimension(50, 16));
         winsCountLabel.setPreferredSize(new java.awt.Dimension(50, 16));
-        mainPanel.add(winsCountLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(361, 40, -1, -1));
 
         lostsCountLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         lostsCountLabel.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
@@ -281,7 +273,6 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         lostsCountLabel.setMaximumSize(new java.awt.Dimension(50, 16));
         lostsCountLabel.setMinimumSize(new java.awt.Dimension(50, 16));
         lostsCountLabel.setPreferredSize(new java.awt.Dimension(50, 16));
-        mainPanel.add(lostsCountLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(361, 62, -1, -1));
 
         totalGamesValueLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         totalGamesValueLabel.setForeground(new java.awt.Color(204, 204, 204));
@@ -289,7 +280,6 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         totalGamesValueLabel.setMaximumSize(new java.awt.Dimension(50, 16));
         totalGamesValueLabel.setMinimumSize(new java.awt.Dimension(50, 16));
         totalGamesValueLabel.setPreferredSize(new java.awt.Dimension(50, 16));
-        mainPanel.add(totalGamesValueLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(423, 99, -1, -1));
 
         winsCountValueLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         winsCountValueLabel.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
@@ -297,7 +287,6 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         winsCountValueLabel.setMaximumSize(new java.awt.Dimension(50, 16));
         winsCountValueLabel.setMinimumSize(new java.awt.Dimension(50, 16));
         winsCountValueLabel.setPreferredSize(new java.awt.Dimension(50, 16));
-        mainPanel.add(winsCountValueLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(423, 40, -1, -1));
 
         lostsCountValueLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         lostsCountValueLabel.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
@@ -305,7 +294,6 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         lostsCountValueLabel.setMaximumSize(new java.awt.Dimension(50, 16));
         lostsCountValueLabel.setMinimumSize(new java.awt.Dimension(50, 16));
         lostsCountValueLabel.setPreferredSize(new java.awt.Dimension(50, 16));
-        mainPanel.add(lostsCountValueLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(423, 62, -1, -1));
 
         topicComboBox.setBackground(new java.awt.Color(51, 51, 51));
         topicComboBox.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -314,7 +302,6 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         topicComboBox.setMaximumSize(new java.awt.Dimension(180, 26));
         topicComboBox.setMinimumSize(new java.awt.Dimension(180, 26));
         topicComboBox.setPreferredSize(new java.awt.Dimension(180, 26));
-        mainPanel.add(topicComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(69, 52, -1, -1));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(204, 204, 204));
@@ -323,7 +310,6 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         jLabel1.setMaximumSize(new java.awt.Dimension(40, 20));
         jLabel1.setMinimumSize(new java.awt.Dimension(40, 20));
         jLabel1.setPreferredSize(new java.awt.Dimension(40, 20));
-        mainPanel.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(17, 55, -1, -1));
 
         drawCountLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         drawCountLabel.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Yellow"));
@@ -333,7 +319,6 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         drawCountLabel.setMaximumSize(new java.awt.Dimension(50, 16));
         drawCountLabel.setMinimumSize(new java.awt.Dimension(50, 16));
         drawCountLabel.setPreferredSize(new java.awt.Dimension(50, 16));
-        mainPanel.add(drawCountLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(361, 18, -1, -1));
 
         drawCountValueLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         drawCountValueLabel.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Yellow"));
@@ -341,7 +326,6 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         drawCountValueLabel.setMaximumSize(new java.awt.Dimension(50, 16));
         drawCountValueLabel.setMinimumSize(new java.awt.Dimension(50, 16));
         drawCountValueLabel.setPreferredSize(new java.awt.Dimension(50, 16));
-        mainPanel.add(drawCountValueLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(423, 18, -1, -1));
 
         averageLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         averageLabel.setForeground(new java.awt.Color(204, 204, 204));
@@ -350,7 +334,6 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         averageLabel.setMaximumSize(new java.awt.Dimension(100, 16));
         averageLabel.setMinimumSize(new java.awt.Dimension(100, 16));
         averageLabel.setPreferredSize(new java.awt.Dimension(90, 16));
-        mainPanel.add(averageLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(311, 121, 100, -1));
 
         averageValueLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         averageValueLabel.setForeground(new java.awt.Color(204, 204, 204));
@@ -358,8 +341,99 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         averageValueLabel.setMaximumSize(new java.awt.Dimension(50, 16));
         averageValueLabel.setMinimumSize(new java.awt.Dimension(50, 16));
         averageValueLabel.setPreferredSize(new java.awt.Dimension(50, 16));
-        mainPanel.add(averageValueLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(423, 121, -1, -1));
-        mainPanel.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(313, 84, 160, 10));
+
+        javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
+        mainPanel.setLayout(mainPanelLayout);
+        mainPanelLayout.setHorizontalGroup(
+            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mainPanelLayout.createSequentialGroup()
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 443, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(mainPanelLayout.createSequentialGroup()
+                            .addGap(17, 17, 17)
+                            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(recoveryCodeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGap(12, 12, 12)
+                            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(recoveryCodeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(topicComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGap(112, 112, 112)
+                            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(drawCountLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(winsCountLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(lostsCountLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGap(12, 12, 12)
+                            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(drawCountValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(winsCountValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(lostsCountValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(mainPanelLayout.createSequentialGroup()
+                            .addGap(313, 313, 313)
+                            .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(mainPanelLayout.createSequentialGroup()
+                            .addGap(69, 69, 69)
+                            .addComponent(startButton)
+                            .addGap(169, 169, 169)
+                            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(totalGamesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(averageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGap(12, 12, 12)
+                            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(totalGamesValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(averageValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addGap(27, 27, 27))
+        );
+        mainPanelLayout.setVerticalGroup(
+            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mainPanelLayout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addGap(5, 5, 5)
+                        .addComponent(recoveryCodeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(12, 12, 12)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addGap(2, 2, 2)
+                        .addComponent(recoveryCodeField, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(6, 6, 6)
+                        .addComponent(topicComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addComponent(drawCountLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(6, 6, 6)
+                        .addComponent(winsCountLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(6, 6, 6)
+                        .addComponent(lostsCountLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addComponent(drawCountValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(6, 6, 6)
+                        .addComponent(winsCountValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(6, 6, 6)
+                        .addComponent(lostsCountValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(6, 6, 6)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(5, 5, 5)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addGap(7, 7, 7)
+                        .addComponent(startButton))
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addComponent(totalGamesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(6, 6, 6)
+                        .addComponent(averageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addComponent(totalGamesValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(6, 6, 6)
+                        .addComponent(averageValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 54, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(29, 29, 29))
+        );
+
+        startButton.getAccessibleContext().setAccessibleName("start");
+        recoveryCodeLabel.getAccessibleContext().setAccessibleName("recioveryCode");
 
         getContentPane().add(mainPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
@@ -577,7 +651,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
                 + "For use input your recovery code, then \n"
                 + "choose topic and click start button.\n"
                 + "\n\n"
-                + "v1.0.0b\n"
+                + "v1.0.0b_001\n"
                 + "[thevalidator]\n"
                 + "2022, November");
 
