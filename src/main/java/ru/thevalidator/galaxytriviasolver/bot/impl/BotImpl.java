@@ -21,8 +21,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import net.lightbody.bmp.BrowserMobProxy;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -73,6 +75,7 @@ public class BotImpl implements Bot {
     private AbstractLocator locator;
     private String topic;
     private AbstractTopic topicsList;
+    private static Random random = new Random();
 
     public BotImpl() {
         this.isActive = false;
@@ -181,6 +184,7 @@ public class BotImpl implements Bot {
             driver.findElement(By.xpath(locator.getHaveAccountButton())).click();
             driver.findElement(By.xpath(locator.getRecoveryCodeField())).sendKeys(recoveryCode);
             driver.findElement(By.xpath(locator.getSendCodeButton())).click();
+            closePopup(2_000);
             if (isAuthorized()) {
                 messageNotify("login success", Color.lightGray);
             }
@@ -350,12 +354,26 @@ public class BotImpl implements Bot {
     }
 
     private WebDriver createDriver() {
+        //System.setProperty("webdriver.chrome.driver","C://softwares//drivers//chromedriver.exe");
         WebDriverManager.chromedriver().setup();
         ChromeOptions options = new ChromeOptions();
+        
+        //BrowserMobProxy proxy;
+        
+        //
+        //options.setExperimentalOption("mobileEmulation", Map.of("deviceName", "Nexus 5"));
+        
+        //Mozilla/5.0 (Linux; Android 12; sdk_gphone64_x86_64 Build/SE1A.211012.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/91.0.4472.114 Mobile Safari/537.36
+        //String userAgent = "user-agent=Mozilla/5.0 (Linux; Android 12; sdk_gphone64_x86_64 Build/SE1A.211012.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/91.0.4472.114 Mobile Safari/537.36";
+        //options.addArguments(userAgent);
+        //options.setUseRunningAndroidApp(true);
+        
+        
         if (isHeadless) {
             options.setHeadless(true);
         }
         WebDriver drv = new ChromeDriver(options);
+        
         drv.manage().window().setSize(new Dimension(1600, 900));
         drv.manage().window().setPosition((new Point(0, 0)));
         return drv;
@@ -476,8 +494,8 @@ public class BotImpl implements Bot {
         }
     }
 
-    public void saveDataToFile(String fileName, String text) {
-        try ( FileOutputStream fos = new FileOutputStream(fileName);  
+    public void saveDataToFile(String pathname, String text) {
+        try ( FileOutputStream fos = new FileOutputStream(pathname);  
               DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos))) {
             outStream.writeUTF(text);
         } catch (IOException e) {
@@ -538,45 +556,22 @@ public class BotImpl implements Bot {
     }
 
     private void answerQuestions() throws InterruptedException {
-        //sometimes problems with Iframe, with this part of code everuthing works fine
-        try {
+        String questionNumber = null;
+        for (int i = 0; i < 5; i++) {
             driver.switchTo().defaultContent();
             closePopup(1_000);
-        } catch (Exception e) {
+            wait(5_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(locator.getPlanetsIFrame())));
+            WebElement questionNumberHeader = wait(3_000).until(presenceOfElementLocated(By.xpath(locator.getTriviaQuestionNumberHeader())));
+            questionNumber = questionNumberHeader.getText();
+            if (i != 0 &&i != 4) {
+                TimeUnit.SECONDS.sleep(random.nextInt(10));
+            } else {
+                TimeUnit.SECONDS.sleep(1);
+            }
+            clickCorrectAnswer();
+            wait(20_000).until(ExpectedConditions.not(
+                    ExpectedConditions.textToBe(By.xpath(locator.getTriviaQuestionNumberHeader()), questionNumber)));
         }
-        //
-        wait(3_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(locator.getPlanetsIFrame())));
-        wait(2_000).until(presenceOfElementLocated(By.xpath(locator.getTriviaQuestionOneHeaderText())));
-        TimeUnit.SECONDS.sleep(1);
-        clickCorrectAnswer();
-
-        driver.switchTo().defaultContent();
-        closePopup(1_000);
-        wait(2_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(locator.getPlanetsIFrame())));
-        wait(45_000).until(presenceOfElementLocated(By.xpath(locator.getTriviaQuestionTwoHeaderText())));
-        TimeUnit.SECONDS.sleep(3);
-        clickCorrectAnswer();
-
-        driver.switchTo().defaultContent();
-        closePopup(1_000);
-        wait(2_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(locator.getPlanetsIFrame())));
-        wait(45_000).until(presenceOfElementLocated(By.xpath(locator.getTriviaQuestionThreeHeaderText())));
-        TimeUnit.SECONDS.sleep(2);
-        clickCorrectAnswer();
-
-        driver.switchTo().defaultContent();
-        closePopup(1_000);
-        wait(2_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(locator.getPlanetsIFrame())));
-        wait(45_000).until(presenceOfElementLocated(By.xpath(locator.getTriviaQuestionFourHeaderText())));
-        TimeUnit.SECONDS.sleep(4);
-        clickCorrectAnswer();
-
-        driver.switchTo().defaultContent();
-        closePopup(1_000);
-        wait(2_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(locator.getPlanetsIFrame())));
-        wait(45_000).until(presenceOfElementLocated(By.xpath(locator.getTriviaQuestionFiveHeaderText())));
-        TimeUnit.SECONDS.sleep(1);
-        clickCorrectAnswer();
     }
 
     private void waitForOpponent() {
@@ -612,8 +607,8 @@ public class BotImpl implements Bot {
         driver.switchTo().defaultContent();
         closePopup(3_000);
         try {
-            wait(40_000).until(ExpectedConditions
-                    .textToBePresentInElementLocated(By.xpath(locator.getTriviaResultHeader()), locator.getTriviaGameResultText()));
+            wait(30_000).until(ExpectedConditions
+                    .textToBePresentInElementLocated(By.xpath(locator.getTriviaResultHeader()), locator.getTriviaGameResultText()));//TODO: improove oil oiled
             messageNotify("game finished", Color.lightGray);
         } catch (Exception ex) {
             //TODO: seems like need to remove try catch block
@@ -624,6 +619,7 @@ public class BotImpl implements Bot {
     }
 
     private void handleResults() {
+        closePopup(2_000);
         String result = driver.findElement(By.xpath(locator.getTriviaQuizTitleResult())).getText().trim();
         String points = driver.findElement(By.xpath(locator.getTriviaResultPoints())).getText().trim();
         if (result.contains(locator.getTriviaWinText())) {
