@@ -18,7 +18,7 @@ public interface Observable {
     void startNotify();
     void stopNotify();
     void shoppingNotify();
-    void messageNotify(String message, Color color);
+    void messageNotify(String message);
     void gameResultNotify(GameResult result, int points);
     
 }

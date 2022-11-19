@@ -27,10 +27,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingWorker;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyleContext;
+import javax.swing.text.BadLocationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.thevalidator.galaxytriviasolver.bot.Bot;
@@ -48,7 +45,7 @@ import ru.thevalidator.galaxytriviasolver.web.Locale;
 public class AppWindow extends javax.swing.JFrame implements Observer {
 
     private static final Logger appWindowLogger = LogManager.getLogger(AppWindow.class);
-
+    private static final int MAX_LINES = 100;
     private final Bot bot;
     private AbstractTopic topics;
     private SwingWorker worker;
@@ -74,8 +71,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         startButton.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
         startButton.setText("STOP");
         recoveryCodeField.setEnabled(false);
-        Color color = Color.lightGray;
-        appendToPane("started", color);
+        appendToPane("started");
     }
 
     @Override
@@ -83,13 +79,12 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         startButton.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
         startButton.setText("START");
         recoveryCodeField.setEnabled(true);
-        Color color = Color.lightGray;
-        appendToPane("stopped", color);
+        appendToPane("stopped");
     }
 
     @Override
-    public void handleMessage(String message, Color color) {
-        appendToPane(message, color);
+    public void handleMessage(String message) {
+        appendToPane(message);
     }
 
     @Override
@@ -103,16 +98,16 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
     public void handleGameResult(GameResult result, int points) {
         switch (result) {
             case WIN:
-                appendToPane("WIN", Color.green);
+                appendToPane("WIN");
                 wins++;
                 totalPoints += points;
                 break;
             case DRAW:
-                appendToPane("DRAW", Color.yellow);
+                appendToPane("DRAW");
                 draws++;
                 break;
             default:
-                appendToPane("LOST", Color.red);
+                appendToPane("LOST");
                 losts++;
                 break;
         }
@@ -137,8 +132,8 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         startButton = new javax.swing.JButton();
         recoveryCodeField = new javax.swing.JPasswordField();
         recoveryCodeLabel = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        logTextPane = new javax.swing.JTextPane();
+        scrollPane = new javax.swing.JScrollPane();
+        logTextArea = new javax.swing.JTextArea();
         totalGamesLabel = new javax.swing.JLabel();
         winsCountLabel = new javax.swing.JLabel();
         lostsCountLabel = new javax.swing.JLabel();
@@ -146,19 +141,22 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         winsCountValueLabel = new javax.swing.JLabel();
         lostsCountValueLabel = new javax.swing.JLabel();
         topicComboBox = new javax.swing.JComboBox<>();
-        jLabel1 = new javax.swing.JLabel();
+        topicLabel = new javax.swing.JLabel();
         drawCountLabel = new javax.swing.JLabel();
         drawCountValueLabel = new javax.swing.JLabel();
         averageLabel = new javax.swing.JLabel();
         averageValueLabel = new javax.swing.JLabel();
-        jSeparator1 = new javax.swing.JSeparator();
-        jMenuBar1 = new javax.swing.JMenuBar();
-        fileMenu = new javax.swing.JMenu();
+        jSeparator = new javax.swing.JSeparator();
+        menuBar = new javax.swing.JMenuBar();
+        mainMenu = new javax.swing.JMenu();
         langMenu = new javax.swing.JMenu();
         russianCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         englishCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         portugalCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         spanishCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        soundNotificationMenu = new javax.swing.JMenu();
+        startNotificationCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        finishCheckBoxMenuItem5 = new javax.swing.JCheckBoxMenuItem();
         exitMenuItem = new javax.swing.JMenuItem();
         optionsMenu = new javax.swing.JMenu();
         unlimMenu = new javax.swing.JMenu();
@@ -232,16 +230,18 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         recoveryCodeLabel.setMinimumSize(new java.awt.Dimension(40, 20));
         recoveryCodeLabel.setPreferredSize(new java.awt.Dimension(40, 20));
 
-        jScrollPane1.setBorder(null);
-        jScrollPane1.setForeground(new java.awt.Color(51, 51, 51));
-        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        jScrollPane1.setMaximumSize(new java.awt.Dimension(440, 180));
-        jScrollPane1.setMinimumSize(new java.awt.Dimension(440, 180));
-        jScrollPane1.setPreferredSize(new java.awt.Dimension(440, 180));
+        scrollPane.setBorder(null);
+        scrollPane.setForeground(new java.awt.Color(51, 51, 51));
+        scrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setMaximumSize(new java.awt.Dimension(440, 180));
+        scrollPane.setMinimumSize(new java.awt.Dimension(440, 180));
+        scrollPane.setPreferredSize(new java.awt.Dimension(440, 180));
 
-        logTextPane.setBackground(new java.awt.Color(51, 51, 51));
-        jScrollPane1.setViewportView(logTextPane);
+        logTextArea.setBackground(new java.awt.Color(51, 51, 51));
+        logTextArea.setColumns(20);
+        logTextArea.setRows(5);
+        scrollPane.setViewportView(logTextArea);
 
         totalGamesLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         totalGamesLabel.setForeground(new java.awt.Color(204, 204, 204));
@@ -297,13 +297,13 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         topicComboBox.setMinimumSize(new java.awt.Dimension(180, 26));
         topicComboBox.setPreferredSize(new java.awt.Dimension(180, 26));
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(204, 204, 204));
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel1.setText("topic");
-        jLabel1.setMaximumSize(new java.awt.Dimension(40, 20));
-        jLabel1.setMinimumSize(new java.awt.Dimension(40, 20));
-        jLabel1.setPreferredSize(new java.awt.Dimension(40, 20));
+        topicLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        topicLabel.setForeground(new java.awt.Color(204, 204, 204));
+        topicLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        topicLabel.setText("topic");
+        topicLabel.setMaximumSize(new java.awt.Dimension(40, 20));
+        topicLabel.setMinimumSize(new java.awt.Dimension(40, 20));
+        topicLabel.setPreferredSize(new java.awt.Dimension(40, 20));
 
         drawCountLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         drawCountLabel.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Yellow"));
@@ -342,13 +342,13 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(scrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(mainPanelLayout.createSequentialGroup()
                             .addGap(17, 17, 17)
                             .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(recoveryCodeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(topicLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGap(12, 12, 12)
                             .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(recoveryCodeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -365,7 +365,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
                                 .addComponent(lostsCountValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGroup(mainPanelLayout.createSequentialGroup()
                             .addGap(313, 313, 313)
-                            .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jSeparator, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(mainPanelLayout.createSequentialGroup()
                             .addGap(69, 69, 69)
                             .addComponent(startButton)
@@ -388,7 +388,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
                         .addGap(5, 5, 5)
                         .addComponent(recoveryCodeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(12, 12, 12)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(topicLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(mainPanelLayout.createSequentialGroup()
                         .addGap(2, 2, 2)
                         .addComponent(recoveryCodeField, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -407,7 +407,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
                         .addGap(6, 6, 6)
                         .addComponent(lostsCountValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(6, 6, 6)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jSeparator, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(5, 5, 5)
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(mainPanelLayout.createSequentialGroup()
@@ -422,7 +422,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
                         .addGap(6, 6, 6)
                         .addComponent(averageValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(scrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(29, 29, 29))
         );
 
@@ -431,9 +431,9 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
 
         getContentPane().add(mainPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
-        jMenuBar1.setMaximumSize(new java.awt.Dimension(116, 23));
+        menuBar.setMaximumSize(new java.awt.Dimension(116, 23));
 
-        fileMenu.setText("File");
+        mainMenu.setText("Menu");
 
         langMenu.setText("Language");
 
@@ -470,12 +470,24 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         });
         langMenu.add(spanishCheckBoxMenuItem);
 
-        fileMenu.add(langMenu);
+        mainMenu.add(langMenu);
+
+        soundNotificationMenu.setText("Sound notifications");
+
+        startNotificationCheckBoxMenuItem.setSelected(true);
+        startNotificationCheckBoxMenuItem.setText("Starting");
+        soundNotificationMenu.add(startNotificationCheckBoxMenuItem);
+
+        finishCheckBoxMenuItem5.setSelected(true);
+        finishCheckBoxMenuItem5.setText("Finishing");
+        soundNotificationMenu.add(finishCheckBoxMenuItem5);
+
+        mainMenu.add(soundNotificationMenu);
 
         exitMenuItem.setText("Close");
-        fileMenu.add(exitMenuItem);
+        mainMenu.add(exitMenuItem);
 
-        jMenuBar1.add(fileMenu);
+        menuBar.add(mainMenu);
 
         optionsMenu.setText("Options");
 
@@ -534,7 +546,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         jCheckBoxMenuItem3.setText("Chat on planets");
         optionsMenu.add(jCheckBoxMenuItem3);
 
-        jMenuBar1.add(optionsMenu);
+        menuBar.add(optionsMenu);
 
         helpMenu.setText("Help");
 
@@ -546,9 +558,9 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         });
         helpMenu.add(AboutMenuItem);
 
-        jMenuBar1.add(helpMenu);
+        menuBar.add(helpMenu);
 
-        setJMenuBar(jMenuBar1);
+        setJMenuBar(menuBar);
 
         pack();
         setLocationRelativeTo(null);
@@ -558,11 +570,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         if (!bot.isActive()) {
             startBot();
         } else {
-            bot.stop();
-            if (worker != null & !worker.isCancelled()) {
-                appWindowLogger.debug("worker stop");
-                worker.cancel(true);
-            }
+            stopBot();
         }
     }//GEN-LAST:event_startButtonActionPerformed
 
@@ -616,12 +624,11 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
     }
 
     private void headlessModeCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_headlessModeCheckBoxMenuItemActionPerformed
-        Color color = Color.cyan;
         if (headlessModeCheckBoxMenuItem.isSelected()) {
-            appendToPane("HEADLESS MODE ON", color);
+            appendToPane("HEADLESS MODE ON");
             bot.isHeadleass(true);
         } else {
-            appendToPane("HEADLESS MODE OFF", color);
+            appendToPane("HEADLESS MODE OFF");
             bot.isHeadleass(false);
         }
     }//GEN-LAST:event_headlessModeCheckBoxMenuItemActionPerformed
@@ -633,7 +640,6 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
     }//GEN-LAST:event_formWindowClosing
 
     private void AboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AboutMenuItemActionPerformed
-        // TODO add your handling code here:
         Component component = new JLabel();
 
         JScrollPane jScrollPane = new JScrollPane(component);
@@ -645,7 +651,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
                 + "For use input your recovery code, then \n"
                 + "choose topic and click start button.\n"
                 + "\n\n"
-                + "v1.0.0b_001\n"
+                + "v1.0.0.0-b003\n"
                 + "[thevalidator]\n"
                 + "2022, November");
 
@@ -666,12 +672,11 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
     }//GEN-LAST:event_AboutMenuItemActionPerformed
 
     private void anonymousModeCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_anonymousModeCheckBoxMenuItemActionPerformed
-        Color color = Color.cyan;
         if (anonymousModeCheckBoxMenuItem.isSelected()) {
-            appendToPane("ANONYMOUS MODE ON", color);
+            appendToPane("ANONYMOUS MODE ON");
             bot.isAnonimous(true);
         } else {
-            appendToPane("ANONYMOUS MODE OFF", color);
+            appendToPane("ANONYMOUS MODE OFF");
             bot.isAnonimous(false);
         }
     }//GEN-LAST:event_anonymousModeCheckBoxMenuItemActionPerformed
@@ -706,10 +711,10 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
     private void thirtyMinUnlimCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thirtyMinUnlimCheckBoxMenuItemActionPerformed
         if (thirtyMinUnlimCheckBoxMenuItem.isSelected()) {
             bot.buyUnlim(1);
-            appendToPane("UNLIM 1 REQUESTED", Color.cyan);
+            appendToPane("UNLIM 1 REQUESTED");
         } else {
             bot.buyUnlim(0);
-            appendToPane("UNLIM 1 REQUEST CANCELLED", Color.cyan);
+            appendToPane("UNLIM 1 REQUEST CANCELLED");
         }
         twoHoursUnlimCheckBoxMenuItem.setSelected(false);
         fourHoursUnlimCheckBoxMenuItem.setSelected(false);
@@ -718,10 +723,10 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
     private void twoHoursUnlimCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_twoHoursUnlimCheckBoxMenuItemActionPerformed
         if (twoHoursUnlimCheckBoxMenuItem.isSelected()) {
             bot.buyUnlim(2);
-            appendToPane("UNLIM 2 REQUESTED", Color.cyan);
+            appendToPane("UNLIM 2 REQUESTED");
         } else {
             bot.buyUnlim(0);
-            appendToPane("UNLIM 2 REQUEST CANCELLED", Color.cyan);
+            appendToPane("UNLIM 2 REQUEST CANCELLED");
         }
         thirtyMinUnlimCheckBoxMenuItem.setSelected(false);
         fourHoursUnlimCheckBoxMenuItem.setSelected(false);
@@ -730,32 +735,40 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
     private void fourHoursUnlimCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fourHoursUnlimCheckBoxMenuItemActionPerformed
         if (fourHoursUnlimCheckBoxMenuItem.isSelected()) {
             bot.buyUnlim(3);
-            appendToPane("UNLIM 3 REQUESTED", Color.cyan);
+            appendToPane("UNLIM 3 REQUESTED");
         } else {
             bot.buyUnlim(0);
-            appendToPane("UNLIM 3 REQUEST CANCELLED", Color.cyan);
+            appendToPane("UNLIM 3 REQUEST CANCELLED");
         }
         thirtyMinUnlimCheckBoxMenuItem.setSelected(false);
         twoHoursUnlimCheckBoxMenuItem.setSelected(false);
     }//GEN-LAST:event_fourHoursUnlimCheckBoxMenuItemActionPerformed
 
-    private void appendToPane(String msg, Color c) {
+    private void appendToPane(String msg) {
         try {
             synchronized (this) {
-                logTextPane.setEditable(true);
-                StyleContext sc = StyleContext.getDefaultStyleContext();
-                AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, c);
-                aset = sc.addAttribute(aset, StyleConstants.Alignment, StyleConstants.ALIGN_JUSTIFIED);
-                int len = logTextPane.getDocument().getLength();
-                logTextPane.setCaretPosition(len);
-                logTextPane.setCharacterAttributes(aset, false);
-                logTextPane.replaceSelection("[" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yy HH:mm.ss")) + "] -> " + msg + "\n");
-                logTextPane.setEditable(false);
-                logTextPane.repaint();
-                //TODO: clean history
+                String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yy HH:mm.ss"));
+                String line = "[" + timestamp + "] -> " + msg + "\n";
+                logTextArea.setEditable(true);
+                logTextArea.append(line);
+                logTextArea.setCaretPosition(logTextArea.getDocument().getLength());
+                cleanConsole();
+                logTextArea.setEditable(false);
             }
         } catch (Exception e) {
             appWindowLogger.error("APPEND METHOD: {}", e.getMessage());
+        }
+    }
+
+    private void cleanConsole() {
+        try {
+            javax.swing.text.Element root = logTextArea.getDocument().getDefaultRootElement();
+            if (root.getElementCount() > MAX_LINES) {
+                javax.swing.text.Element firstLine = root.getElement(0);
+                logTextArea.getDocument().remove(0, firstLine.getEndOffset());
+            }
+        } catch (BadLocationException e) {
+            appWindowLogger.error("CLEAN CONSOLE METHOD: {}", e.getMessage());
         }
     }
 
@@ -778,9 +791,16 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
             };
             worker.execute();
         } else {
-            Color color = Color.yellow;
-            appendToPane("BAD RECOVERY CODE", color);
+            appendToPane("BAD RECOVERY CODE");
         }
+    }
+
+    private void stopBot() {
+        bot.stop();
+//        if (worker != null & !worker.isCancelled()) {
+//            appWindowLogger.debug("worker stop");
+//            worker.cancel(true);
+//        }
     }
 
     private JFrame getAppWindow() {
@@ -790,7 +810,6 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
     private void addTrayIcon() {
         if (!SystemTray.isSupported()) {
             System.out.println("SystemTray is not supported");
-            //return;
         } else {
             final PopupMenu popup = new PopupMenu();
 
@@ -877,7 +896,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
             try {
                 tray.add(trayIcon);
             } catch (AWTException e) {
-                System.out.println("TrayIcon could not be added.");
+                appWindowLogger.error("Tray icon could not be added: {}", e.getMessage());
             }
         }
 
@@ -892,31 +911,34 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JLabel drawCountValueLabel;
     private javax.swing.JCheckBoxMenuItem englishCheckBoxMenuItem;
     private javax.swing.JMenuItem exitMenuItem;
-    private javax.swing.JMenu fileMenu;
+    private javax.swing.JCheckBoxMenuItem finishCheckBoxMenuItem5;
     private javax.swing.JCheckBoxMenuItem fourHoursUnlimCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem headlessModeCheckBoxMenuItem;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem2;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem3;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator;
     private javax.swing.JMenu langMenu;
-    private javax.swing.JTextPane logTextPane;
+    private javax.swing.JTextArea logTextArea;
     private javax.swing.JLabel lostsCountLabel;
     private javax.swing.JLabel lostsCountValueLabel;
+    private javax.swing.JMenu mainMenu;
     private javax.swing.JPanel mainPanel;
+    private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenu optionsMenu;
     private javax.swing.JCheckBoxMenuItem portugalCheckBoxMenuItem;
     private javax.swing.JPasswordField recoveryCodeField;
     private javax.swing.JLabel recoveryCodeLabel;
     private javax.swing.JCheckBoxMenuItem russianCheckBoxMenuItem;
+    private javax.swing.JScrollPane scrollPane;
+    private javax.swing.JMenu soundNotificationMenu;
     private javax.swing.JCheckBoxMenuItem spanishCheckBoxMenuItem;
     private javax.swing.JButton startButton;
+    private javax.swing.JCheckBoxMenuItem startNotificationCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem thirtyMinUnlimCheckBoxMenuItem;
     private javax.swing.JComboBox<String> topicComboBox;
+    private javax.swing.JLabel topicLabel;
     private javax.swing.JLabel totalGamesLabel;
     private javax.swing.JLabel totalGamesValueLabel;
     private javax.swing.JCheckBoxMenuItem twoHoursUnlimCheckBoxMenuItem;

@@ -15,7 +15,7 @@ public interface Observer {
     void handleStart();
     void handleStop();
     void handleUnlimShopping();
-    void handleMessage(String message, Color color);
+    void handleMessage(String message);
     void handleGameResult(GameResult result, int points);
 
 }
