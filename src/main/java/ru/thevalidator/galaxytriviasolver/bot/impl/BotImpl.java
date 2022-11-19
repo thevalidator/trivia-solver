@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -198,7 +199,7 @@ public class BotImpl implements Bot {
     }
 
     public void openTriviaGame() {
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 3; i++) {
             try {
                 closePopup(3_000);
                 wait(15_000).until(elementToBeClickable(By.xpath(locator.getGamesMenuItem()))).click();
@@ -252,6 +253,9 @@ public class BotImpl implements Bot {
                                 timeToSleep += 60;
                             }
                             checkDailyRatings();
+                            
+                            //playRaces();
+                            
                             throw new NotEnoughEnergyException(timeToSleep, statusMessage);
                         }
 
@@ -281,6 +285,11 @@ public class BotImpl implements Bot {
         }
 
     }
+    
+    private void playRaces() {
+        
+    }
+    
 //probably error with the first question happens here
 
     private void clickCorrectAnswer() {
@@ -330,8 +339,9 @@ public class BotImpl implements Bot {
                 try {
                     play(topic);
                 } catch (Exception e) {
-                    terminateSession();
+
                     if (isActive) {
+                        terminateSession();
                         int sleepTime = 145;
                         if (e instanceof NotEnoughEnergyException) {
                             sleepTime = ((NotEnoughEnergyException) e).getSecondsToWait();
@@ -368,10 +378,33 @@ public class BotImpl implements Bot {
     }
 
     private WebDriver createDriver() {
-        //System.setProperty("webdriver.chrome.driver","C://softwares//drivers//chromedriver.exe");
         WebDriverManager.chromedriver().setup();
-        ChromeOptions options = new ChromeOptions();
+        
+        //System.setProperty("webdriver.chrome.driver","C://softwares//drivers//chromedriver.exe");
+        //ChromeOptions options = new ChromeOptions();
+        //options.setBinary("/path/to/other/chrome/binary");
 
+        //mobile emulation 1
+//        Map<String, String> mobileEmulation = new HashMap<>();
+//        mobileEmulation.put("deviceName", "Nexus 5");
+//        ChromeOptions options = new ChromeOptions();
+//        options.setExperimentalOption("mobileEmulation", mobileEmulation);
+
+        //mobile emulation 2
+//        Map<String, Object> deviceMetrics = new HashMap<>();
+//        deviceMetrics.put("width", 360);
+//        deviceMetrics.put("height", 640);
+//        deviceMetrics.put("pixelRatio", 3.0);
+//        Map<String, Object> mobileEmulation = new HashMap<>();
+//        mobileEmulation.put("deviceMetrics", deviceMetrics);
+//        mobileEmulation.put("userAgent", "Mozilla/5.0 (Linux; Android 4.2.1; en-us; Nexus 5 Build/JOP40D) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19");
+//        ChromeOptions chromeOptions = new ChromeOptions();
+//        chromeOptions.setExperimentalOption("mobileEmulation", mobileEmulation);
+//        WebDriver driver = new ChromeDriver(chromeOptions);
+
+
+        ChromeOptions options = new ChromeOptions();
+        
         //BrowserMobProxy proxy;
         //
         //options.setExperimentalOption("mobileEmulation", Map.of("deviceName", "Nexus 5"));
@@ -379,13 +412,14 @@ public class BotImpl implements Bot {
         //String userAgent = "user-agent=Mozilla/5.0 (Linux; Android 12; sdk_gphone64_x86_64 Build/SE1A.211012.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/91.0.4472.114 Mobile Safari/537.36";
         //options.addArguments(userAgent);
         //options.setUseRunningAndroidApp(true);
+        
         if (isHeadless) {
             options.setHeadless(true);
         }
         WebDriver drv = new ChromeDriver(options);
-
         drv.manage().window().setSize(new Dimension(1600, 900));
         drv.manage().window().setPosition((new Point(0, 0)));
+        
         return drv;
     }
 
@@ -709,7 +743,7 @@ public class BotImpl implements Bot {
         try {
             TimeUnit.SECONDS.sleep(3);
         } catch (InterruptedException ex) {
-            //java.util.logging.Logger.getLogger(BotImpl.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(ex.getMessage());
         }
         wait(10_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(locator.getPlanetsIFrame())));
         driver.findElement(By.xpath(locator.getTriviaReturnToMainPageButton())).click();
