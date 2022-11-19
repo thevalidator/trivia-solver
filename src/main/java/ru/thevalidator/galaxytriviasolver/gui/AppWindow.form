@@ -138,6 +138,9 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Play races"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCheckBoxMenuItem1ActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="jCheckBoxMenuItem2">
               <Properties>
@@ -257,21 +260,22 @@
                               </Group>
                           </Group>
                           <Group type="102" attributes="0">
-                              <EmptySpace min="313" pref="313" max="-2" attributes="0"/>
-                              <Component id="jSeparator" min="-2" pref="160" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" attributes="0">
                               <EmptySpace min="69" pref="69" max="-2" attributes="0"/>
                               <Component id="startButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="169" pref="169" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="154" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="totalGamesLabel" min="-2" max="-2" attributes="0"/>
-                                  <Component id="averageLabel" min="-2" pref="100" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="12" pref="12" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="totalGamesValueLabel" min="-2" max="-2" attributes="0"/>
-                                  <Component id="averageValueLabel" min="-2" max="-2" attributes="0"/>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="averageLabel" min="-2" max="-2" attributes="0"/>
+                                          <Component id="totalGamesLabel" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace min="12" pref="12" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="totalGamesValueLabel" min="-2" max="-2" attributes="0"/>
+                                          <Component id="averageValueLabel" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                  <Component id="jSeparator" alignment="0" min="-2" pref="177" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -477,13 +481,13 @@
             <Property name="text" type="java.lang.String" value="TOTAL GAMES:"/>
             <Property name="horizontalTextPosition" type="int" value="4"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[100, 16]"/>
+              <Dimension value="[115, 16]"/>
             </Property>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[100, 16]"/>
+              <Dimension value="[115, 16]"/>
             </Property>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[100, 16]"/>
+              <Dimension value="[115, 16]"/>
             </Property>
           </Properties>
         </Component>
@@ -693,13 +697,13 @@
             <Property name="horizontalAlignment" type="int" value="4"/>
             <Property name="text" type="java.lang.String" value="AVG POINTS:"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[100, 16]"/>
+              <Dimension value="[115, 16]"/>
             </Property>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[100, 16]"/>
+              <Dimension value="[115, 16]"/>
             </Property>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[90, 16]"/>
+              <Dimension value="[115, 16]"/>
             </Property>
           </Properties>
         </Component>

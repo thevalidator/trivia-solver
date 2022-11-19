@@ -248,9 +248,9 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         totalGamesLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         totalGamesLabel.setText("TOTAL GAMES:");
         totalGamesLabel.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        totalGamesLabel.setMaximumSize(new java.awt.Dimension(100, 16));
-        totalGamesLabel.setMinimumSize(new java.awt.Dimension(100, 16));
-        totalGamesLabel.setPreferredSize(new java.awt.Dimension(100, 16));
+        totalGamesLabel.setMaximumSize(new java.awt.Dimension(115, 16));
+        totalGamesLabel.setMinimumSize(new java.awt.Dimension(115, 16));
+        totalGamesLabel.setPreferredSize(new java.awt.Dimension(115, 16));
 
         winsCountLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         winsCountLabel.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
@@ -325,9 +325,9 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         averageLabel.setForeground(new java.awt.Color(204, 204, 204));
         averageLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         averageLabel.setText("AVG POINTS:");
-        averageLabel.setMaximumSize(new java.awt.Dimension(100, 16));
-        averageLabel.setMinimumSize(new java.awt.Dimension(100, 16));
-        averageLabel.setPreferredSize(new java.awt.Dimension(90, 16));
+        averageLabel.setMaximumSize(new java.awt.Dimension(115, 16));
+        averageLabel.setMinimumSize(new java.awt.Dimension(115, 16));
+        averageLabel.setPreferredSize(new java.awt.Dimension(115, 16));
 
         averageValueLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         averageValueLabel.setForeground(new java.awt.Color(204, 204, 204));
@@ -364,19 +364,19 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
                                 .addComponent(winsCountValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(lostsCountValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGroup(mainPanelLayout.createSequentialGroup()
-                            .addGap(313, 313, 313)
-                            .addComponent(jSeparator, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(mainPanelLayout.createSequentialGroup()
                             .addGap(69, 69, 69)
                             .addComponent(startButton)
-                            .addGap(169, 169, 169)
+                            .addGap(154, 154, 154)
                             .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(totalGamesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(averageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGap(12, 12, 12)
-                            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(totalGamesValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(averageValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addGroup(mainPanelLayout.createSequentialGroup()
+                                    .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(averageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(totalGamesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGap(12, 12, 12)
+                                    .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(totalGamesValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(averageValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(jSeparator, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addGap(27, 27, 27))
         );
         mainPanelLayout.setVerticalGroup(
@@ -538,6 +538,11 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         optionsMenu.add(anonymousModeCheckBoxMenuItem);
 
         jCheckBoxMenuItem1.setText("Play races");
+        jCheckBoxMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBoxMenuItem1ActionPerformed(evt);
+            }
+        });
         optionsMenu.add(jCheckBoxMenuItem1);
 
         jCheckBoxMenuItem2.setText("Write to blog");
@@ -651,7 +656,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
                 + "For use input your recovery code, then \n"
                 + "choose topic and click start button.\n"
                 + "\n\n"
-                + "v1.0.0.0-b003\n"
+                + "v1.0.0.0-b004\n"
                 + "[thevalidator]\n"
                 + "2022, November");
 
@@ -704,8 +709,13 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
     }//GEN-LAST:event_spanishCheckBoxMenuItemActionPerformed
 
     private void formWindowIconified(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowIconified
-        this.setVisible(false);
-        this.setState(JFrame.NORMAL);
+        if (System.getProperty("os.name").contains("Windows")) {
+            this.setVisible(false);
+            this.setState(JFrame.NORMAL);
+        } else {
+            this.setState(JFrame.ICONIFIED);
+        }
+
     }//GEN-LAST:event_formWindowIconified
 
     private void thirtyMinUnlimCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thirtyMinUnlimCheckBoxMenuItemActionPerformed
@@ -743,6 +753,10 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         thirtyMinUnlimCheckBoxMenuItem.setSelected(false);
         twoHoursUnlimCheckBoxMenuItem.setSelected(false);
     }//GEN-LAST:event_fourHoursUnlimCheckBoxMenuItemActionPerformed
+
+    private void jCheckBoxMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxMenuItem1ActionPerformed
+        System.out.println(System.getProperty("os.name"));
+    }//GEN-LAST:event_jCheckBoxMenuItem1ActionPerformed
 
     private void appendToPane(String msg) {
         try {
