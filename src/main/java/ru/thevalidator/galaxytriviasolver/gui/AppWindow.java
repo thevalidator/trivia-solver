@@ -165,7 +165,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         fourHoursUnlimCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         headlessModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         anonymousModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        jCheckBoxMenuItem1 = new javax.swing.JCheckBoxMenuItem();
+        playRacesCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         jCheckBoxMenuItem2 = new javax.swing.JCheckBoxMenuItem();
         jCheckBoxMenuItem3 = new javax.swing.JCheckBoxMenuItem();
         helpMenu = new javax.swing.JMenu();
@@ -238,6 +238,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         scrollPane.setMinimumSize(new java.awt.Dimension(440, 180));
         scrollPane.setPreferredSize(new java.awt.Dimension(440, 180));
 
+        logTextArea.setEditable(false);
         logTextArea.setBackground(new java.awt.Color(51, 51, 51));
         logTextArea.setColumns(20);
         logTextArea.setRows(5);
@@ -537,13 +538,13 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         });
         optionsMenu.add(anonymousModeCheckBoxMenuItem);
 
-        jCheckBoxMenuItem1.setText("Play races");
-        jCheckBoxMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        playRacesCheckBoxMenuItem.setText("Play races");
+        playRacesCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBoxMenuItem1ActionPerformed(evt);
+                playRacesCheckBoxMenuItemActionPerformed(evt);
             }
         });
-        optionsMenu.add(jCheckBoxMenuItem1);
+        optionsMenu.add(playRacesCheckBoxMenuItem);
 
         jCheckBoxMenuItem2.setText("Write to blog");
         optionsMenu.add(jCheckBoxMenuItem2);
@@ -656,7 +657,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
                 + "For use input your recovery code, then \n"
                 + "choose topic and click start button.\n"
                 + "\n\n"
-                + "v1.0.0.0-b004\n"
+                + "v1.0.0.0-b005 (races added)\n"
                 + "[thevalidator]\n"
                 + "2022, November");
 
@@ -754,9 +755,15 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         twoHoursUnlimCheckBoxMenuItem.setSelected(false);
     }//GEN-LAST:event_fourHoursUnlimCheckBoxMenuItemActionPerformed
 
-    private void jCheckBoxMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxMenuItem1ActionPerformed
-        System.out.println(System.getProperty("os.name"));
-    }//GEN-LAST:event_jCheckBoxMenuItem1ActionPerformed
+    private void playRacesCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playRacesCheckBoxMenuItemActionPerformed
+        if (playRacesCheckBoxMenuItem.isSelected()) {
+            bot.playRides(true);
+            appendToPane("RACING AFTER TRIVIA ON");
+        } else {
+            bot.playRides(false);
+            appendToPane("RACING AFTER TRIVIA OFF");
+        }
+    }//GEN-LAST:event_playRacesCheckBoxMenuItemActionPerformed
 
     private void appendToPane(String msg) {
         try {
@@ -822,9 +829,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
     }
 
     private void addTrayIcon() {
-        if (!SystemTray.isSupported()) {
-            System.out.println("SystemTray is not supported");
-        } else {
+        if (SystemTray.isSupported()) {
             final PopupMenu popup = new PopupMenu();
 
             final TrayIcon trayIcon = new TrayIcon(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/tray.png")));
@@ -929,7 +934,6 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JCheckBoxMenuItem fourHoursUnlimCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem headlessModeCheckBoxMenuItem;
     private javax.swing.JMenu helpMenu;
-    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem2;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem3;
     private javax.swing.JSeparator jSeparator;
@@ -941,6 +945,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenu optionsMenu;
+    private javax.swing.JCheckBoxMenuItem playRacesCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem portugalCheckBoxMenuItem;
     private javax.swing.JPasswordField recoveryCodeField;
     private javax.swing.JLabel recoveryCodeLabel;
