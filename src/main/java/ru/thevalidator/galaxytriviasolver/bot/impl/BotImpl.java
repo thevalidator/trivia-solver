@@ -3,7 +3,7 @@
  */
 //TODO: 
 /*
-    1) answers on questions in cycle
+    1) 
     2) 
  */
 package ru.thevalidator.galaxytriviasolver.bot.impl;
@@ -19,12 +19,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-import net.lightbody.bmp.BrowserMobProxy;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,6 +38,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import static org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClickable;
 import static org.openqa.selenium.support.ui.ExpectedConditions.frameToBeAvailableAndSwitchToIt;
+import static org.openqa.selenium.support.ui.ExpectedConditions.invisibilityOfElementLocated;
 import static org.openqa.selenium.support.ui.ExpectedConditions.presenceOfElementLocated;
 import static org.openqa.selenium.support.ui.ExpectedConditions.textToBe;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfAllElementsLocatedBy;
@@ -68,6 +66,7 @@ public class BotImpl implements Bot {
     private volatile boolean isAnonymous;
     private volatile boolean isActive;
     private volatile int unlimOption;
+    private volatile boolean shouldRace;
     private boolean isRunning;
     private WebDriver driver;
     private String code;
@@ -83,6 +82,7 @@ public class BotImpl implements Bot {
         this.isActive = false;
         this.isHeadless = true;
         this.isAnonymous = true;
+        this.shouldRace = false;
         this.unlimOption = 0;
         this.observers = new ArrayList<>();
         this.solver = new SolverImpl();
@@ -171,6 +171,11 @@ public class BotImpl implements Bot {
     }
 
     @Override
+    public void playRides(boolean b) {
+        this.shouldRace = b;
+    }
+
+    @Override
     public void setRecoveryCode(String code) {
         this.code = code;
     }
@@ -195,23 +200,6 @@ public class BotImpl implements Bot {
             messageNotify("LOGIN ERROR");
             logger.error("LOGIN ERROR: {}", e.getMessage());
             throw new LoginErrorException(e.getMessage());
-        }
-    }
-
-    public void openTriviaGame() {
-        for (int i = 0; i < 3; i++) {
-            try {
-                closePopup(3_000);
-                wait(15_000).until(elementToBeClickable(By.xpath(locator.getGamesMenuItem()))).click();
-                closePopup(3_000);
-                wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(locator.getPlanetsIFrame())));
-                closePopup(3_000);
-                wait(15_000).until(elementToBeClickable(By.xpath(locator.getTriviaGameButton()))).click();
-                break;
-            } catch (Exception e) {
-                takeScreenshot(getFileNameTimeStamp() + ".png");
-                refreshPage();
-            }
         }
     }
 
@@ -245,7 +233,7 @@ public class BotImpl implements Bot {
                             continue;
                         } else {
                             String statusMessage = driver.findElement(By.xpath(locator.getTriviaEnergyTimer())).getText();
-                            messageNotify("no attempts left, need to wait " + statusMessage);
+                            messageNotify("no attempts left, time to recharge " + statusMessage);
                             int timeToSleep = Integer.parseInt(statusMessage.substring(0, statusMessage.indexOf(" ")));
                             if (statusMessage.contains(locator.getTriviaMinutesText())) {
                                 timeToSleep = (timeToSleep + 2) * 60;
@@ -253,9 +241,15 @@ public class BotImpl implements Bot {
                                 timeToSleep += 60;
                             }
                             checkDailyRatings();
-                            
-                            //playRaces();
-                            
+                            long startRacingTime = System.currentTimeMillis();
+                            if (shouldRace) {
+                                messageNotify("started races");
+                                playRaces();
+                                messageNotify("finished races");
+                            }
+                            long finishRacingTime = System.currentTimeMillis();
+                            timeToSleep = timeToSleep - (int)((finishRacingTime - startRacingTime) / 1_000);
+                            messageNotify("sleeping " + timeToSleep + " seconds (" + timeToSleep / 60 + " mins)");
                             throw new NotEnoughEnergyException(timeToSleep, statusMessage);
                         }
 
@@ -267,7 +261,6 @@ public class BotImpl implements Bot {
                     throw e;
                 } catch (Exception e) {
                     gameResultNotify(GameResult.LOST, 0);
-                    //messageNotify("ERROR", Color.red);
                     logger.error(e.getMessage());
                     String pageSource = driver.getPageSource();
                     String fileName = getFileNameTimeStamp() + "_playing_game";
@@ -285,13 +278,99 @@ public class BotImpl implements Bot {
         }
 
     }
-    
-    private void playRaces() {
-        
-    }
-    
-//probably error with the first question happens here
 
+    private void playRaces() {
+
+        try {
+            driver.switchTo().defaultContent();
+            openRacesGame();
+            startRacing();
+        } catch (Exception e) {
+            String fileName = getFileNameTimeStamp() + "_race_game";
+            takeScreenshot(fileName + ".png");
+            saveDataToFile(fileName + ".log", Arrays.toString(e.getStackTrace()));
+            logger.error("Races: {}", e.getMessage());
+        }
+
+    }
+
+    private void startRacing() {
+
+        closePopup(3_000);
+        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(locator.getPlanetsIFrame())));
+        String attempts = wait(3_000).until(presenceOfElementLocated(By.xpath(locator.getRacesAttemptsCount()))).getText().trim();
+        boolean hasAttempts = Integer.parseInt(attempts) > 0;
+
+        if (hasAttempts) {
+
+            wait(5_000).until(presenceOfElementLocated(By.xpath(locator.getRacesStartButton()))).click();
+
+            while (hasAttempts) {     
+                wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(locator.getPlanetsIFrame())));
+                wait(30_000).until(visibilityOfElementLocated(By.xpath("//div[@id='waitOverlay']")));
+                wait(30_000).until(invisibilityOfElementLocated(By.xpath("//div[@id='waitOverlay']")));
+
+                long start = System.currentTimeMillis();
+                while ((System.currentTimeMillis() - start) < 4_800) {
+                    java.lang.Thread.onSpinWait();
+                }
+                try {
+                    wait(500).until(elementToBeClickable(By.xpath("//div[@id='nitroButton']"))).click();
+                } catch (Exception e) {
+                }
+
+                try {
+                    wait(45_000).until(visibilityOfElementLocated(By.xpath("//div[@style='display: block;' and contains(@class, 'overlay_cars_race')]")));
+                } catch (Exception e) {
+                    if (driver.findElement(By.xpath("//button[@class='s__overlay__content_close js-overlay-close-button']")).isDisplayed()) {
+                        while (driver.findElement(By.xpath("//button[@class='s__overlay__content_close js-overlay-close-button']")).isDisplayed()) {
+                            driver.findElement(By.xpath("//button[@class='s__overlay__content_close js-overlay-close-button']")).click();
+                        }
+                    } else {
+                        driver.switchTo().defaultContent();
+                        closePopup(2_000);
+                        driver.switchTo().frame(driver.findElement(By.xpath(locator.getPlanetsIFrame())));
+                    }
+                    wait(45_000).until(visibilityOfElementLocated(By.xpath("//div[@style='display: block;' and contains(@class, 'overlay_cars_race')]")));
+                }
+                messageNotify("single race finished");
+                try {
+                    wait(20_000).until(visibilityOfElementLocated(By.xpath(locator.getRacesRaceAgainButton()))).click();
+                } catch (Exception e) {
+                    hasAttempts = false;
+                }
+            }
+
+        }
+
+    }
+
+    private void openRacesGame() {
+        openGame(locator.getRacesGameButton());
+    }
+
+    public void openTriviaGame() {
+        openGame(locator.getTriviaGameButton());
+    }
+
+    private void openGame(String gameButtonLocator) {
+        for (int i = 0; i < 3; i++) {
+            try {
+                closePopup(3_000);
+                wait(15_000).until(elementToBeClickable(By.xpath(locator.getGamesMenuItem()))).click();
+                closePopup(3_000);
+                wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(locator.getPlanetsIFrame())));
+                closePopup(3_000);
+                wait(15_000).until(elementToBeClickable(By.xpath(gameButtonLocator))).click();
+                break;
+            } catch (Exception e) {
+                takeScreenshot(getFileNameTimeStamp() + ".png");
+                refreshPage();
+            }
+        }
+    }
+
+//probably error with the first question happens here
     private void clickCorrectAnswer() {
         List<WebElement> elements = driver.findElements(By.xpath(locator.getTriviaQuestionID()));
         Answer[] answers = new Answer[4];
@@ -379,17 +458,15 @@ public class BotImpl implements Bot {
 
     private WebDriver createDriver() {
         WebDriverManager.chromedriver().setup();
-        
+
         //System.setProperty("webdriver.chrome.driver","C://softwares//drivers//chromedriver.exe");
         //ChromeOptions options = new ChromeOptions();
         //options.setBinary("/path/to/other/chrome/binary");
-
         //mobile emulation 1
 //        Map<String, String> mobileEmulation = new HashMap<>();
 //        mobileEmulation.put("deviceName", "Nexus 5");
 //        ChromeOptions options = new ChromeOptions();
 //        options.setExperimentalOption("mobileEmulation", mobileEmulation);
-
         //mobile emulation 2
 //        Map<String, Object> deviceMetrics = new HashMap<>();
 //        deviceMetrics.put("width", 360);
@@ -401,10 +478,8 @@ public class BotImpl implements Bot {
 //        ChromeOptions chromeOptions = new ChromeOptions();
 //        chromeOptions.setExperimentalOption("mobileEmulation", mobileEmulation);
 //        WebDriver driver = new ChromeDriver(chromeOptions);
-
-
         ChromeOptions options = new ChromeOptions();
-        
+
         //BrowserMobProxy proxy;
         //
         //options.setExperimentalOption("mobileEmulation", Map.of("deviceName", "Nexus 5"));
@@ -412,14 +487,13 @@ public class BotImpl implements Bot {
         //String userAgent = "user-agent=Mozilla/5.0 (Linux; Android 12; sdk_gphone64_x86_64 Build/SE1A.211012.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/91.0.4472.114 Mobile Safari/537.36";
         //options.addArguments(userAgent);
         //options.setUseRunningAndroidApp(true);
-        
         if (isHeadless) {
             options.setHeadless(true);
         }
         WebDriver drv = new ChromeDriver(options);
         drv.manage().window().setSize(new Dimension(1600, 900));
         drv.manage().window().setPosition((new Point(0, 0)));
-        
+
         return drv;
     }
 
@@ -716,7 +790,8 @@ public class BotImpl implements Bot {
     }
 
     private String getFileNameTimeStamp() {
-        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy_HHmmss"));//DateTimeFormatter.ofPattern("ddMMyyyy_HHmmss").format(LocalDateTime.now());
+        String path = "logs" + File.separator;
+        return path + LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy_HHmmss"));
     }
 
     private void checkDailyRatings() {
@@ -725,8 +800,10 @@ public class BotImpl implements Bot {
         String ownDailyResult = driver.findElement(By.xpath(locator.getTriviaOwnDailyResult())).getText();
         driver.findElement(By.xpath(locator.getTriviaDailyRatingsPageButton())).click();
         wait(10_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(locator.getPlanetsIFrame())));
+        String firstPlaceResult = driver.findElement(By.xpath(locator.getTriviaFirstPlaceDailyResult())).getText();
         String tenthPlaceResult = driver.findElement(By.xpath(locator.getTriviaTenthPlaceDailyResult())).getText();
-        messageNotify("RATING: my - " + ownDailyResult + "  10th: - " + tenthPlaceResult);
+        String message = String.format("[1] %s [10] %s [user] %s", firstPlaceResult, tenthPlaceResult, ownDailyResult);
+        messageNotify(message);
     }
 
     private void buyUnlimStatus() {
