@@ -54,7 +54,7 @@ import ru.thevalidator.galaxytriviasolver.exception.LoginErrorException;
 import ru.thevalidator.galaxytriviasolver.exception.NotEnoughEnergyException;
 import ru.thevalidator.galaxytriviasolver.model.Observer;
 import ru.thevalidator.galaxytriviasolver.solver.Solver;
-import ru.thevalidator.galaxytriviasolver.solver.SolverImpl;
+import ru.thevalidator.galaxytriviasolver.solver.impl.SolverImpl;
 import ru.thevalidator.galaxytriviasolver.web.AbstractLocator;
 import ru.thevalidator.galaxytriviasolver.web.AbstractTopic;
 
@@ -67,6 +67,7 @@ public class BotImpl implements Bot {
     private volatile boolean isActive;
     private volatile int unlimOption;
     private volatile boolean shouldRace;
+    private volatile boolean changeTopics;
     private boolean isRunning;
     private WebDriver driver;
     private String code;
@@ -83,6 +84,7 @@ public class BotImpl implements Bot {
         this.isHeadless = true;
         this.isAnonymous = true;
         this.shouldRace = false;
+        this.changeTopics = false;
         this.unlimOption = 0;
         this.observers = new ArrayList<>();
         this.solver = new SolverImpl();
@@ -186,29 +188,34 @@ public class BotImpl implements Bot {
     }
 
     public void login(String recoveryCode) throws LoginErrorException {
-        try {
-            openPage();
-            driver.findElement(By.xpath(locator.getHaveAccountButton())).click();
-            driver.findElement(By.xpath(locator.getRecoveryCodeField())).sendKeys(recoveryCode);
-            driver.findElement(By.xpath(locator.getSendCodeButton())).click();
-            closePopup(2_000);
-            if (isAuthorized()) {
-                messageNotify("login success");
+        for (int i = 1; i < 4; i++) {
+            try {
+                openPage();
+                driver.findElement(By.xpath(locator.getHaveAccountButton())).click();
+                driver.findElement(By.xpath(locator.getRecoveryCodeField())).sendKeys(recoveryCode);
+                driver.findElement(By.xpath(locator.getSendCodeButton())).click();
+                closePopup(2_000);
+                if (isAuthorized()) {
+                    messageNotify("login success");
+                    break;
+                }
+            } catch (Exception e) {
+                takeScreenshot(getFileNameTimeStamp() + "_login.png");
+                messageNotify("LOGIN ERROR TRY " + i);
+                logger.error("LOGIN ERROR: {}", e.getMessage());
+                if (i == 3) {
+                    throw new LoginErrorException(e.getMessage());
+                }
             }
-        } catch (Exception e) {
-            takeScreenshot(getFileNameTimeStamp() + "_login.png");
-            messageNotify("LOGIN ERROR");
-            logger.error("LOGIN ERROR: {}", e.getMessage());
-            throw new LoginErrorException(e.getMessage());
         }
     }
 
     public void play(String topic) throws CanNotPlayException, NotEnoughEnergyException {
 
-        List<WebElement> topics = startGame();
+        List<WebElement> topics = getTopics();
 
         if (selectTopic(topics)) {
-            while (true) {
+            while (isActive) {
                 try {
                     waitForOpponent();
                     answerQuestions();
@@ -248,7 +255,7 @@ public class BotImpl implements Bot {
                                 messageNotify("finished races");
                             }
                             long finishRacingTime = System.currentTimeMillis();
-                            timeToSleep = timeToSleep - (int)((finishRacingTime - startRacingTime) / 1_000);
+                            timeToSleep = timeToSleep - (int) ((finishRacingTime - startRacingTime) / 1_000);
                             messageNotify("sleeping " + timeToSleep + " seconds (" + timeToSleep / 60 + " mins)");
                             throw new NotEnoughEnergyException(timeToSleep, statusMessage);
                         }
@@ -283,7 +290,7 @@ public class BotImpl implements Bot {
 
         try {
             driver.switchTo().defaultContent();
-            openRacesGame();
+            openRidesGame();
             startRacing();
         } catch (Exception e) {
             String fileName = getFileNameTimeStamp() + "_race_game";
@@ -305,7 +312,7 @@ public class BotImpl implements Bot {
 
             wait(5_000).until(presenceOfElementLocated(By.xpath(locator.getRacesStartButton()))).click();
 
-            while (hasAttempts) {     
+            while (hasAttempts) {
                 wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(locator.getPlanetsIFrame())));
                 wait(30_000).until(visibilityOfElementLocated(By.xpath("//div[@id='waitOverlay']")));
                 wait(30_000).until(invisibilityOfElementLocated(By.xpath("//div[@id='waitOverlay']")));
@@ -345,7 +352,7 @@ public class BotImpl implements Bot {
 
     }
 
-    private void openRacesGame() {
+    private void openRidesGame() {
         openGame(locator.getRacesGameButton());
     }
 
@@ -354,7 +361,7 @@ public class BotImpl implements Bot {
     }
 
     private void openGame(String gameButtonLocator) {
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 4; i++) {
             try {
                 closePopup(3_000);
                 wait(15_000).until(elementToBeClickable(By.xpath(locator.getGamesMenuItem()))).click();
@@ -407,42 +414,50 @@ public class BotImpl implements Bot {
     public void run() {
         try {
             isRunning = true;
-            isActive = true;
+            isActive = true;    //TODO: ???? check if activated on pressing button start
             startNotify();
 
-            driver = createDriver();
-            login(code);
-            openTriviaGame();
-            while (isActive) {
+            work();
 
-                try {
-                    play(topic);
-                } catch (Exception e) {
-
-                    if (isActive) {
-                        terminateSession();
-                        int sleepTime = 145;
-                        if (e instanceof NotEnoughEnergyException) {
-                            sleepTime = ((NotEnoughEnergyException) e).getSecondsToWait();
-                            try {
-                                TimeUnit.SECONDS.sleep(sleepTime);
-                            } catch (InterruptedException ex) {
-                                logger.error(ex.getMessage());
-                            }
-                        } else {
-                            messageNotify("ERROR... restarting in " + sleepTime + " secs");
-                            logger.error(e.getMessage());
-                        }
-
-                        driver = createDriver();
-                        login(code);
-                        openTriviaGame();
-
-                    } else {
-                        throw e;
-                    }
-                }
-            }
+////            driver = createDriver();
+////            login(code);
+////            
+////            openTriviaGame();
+////            
+////            
+////            //
+////            play(topic);
+////            //
+//            while (isActive) {
+//
+//                try {
+//                    play(topic);
+//                } catch (Exception e) {
+//
+//                    if (isActive) {
+//                        terminateSession();
+//                        int sleepTime = 145;
+//                        if (e instanceof NotEnoughEnergyException) {
+//                            sleepTime = ((NotEnoughEnergyException) e).getSecondsToWait();
+//                            try {
+//                                TimeUnit.SECONDS.sleep(sleepTime);
+//                            } catch (InterruptedException ex) {
+//                                logger.error(ex.getMessage());
+//                            }
+//                        } else {
+//                            messageNotify("ERROR... restarting in " + sleepTime + " secs");
+//                            logger.error(e.getMessage());
+//                        }
+//
+//                        driver = createDriver();
+//                        login(code);
+//                        openTriviaGame();
+//
+//                    } else {
+//                        throw e;
+//                    }
+//                }
+//            }
         } catch (Exception e) {
             logger.error(e.getMessage());
         } finally {
@@ -456,7 +471,86 @@ public class BotImpl implements Bot {
         }
     }
 
-    private WebDriver createDriver() {
+    private void work() throws LoginErrorException {
+        createWebDriver();
+        login(code);
+        int triviaRecoveryTime = playTrivia();
+        playRides();
+        terminateSession();
+        
+        //getSomeSleep();
+        //chillout();
+
+    }
+
+    private int playTrivia() {
+        openTriviaGame();
+        int secondsToWait = 140;
+        try {
+            boolean isStarted = startTriviaGame();
+            if (isStarted) {
+                String attempts = getAvailableAttempts();
+                while (!attempts.equals("0") && isActive) {
+                    waitForOpponent();
+                    answerQuestions();
+                    waitForResults();
+                    handleResults();
+                    attempts = getAvailableAttempts();
+                    messageNotify("attempts left: " + attempts);
+                    driver.findElement(By.xpath(locator.getTriviaPlayAgainButton())).click();
+                }
+                
+                
+//                    String attempts = getAvailableAttempts();
+//                    if (attempts.equals("0")) {
+//                        if (unlimOption > 0 && unlimOption < 4) {
+//                            buyUnlimStatus();
+//                            //TODO: sleep several seconds or not necessary????
+//                            startTriviaGame();
+//                        } else {
+//                            String statusMessage = driver.findElement(By.xpath(locator.getTriviaEnergyTimer())).getText();
+//                            messageNotify("no attempts left, time to recharge " + statusMessage);
+//                            int timeToSleep = Integer.parseInt(statusMessage.substring(0, statusMessage.indexOf(" ")));
+//                            if (statusMessage.contains(locator.getTriviaMinutesText())) {
+//                                return (timeToSleep + 2) * 60;
+//                            } else {
+//                                return timeToSleep + 60;
+//                            }
+//                        }
+//                    } else {
+//                        messageNotify("attempts left: " + attempts);
+//                        driver.findElement(By.xpath(locator.getTriviaPlayAgainButton())).click();
+//                    }
+//                }
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            String fileName = getFileNameTimeStamp() + "_trivia_play";
+            takeScreenshot(fileName + ".png");
+            saveDataToFile(fileName + ".log", Arrays.toString(e.getStackTrace()));
+        }
+        return secondsToWait;
+    }
+
+    private boolean startTriviaGame() throws NotEnoughEnergyException {
+        List<WebElement> topics = getTopics();
+        return selectTopic(topics);
+    }
+
+    private String getAvailableAttempts() {
+        driver.switchTo().defaultContent();
+        closePopup(1_000);
+        wait(2_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(locator.getPlanetsIFrame())));
+        String attempts = driver.findElement(By.xpath(locator.getTriviaEnergyCountCard())).getText().trim();
+
+        return attempts;
+    }
+
+    private void playRides() {
+        //openRidesGame();
+    }
+
+    private void createWebDriver() {
         WebDriverManager.chromedriver().setup();
 
         //System.setProperty("webdriver.chrome.driver","C://softwares//drivers//chromedriver.exe");
@@ -490,11 +584,11 @@ public class BotImpl implements Bot {
         if (isHeadless) {
             options.setHeadless(true);
         }
-        WebDriver drv = new ChromeDriver(options);
-        drv.manage().window().setSize(new Dimension(1600, 900));
-        drv.manage().window().setPosition((new Point(0, 0)));
+        driver = new ChromeDriver(options);
+        driver.manage().window().setSize(new Dimension(1600, 900));
+        driver.manage().window().setPosition((new Point(0, 0)));
 
-        return drv;
+        //return drv;
     }
 
     private WebDriverWait wait(int beforeMillis) {
@@ -708,7 +802,7 @@ public class BotImpl implements Bot {
         closePopup(4_000);
     }
 
-    private List<WebElement> startGame() throws NotEnoughEnergyException {
+    private List<WebElement> getTopics() throws NotEnoughEnergyException {
         closePopup(3_000);
         wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(locator.getPlanetsIFrame())));
         WebElement anonSwitcher = wait(15_000).until(presenceOfElementLocated(By.xpath(locator.getTriviaAnonymousToggle())));

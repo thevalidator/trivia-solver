@@ -168,6 +168,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         playRacesCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         jCheckBoxMenuItem2 = new javax.swing.JCheckBoxMenuItem();
         jCheckBoxMenuItem3 = new javax.swing.JCheckBoxMenuItem();
+        changeTopicsCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         helpMenu = new javax.swing.JMenu();
         AboutMenuItem = new javax.swing.JMenuItem();
 
@@ -552,6 +553,14 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         jCheckBoxMenuItem3.setText("Chat on planets");
         optionsMenu.add(jCheckBoxMenuItem3);
 
+        changeTopicsCheckBoxMenuItem.setText("Change topics");
+        changeTopicsCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                changeTopicsCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        optionsMenu.add(changeTopicsCheckBoxMenuItem);
+
         menuBar.add(optionsMenu);
 
         helpMenu.setText("Help");
@@ -765,9 +774,13 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         }
     }//GEN-LAST:event_playRacesCheckBoxMenuItemActionPerformed
 
+    private void changeTopicsCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeTopicsCheckBoxMenuItemActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_changeTopicsCheckBoxMenuItemActionPerformed
+
     private void appendToPane(String msg) {
         try {
-            synchronized (this) {
+            //synchronized (this) {
                 String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yy HH:mm.ss"));
                 String line = "[" + timestamp + "] -> " + msg + "\n";
                 logTextArea.setEditable(true);
@@ -775,7 +788,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
                 logTextArea.setCaretPosition(logTextArea.getDocument().getLength());
                 cleanConsole();
                 logTextArea.setEditable(false);
-            }
+            //}
         } catch (Exception e) {
             appWindowLogger.error("APPEND METHOD: {}", e.getMessage());
         }
@@ -926,6 +939,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JCheckBoxMenuItem anonymousModeCheckBoxMenuItem;
     private javax.swing.JLabel averageLabel;
     private javax.swing.JLabel averageValueLabel;
+    private javax.swing.JCheckBoxMenuItem changeTopicsCheckBoxMenuItem;
     private javax.swing.JLabel drawCountLabel;
     private javax.swing.JLabel drawCountValueLabel;
     private javax.swing.JCheckBoxMenuItem englishCheckBoxMenuItem;

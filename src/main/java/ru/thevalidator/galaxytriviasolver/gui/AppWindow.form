@@ -152,6 +152,14 @@
                 <Property name="text" type="java.lang.String" value="Chat on planets"/>
               </Properties>
             </MenuItem>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="changeTopicsCheckBoxMenuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Change topics"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="changeTopicsCheckBoxMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
           </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="helpMenu">

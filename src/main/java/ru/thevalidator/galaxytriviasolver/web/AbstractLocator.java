@@ -63,10 +63,12 @@ public abstract class AbstractLocator {
     public final String getTriviaQuizTitleResult() {return "//div[@class='s__quiz_title_result']";};
     public final String getTriviaQuizResultWrap() {return "//div[@class='s__quiz_result_wrap']";};
     public final String getTriviaResultPoints() {return "//div[contains(@class,'s__quiz_result_self')]//div[@class='s__quiz_result_count']";};
+    public final String getTriviaQuestionNumberHeader() {return "//p[@id='numberOfQuestion']";}
     public final String getTriviaQuestionID() {return "//div[@id='answersContainer']//div[@rel]";};
     public final String getTriviaReturnToMainPageButton() {return "//a[contains(@data-href, 'quiz_index')]";}
     public final String getTriviaDailyRatingsPageButton() {return "//div[@class='s__quiz_main_rating_card' and contains(@data-href, 'quiz_daily_rating')]";}
     public final String getTriviaOwnDailyResult() {return (getTriviaDailyRatingsPageButton() + "//div[@class='s__quiz_main_rating_card_count']");}
+    public final String getTriviaFirstPlaceDailyResult() {return "//div[contains(@class,'s__gd__plank s__quiz_rating ')]/a/div[@class='s__gd__plank__block number' and contains(text(), '1 x')]/..//div[@class='s__gd__plank__text position2']";}
     public final String getTriviaTenthPlaceDailyResult() {return "//div[contains(@class,'s__gd__plank s__quiz_rating ')]/a/div[@class='s__gd__plank__block number' and contains(text(), '10 x')]/..//div[@class='s__gd__plank__text position2']";}
     public final String getTriviaUnlimShopButton() {return "//a[contains(@data-href, 'quiz_energy_shop_index')]";}
     
@@ -76,6 +78,14 @@ public abstract class AbstractLocator {
         }
         return "//div[@class='s__card_unlim_wrap']//div[contains(@data-href, 'quiz_energy_shop_buy&item_id=" + option + "')]";
     }
+    
+    
+    //races
+    public final String getRacesGameButton() {return "//a[@class='s__card ' and contains(@data-href, 'cars_box_index')]";};
+    public final String getRacesStartButton() {return "//a[@id='js-button-start-race']";};
+    public final String getRacesAttemptsCount() {return "//div[@id='js-race-attempts-count']";};
+    public final String getRacesRaceAgainButton() {return "//div[@style='display: block;']//a[contains(@data-href, 'cars_race')]/div";};
+    public final String getRacesOpponentFoundTriggerBlock() {return "//div[@id='waitOverlay' and @style='display: none;']";};
 
 
 //    //login page

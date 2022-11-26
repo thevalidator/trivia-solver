@@ -24,5 +24,6 @@ public interface Bot extends Runnable, Observable {
     void addListener(Observer o);
     void removeListeners();
     void stop();
+    void playRides(boolean b);
     
 }
