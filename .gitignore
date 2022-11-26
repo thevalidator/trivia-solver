@@ -80,3 +80,4 @@ gradle-app.setting
 *.gif
 *.ico
 *.exe
+SolverImpl.java
