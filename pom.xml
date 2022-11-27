@@ -3,8 +3,24 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.thevalidator</groupId>
     <artifactId>galaxy-trivia-solver</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0.0-c001</version>
     <packaging>jar</packaging>
+    <url>https://github.com/thevalidator/trivia-solver</url>
+    
+    <licenses>
+        <license>
+            <name>GNU AFFERO GENERAL PUBLIC LICENSE VERSION 3</name>
+            <url>https://www.gnu.org/licenses/agpl-3.0.html</url>
+        </license>
+    </licenses>
+    
+    <developers>
+        <developer>
+            <id>thevalidator</id>
+            <name>illusion</name>
+            <!--<email>email@email.com</email>-->
+        </developer>
+    </developers>
     
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -13,9 +29,20 @@
         <exec.mainClass>ru.thevalidator.galaxytriviasolver.GalaxyTriviaSolver</exec.mainClass>
         <selenium.version>4.5.0</selenium.version>
         <log4j.version>2.19.0</log4j.version>
+        <jackson.version>2.14.1</jackson.version>
     </properties>
     
     <dependencies>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.formdev</groupId>
             <artifactId>flatlaf</artifactId>
@@ -58,11 +85,62 @@
             <artifactId>log4j-slf4j-impl</artifactId>
             <version>${log4j.version}</version>
         </dependency>
+        <dependency>
+            <groupId>net.lightbody.bmp</groupId>
+            <artifactId>browsermob-core</artifactId>
+            <version>2.1.5</version>
+            <!--<scope>test</scope>-->
+        </dependency>
+        <dependency>
+            <groupId>com.yworks</groupId>
+            <artifactId>yguard</artifactId>
+            <version>4.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+
     </dependencies>
     
     <build>
-        <finalName>TriviaSolver-int</finalName>
+        <finalName>TriviaSolver</finalName>
         <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <id>obfuscate</id>
+                        <configuration>
+                            <tasks>
+                                <property name="runtime_classpath" refid="maven.runtime.classpath"/>
+                                <taskdef name="yguard" classname="com.yworks.yguard.YGuardTask" classpath="${runtime_classpath}"/>
+                                <yguard>
+                                    <!-- see the yGuard task documentation for information about the <yguard> element-->
+                                    <inoutpair in="${project.build.directory}/${project.build.finalName}.jar" out="${project.build.directory}/${project.build.finalName}_obfuscated.jar" />
+
+                                    
+                                    <!--<shrink logfile="${project.build.directory}/yshrink.log.xml">
+                                        <keep>
+                                            0<0!-0- main method -0->
+                                            <method name="void main(java.lang.String[])" class="${mainclass}" />
+                                        </keep>
+                                        
+                                    </shrink>-->
+
+                                    <rename mainclass="${mainclass}" logfile="${project.build.directory}/yguard.log.xml">
+                                        <property name="error-checking" value="pedantic"/>
+                                    </rename>
+                                </yguard>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.4.2</version>
@@ -100,7 +178,7 @@
                             <headerType>gui</headerType>
                             <stayAlive>true</stayAlive>
                             <jar>target/${project.build.finalName}-jar-with-dependencies.jar</jar>
-                            <outfile>${basedir}/${project.build.finalName}.exe</outfile>
+                            <outfile>${basedir}/${project.build.finalName}_${project.version}.exe</outfile>
                             <icon>${project.basedir}/src/main/resources/trivia.ico</icon>
                             <singleInstance>
                                 <mutexName>triviaMutex0</mutexName>
@@ -121,17 +199,17 @@
                             </jre>
                             <versionInfo>
                                 <fileVersion>1.0.0.0</fileVersion>
-                                <txtFileVersion>1.0.0.0b</txtFileVersion>
+                                <txtFileVersion>${project.version}</txtFileVersion>
                                 <fileDescription>Trivia solver app</fileDescription>
-                                <copyright>thevalidator</copyright>
+                                <copyright>Thevalidator 2022</copyright>
                                 <productVersion>1.0.0.0</productVersion>
-                                <txtProductVersion>1.0.0.0b</txtProductVersion>
+                                <txtProductVersion>${project.version}</txtProductVersion>
                                 <productName>Trivia solver</productName>
                                 <companyName></companyName>
                                 <internalName>triviasolver</internalName>
-                                <originalFilename>${project.build.finalName}.exe</originalFilename>
+                                <originalFilename>${project.build.finalName}_${project.version}.exe</originalFilename>
                                 <trademarks></trademarks>
-                                <language>RUSSIAN</language>
+                                <language>ENGLISH</language>
                             </versionInfo>
                         </configuration>
                     </execution>
@@ -148,9 +226,9 @@
                             <goal>sign</goal>
                         </goals>
                         <configuration>
-                            <file>${project.build.finalName}.exe</file>
+                            <file>${project.build.finalName}_${project.version}.exe</file>
                             <name>Trivia solver</name>
-                            <url>http://www.thekrechetofficial.ru</url>
+                            <!--<url>http://www.website.ru</url>-->
                             <keystore>C:\Users\User\keystore.jks</keystore>
                             <alias>trivia.solver</alias>
                             <storepass>trvaslvr</storepass>
