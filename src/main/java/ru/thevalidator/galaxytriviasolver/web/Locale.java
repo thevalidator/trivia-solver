@@ -9,4 +9,8 @@ package ru.thevalidator.galaxytriviasolver.web;
  */
 public enum Locale {
     RU, EN, PT, ES;
+    
+    public static Locale getDefaultLocale() {
+        return EN;
+    }
 }

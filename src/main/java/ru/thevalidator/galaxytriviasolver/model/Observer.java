@@ -5,7 +5,7 @@
 package ru.thevalidator.galaxytriviasolver.model;
 
 import java.awt.Color;
-import ru.thevalidator.galaxytriviasolver.bot.GameResult;
+import ru.thevalidator.galaxytriviasolver.solver.GameResult;
 
 /**
  * @author thevalidator <the.validator@yandex.ru>

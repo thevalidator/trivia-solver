@@ -12,9 +12,13 @@ import java.util.List;
 public class UserStorage {
     
     public static final String STORAGE_DATE_FILE_NAME = "users.json";
+    private static final int MAX_ACCOUNTS = 20;
     private User[] users;
 
     public UserStorage(List<User> users) {
+        if (users.size() > MAX_ACCOUNTS) {
+            throw new IllegalArgumentException("allowed " + MAX_ACCOUNTS + " maximum, found more");
+        }
         this.users = users.toArray(User[]::new);
     }
     
@@ -26,6 +30,8 @@ public class UserStorage {
         return names;
     }
     
-    
+    public String getUserCode(int index) {
+        return users[index].getCode();
+    }
 
 }

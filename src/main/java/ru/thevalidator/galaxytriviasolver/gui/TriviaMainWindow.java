@@ -6,14 +6,20 @@ package ru.thevalidator.galaxytriviasolver.gui;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.swing.JCheckBoxMenuItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.thevalidator.galaxytriviasolver.account.User;
 import ru.thevalidator.galaxytriviasolver.account.UserStorage;
+import ru.thevalidator.galaxytriviasolver.web.AbstractTopic;
+import ru.thevalidator.galaxytriviasolver.web.Locale;
 
 /**
  *
@@ -23,10 +29,14 @@ public class TriviaMainWindow extends javax.swing.JFrame {
 
     private static final Logger logger = LogManager.getLogger(TriviaMainWindow.class);
     private UserStorage userStorage;
+    private List<JCheckBoxMenuItem> servers;
+    private AbstractTopic topics;
 
     public TriviaMainWindow() {
         this.userStorage = new UserStorage(readUserData());
+        this.servers = new ArrayList<>();
         initComponents();
+        initLocale(Locale.getDefaultLocale());
     }
 
     /**
@@ -45,7 +55,7 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         accountComboBox = new javax.swing.JComboBox<>();
-        jComboBox2 = new javax.swing.JComboBox<>();
+        topicComboBox = new javax.swing.JComboBox<>();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
@@ -63,15 +73,15 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
-        jMenu3 = new javax.swing.JMenu();
-        jCheckBoxMenuItem1 = new javax.swing.JCheckBoxMenuItem();
-        jCheckBoxMenuItem2 = new javax.swing.JCheckBoxMenuItem();
-        jCheckBoxMenuItem3 = new javax.swing.JCheckBoxMenuItem();
-        jCheckBoxMenuItem4 = new javax.swing.JCheckBoxMenuItem();
+        serverMenu = new javax.swing.JMenu();
+        ruServerCheckBoxMenuItem = new JCheckBoxMenuItem();
+        enServerCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        esServerCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        ptServerCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem3 = new javax.swing.JMenuItem();
-        jMenu4 = new javax.swing.JMenu();
-        jMenuItem4 = new javax.swing.JMenuItem();
+        helpMenu = new javax.swing.JMenu();
+        aboutMenuItem = new javax.swing.JMenuItem();
 
         jMenuItem2.setText("jMenuItem2");
 
@@ -132,12 +142,12 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         accountComboBox.setMinimumSize(new java.awt.Dimension(270, 32));
         accountComboBox.setPreferredSize(new java.awt.Dimension(270, 32));
 
-        jComboBox2.setBackground(new java.awt.Color(51, 51, 51));
-        jComboBox2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jComboBox2.addActionListener(new java.awt.event.ActionListener() {
+        topicComboBox.setBackground(new java.awt.Color(51, 51, 51));
+        topicComboBox.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        topicComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        topicComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox2ActionPerformed(evt);
+                topicComboBoxActionPerformed(evt);
             }
         });
 
@@ -152,25 +162,25 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(41, 41, 41)
+                .addGap(30, 30, 30)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel5)
                     .addComponent(jLabel4)
                     .addComponent(accountComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(64, Short.MAX_VALUE))
+                    .addComponent(topicComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(75, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(16, 16, 16)
+                .addGap(14, 14, 14)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(accountComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(topicComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -317,31 +327,29 @@ public class TriviaMainWindow extends javax.swing.JFrame {
 
         jMenu2.setText("Options");
 
-        jMenu3.setText("Server");
+        serverMenu.setText("Server");
 
-        jCheckBoxMenuItem1.setText("RU");
-        jCheckBoxMenuItem1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBoxMenuItem1ActionPerformed(evt);
-            }
-        });
-        jMenu3.add(jCheckBoxMenuItem1);
+        ruServerCheckBoxMenuItem.setText("RU");
+        ruServerCheckBoxMenuItem.addActionListener(getserverActionListener());
+        serverMenu.add(ruServerCheckBoxMenuItem);
+        servers.add(ruServerCheckBoxMenuItem);
 
-        jCheckBoxMenuItem2.setText("EN");
-        jMenu3.add(jCheckBoxMenuItem2);
+        enServerCheckBoxMenuItem.setText("EN");
+        enServerCheckBoxMenuItem.addActionListener(getserverActionListener());
+        serverMenu.add(enServerCheckBoxMenuItem);
+        servers.add(enServerCheckBoxMenuItem);
 
-        jCheckBoxMenuItem3.setText("ES");
-        jCheckBoxMenuItem3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBoxMenuItem3ActionPerformed(evt);
-            }
-        });
-        jMenu3.add(jCheckBoxMenuItem3);
+        esServerCheckBoxMenuItem.setText("ES");
+        esServerCheckBoxMenuItem.addActionListener(getserverActionListener());
+        serverMenu.add(esServerCheckBoxMenuItem);
+        servers.add(esServerCheckBoxMenuItem);
 
-        jCheckBoxMenuItem4.setText("PT");
-        jMenu3.add(jCheckBoxMenuItem4);
+        ptServerCheckBoxMenuItem.setText("PT");
+        ptServerCheckBoxMenuItem.addActionListener(getserverActionListener());
+        serverMenu.add(ptServerCheckBoxMenuItem);
+        servers.add(ptServerCheckBoxMenuItem);
 
-        jMenu2.add(jMenu3);
+        jMenu2.add(serverMenu);
 
         jMenuItem1.setText("Headless");
         jMenu2.add(jMenuItem1);
@@ -351,12 +359,17 @@ public class TriviaMainWindow extends javax.swing.JFrame {
 
         jMenuBar1.add(jMenu2);
 
-        jMenu4.setText("Help");
+        helpMenu.setText("Help");
 
-        jMenuItem4.setText("About");
-        jMenu4.add(jMenuItem4);
+        aboutMenuItem.setText("About");
+        aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aboutMenuItemActionPerformed(evt);
+            }
+        });
+        helpMenu.add(aboutMenuItem);
 
-        jMenuBar1.add(jMenu4);
+        jMenuBar1.add(helpMenu);
 
         setJMenuBar(jMenuBar1);
 
@@ -390,26 +403,21 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jCheckBoxMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxMenuItem1ActionPerformed
+    private void topicComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_topicComboBoxActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBoxMenuItem1ActionPerformed
+    }//GEN-LAST:event_topicComboBoxActionPerformed
 
-    private void jCheckBoxMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxMenuItem3ActionPerformed
+    private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBoxMenuItem3ActionPerformed
-
-    private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox2ActionPerformed
+    }//GEN-LAST:event_aboutMenuItemActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JComboBox<String> accountComboBox;
-    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
-    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem2;
-    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem3;
-    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem4;
-    private javax.swing.JComboBox<String> jComboBox2;
+    private javax.swing.JCheckBoxMenuItem enServerCheckBoxMenuItem;
+    private javax.swing.JCheckBoxMenuItem esServerCheckBoxMenuItem;
+    private javax.swing.JMenu helpMenu;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -425,19 +433,20 @@ public class TriviaMainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenu jMenu3;
-    private javax.swing.JMenu jMenu4;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
-    private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JCheckBoxMenuItem ptServerCheckBoxMenuItem;
+    private javax.swing.JCheckBoxMenuItem ruServerCheckBoxMenuItem;
+    private javax.swing.JMenu serverMenu;
+    private javax.swing.JComboBox<String> topicComboBox;
     // End of variables declaration//GEN-END:variables
 
     private List<User> readUserData() {
@@ -445,7 +454,6 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         try {
             ObjectMapper mapper = new ObjectMapper();
             users = Arrays.asList(mapper.readValue(Paths.get(UserStorage.STORAGE_DATE_FILE_NAME).toFile(), User[].class));
-            users.forEach(System.out::println);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
@@ -459,6 +467,28 @@ public class TriviaMainWindow extends javax.swing.JFrame {
             writer.writeValue(Paths.get(UserStorage.STORAGE_DATE_FILE_NAME).toFile(), users);
         } catch (IOException e) {
             logger.error(e.getMessage());
+        }
+    }
+
+    //  CUSTOM LISTENERS //
+    private ActionListener getserverActionListener() {
+        return (java.awt.event.ActionEvent evt) -> {
+            serverCheckBoxMenuItemActionPerformed(evt);
+        };
+    }
+
+    private void serverCheckBoxMenuItemActionPerformed(ActionEvent server) {
+        System.out.println(server.getActionCommand());
+        initLocale(Locale.valueOf(server.getActionCommand()));
+    }
+
+    private void initLocale(Locale locale) {
+        for (JCheckBoxMenuItem s: servers) {
+            if (!s.getText().equals(locale.name())) {
+                s.setSelected(false);
+            } else {
+                s.setSelected(true);
+            }
         }
     }
 
