@@ -6,14 +6,26 @@ package ru.thevalidator.galaxytriviasolver.gui;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import java.awt.AWTException;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
+import java.awt.Toolkit;
+import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFrame;
+import javax.swing.text.BadLocationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.thevalidator.galaxytriviasolver.account.User;
@@ -26,7 +38,9 @@ import ru.thevalidator.galaxytriviasolver.web.Locale;
  */
 public class TriviaMainWindow extends javax.swing.JFrame {
 
+    private static int MAX_LINES = 300;
     private static final Logger logger = LogManager.getLogger(TriviaMainWindow.class);
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm.ss");
     private UserStorage userStorage;
     private List<JCheckBoxMenuItem> servers;
     //private Locale locale;
@@ -36,6 +50,8 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         this.servers = new ArrayList<>();
         initComponents();
         initLocale(Locale.getDefaultLocale());
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/clover.png")));
+        addTrayIcon();
     }
 
     /**
@@ -50,7 +66,7 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         jMenuItem2 = new javax.swing.JMenuItem();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        logTextArea = new javax.swing.JTextArea();
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         accountComboBox = new javax.swing.JComboBox<>();
@@ -98,14 +114,14 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         jScrollPane1.setOpaque(false);
         jScrollPane1.setPreferredSize(new java.awt.Dimension(576, 205));
 
-        jTextArea1.setEditable(false);
-        jTextArea1.setBackground(new java.awt.Color(51, 51, 51));
-        jTextArea1.setColumns(20);
-        jTextArea1.setLineWrap(true);
-        jTextArea1.setRows(5);
-        jTextArea1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        jTextArea1.setMinimumSize(new java.awt.Dimension(232, 80));
-        jScrollPane1.setViewportView(jTextArea1);
+        logTextArea.setEditable(false);
+        logTextArea.setBackground(new java.awt.Color(51, 51, 51));
+        logTextArea.setColumns(20);
+        logTextArea.setLineWrap(true);
+        logTextArea.setRows(5);
+        logTextArea.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        logTextArea.setMinimumSize(new java.awt.Dimension(232, 80));
+        jScrollPane1.setViewportView(logTextArea);
 
         jLabel1.setBackground(new java.awt.Color(51, 51, 51));
         jLabel1.setFont(new java.awt.Font("OCR A Extended", 1, 14)); // NOI18N
@@ -441,18 +457,83 @@ public class TriviaMainWindow extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTextArea logTextArea;
     private javax.swing.JCheckBoxMenuItem ptServerCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem ruServerCheckBoxMenuItem;
     private javax.swing.JMenu serverMenu;
     private javax.swing.JComboBox<String> topicComboBox;
     // End of variables declaration//GEN-END:variables
 
+    private JFrame getMainWindow() {
+        return this;
+    }
+
+    private void addTrayIcon() {
+        if (SystemTray.isSupported()) {
+            final PopupMenu popup = new PopupMenu();
+            final TrayIcon trayIcon = new TrayIcon(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/tray.png")));
+            final SystemTray tray = SystemTray.getSystemTray();
+            
+            MenuItem minimizeItem = new MenuItem("Minimize");
+            minimizeItem.addActionListener((ActionEvent e) -> {
+                getMainWindow().setVisible(false);
+            });
+            MenuItem exitItem = new MenuItem("Exit");
+            exitItem.addActionListener((ActionEvent e) -> {
+                tray.remove(trayIcon);
+                System.exit(0);
+            });
+            
+            popup.add(minimizeItem);
+            popup.add(exitItem);
+            
+            trayIcon.setPopupMenu(popup);
+            trayIcon.addMouseListener(new MouseListener() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getButton() == MouseEvent.BUTTON1) {
+                        getMainWindow().setVisible(true);
+                        getMainWindow().toFront();
+                    } else if (e.getButton() == MouseEvent.BUTTON2) {
+                        getMainWindow().setVisible(false);
+                    }
+                }
+
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    //throw new UnsupportedOperationException("Not supported yet.");
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    //throw new UnsupportedOperationException("Not supported yet.");
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    //throw new UnsupportedOperationException("Not supported yet.");
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    //throw new UnsupportedOperationException("Not supported yet.");
+                }
+            });
+            try {
+                tray.add(trayIcon);
+            } catch (AWTException e) {
+                logger.error("Tray icon could not be added: {}", e.getMessage());
+            }
+        }
+    }
+
     private List<User> readUserData() {
         List<User> users = null;
         try {
             ObjectMapper mapper = new ObjectMapper();
-            users = Arrays.asList(mapper.readValue(Paths.get(UserStorage.STORAGE_DATE_FILE_NAME).toFile(), User[].class));
+            users
+                    = Arrays.asList(mapper.readValue(Paths.get(UserStorage.STORAGE_DATE_FILE_NAME).toFile(), User[].class
+                    ));
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
@@ -469,6 +550,33 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         }
     }
 
+    //  LOG CONSOLE //
+    private void appendToPane(String msg) {
+        try {
+            String timestamp = LocalDateTime.now().format(formatter);
+            String line = "[" + timestamp + "] -> " + msg + "\n";
+            logTextArea.setEditable(true);
+            cleanConsole();
+            logTextArea.append(line);
+            logTextArea.setCaretPosition(logTextArea.getDocument().getLength());
+            logTextArea.setEditable(false);
+        } catch (Exception e) {
+            logger.error("APPEND METHOD: {}", e.getMessage());
+        }
+    }
+
+    private void cleanConsole() {
+        try {
+            javax.swing.text.Element root = logTextArea.getDocument().getDefaultRootElement();
+            if (root.getElementCount() > MAX_LINES) {
+                javax.swing.text.Element firstLine = root.getElement(0);
+                logTextArea.getDocument().remove(0, firstLine.getEndOffset());
+            }
+        } catch (BadLocationException e) {
+            logger.error("CLEAN CONSOLE METHOD: {}", e.getMessage());
+        }
+    }
+
     //  CUSTOM LISTENERS //
     private ActionListener getserverActionListener() {
         return (java.awt.event.ActionEvent evt) -> {
@@ -481,13 +589,14 @@ public class TriviaMainWindow extends javax.swing.JFrame {
     }
 
     private void initLocale(Locale locale) {
-        for (JCheckBoxMenuItem s: servers) {
-            if (!s.getText().equals(locale.name())) {
-                s.setSelected(false);
-            } else {
+        for (JCheckBoxMenuItem s : servers) {
+            if (s.getText().equals(locale.name())) {
                 s.setSelected(true);
                 currentLocaleLabel.setText(locale.name());
                 topicComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(locale.getTopics()));
+                appendToPane(locale.name() + " server selected");
+            } else {
+                s.setSelected(false);
             }
         }
     }
