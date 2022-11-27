@@ -144,11 +144,6 @@ public class TriviaMainWindow extends javax.swing.JFrame {
 
         topicComboBox.setBackground(new java.awt.Color(51, 51, 51));
         topicComboBox.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        topicComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                topicComboBoxActionPerformed(evt);
-            }
-        });
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel4.setText("account");
@@ -409,10 +404,6 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void topicComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_topicComboBoxActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_topicComboBoxActionPerformed
 
     private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
         // TODO add your handling code here:
