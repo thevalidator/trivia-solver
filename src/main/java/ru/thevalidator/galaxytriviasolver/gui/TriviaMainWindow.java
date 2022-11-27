@@ -18,7 +18,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.thevalidator.galaxytriviasolver.account.User;
 import ru.thevalidator.galaxytriviasolver.account.UserStorage;
-import ru.thevalidator.galaxytriviasolver.web.AbstractTopic;
 import ru.thevalidator.galaxytriviasolver.web.Locale;
 
 /**
@@ -30,7 +29,7 @@ public class TriviaMainWindow extends javax.swing.JFrame {
     private static final Logger logger = LogManager.getLogger(TriviaMainWindow.class);
     private UserStorage userStorage;
     private List<JCheckBoxMenuItem> servers;
-    private AbstractTopic topics;
+    //private Locale locale;
 
     public TriviaMainWindow() {
         this.userStorage = new UserStorage(readUserData());
@@ -58,6 +57,7 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         topicComboBox = new javax.swing.JComboBox<>();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
+        currentLocaleLabel = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -144,7 +144,6 @@ public class TriviaMainWindow extends javax.swing.JFrame {
 
         topicComboBox.setBackground(new java.awt.Color(51, 51, 51));
         topicComboBox.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        topicComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         topicComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 topicComboBoxActionPerformed(evt);
@@ -157,16 +156,22 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel5.setText("topic");
 
+        currentLocaleLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        currentLocaleLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        currentLocaleLabel.setText("EN");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(30, 30, 30)
+                .addContainerGap()
+                .addComponent(currentLocaleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5)
                     .addComponent(jLabel4)
                     .addComponent(accountComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5)
                     .addComponent(topicComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(75, Short.MAX_VALUE))
         );
@@ -180,8 +185,10 @@ public class TriviaMainWindow extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(topicComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(topicComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(currentLocaleLabel))
+                .addContainerGap(81, Short.MAX_VALUE))
         );
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -415,6 +422,7 @@ public class TriviaMainWindow extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JComboBox<String> accountComboBox;
+    private javax.swing.JLabel currentLocaleLabel;
     private javax.swing.JCheckBoxMenuItem enServerCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem esServerCheckBoxMenuItem;
     private javax.swing.JMenu helpMenu;
@@ -478,7 +486,6 @@ public class TriviaMainWindow extends javax.swing.JFrame {
     }
 
     private void serverCheckBoxMenuItemActionPerformed(ActionEvent server) {
-        System.out.println(server.getActionCommand());
         initLocale(Locale.valueOf(server.getActionCommand()));
     }
 
@@ -488,6 +495,8 @@ public class TriviaMainWindow extends javax.swing.JFrame {
                 s.setSelected(false);
             } else {
                 s.setSelected(true);
+                currentLocaleLabel.setText(locale.name());
+                topicComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(locale.getTopics()));
             }
         }
     }

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2022 thevalidator
  */
-package ru.thevalidator.galaxytriviasolver.solver;
+package ru.thevalidator.galaxytriviasolver.module.trivia;
 
 /**
  *
