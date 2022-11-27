@@ -4,7 +4,6 @@
 
 package ru.thevalidator.galaxytriviasolver.model;
 
-import java.awt.Color;
 import ru.thevalidator.galaxytriviasolver.module.trivia.GameResult;
 
 /**

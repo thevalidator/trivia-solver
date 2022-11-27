@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import java.awt.AWTException;
+import java.awt.Component;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
@@ -23,8 +24,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.swing.BorderFactory;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.text.BadLocationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -109,8 +115,18 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         setMinimumSize(new java.awt.Dimension(600, 500));
         setResizable(false);
         setSize(new java.awt.Dimension(600, 500));
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowIconified(java.awt.event.WindowEvent evt) {
+                formWindowIconified(evt);
+            }
+        });
 
+        jScrollPane1.setBackground(new java.awt.Color(51, 51, 51));
         jScrollPane1.setBorder(null);
+        jScrollPane1.setForeground(new java.awt.Color(102, 102, 102));
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(576, 205));
         jScrollPane1.setOpaque(false);
         jScrollPane1.setPreferredSize(new java.awt.Dimension(576, 205));
 
@@ -119,8 +135,9 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         logTextArea.setColumns(20);
         logTextArea.setLineWrap(true);
         logTextArea.setRows(5);
-        logTextArea.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        logTextArea.setMinimumSize(new java.awt.Dimension(232, 80));
+        logTextArea.setBorder(javax.swing.BorderFactory.createEmptyBorder(6, 6, 6, 6));
+        logTextArea.setMargin(new java.awt.Insets(6, 6, 6, 6));
+        logTextArea.setMinimumSize(new java.awt.Dimension(232, 82));
         jScrollPane1.setViewportView(logTextArea);
 
         jLabel1.setBackground(new java.awt.Color(51, 51, 51));
@@ -137,7 +154,7 @@ public class TriviaMainWindow extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 576, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -147,7 +164,7 @@ public class TriviaMainWindow extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -422,8 +439,42 @@ public class TriviaMainWindow extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
-        // TODO add your handling code here:
+        Component component = new JLabel();
+        JScrollPane jScrollPane = new JScrollPane(component);
+        jScrollPane.setBorder(BorderFactory.createEmptyBorder());
+        JTextArea jTextArea = new JTextArea(
+                "\n"
+                + "Galaxy Trivia solver helps you to win \n"
+                + "and get to the top 10 list of the day.\n\n"
+                + "For use input account data in users.json,\n"
+                + "then start the app, choose account with\n"
+                + "topic and click start button.\n"
+                + "\n\n"
+                + "v1.0.0.0-c001 (dev)\n"
+                + "[thevalidator]\n"
+                + "2022, November");
+        jTextArea.setColumns(20);
+        jTextArea.setLineWrap(true);
+        jTextArea.setRows(12);
+        jTextArea.setEditable(false);
+        jScrollPane.setViewportView(jTextArea);
+        JLabel header = new JLabel();
+        header.setText("Trivia solver");
+        header.setFont(new java.awt.Font("Segoe UI", 1, 14));
+        header.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        header.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jScrollPane.setColumnHeaderView(header);
+        JOptionPane.showMessageDialog(this, jScrollPane, "About", JOptionPane.PLAIN_MESSAGE);
     }//GEN-LAST:event_aboutMenuItemActionPerformed
+
+    private void formWindowIconified(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowIconified
+        if (System.getProperty("os.name").contains("Windows")) {
+            this.setVisible(false);
+            this.setState(JFrame.NORMAL);
+        } else {
+            this.setState(JFrame.ICONIFIED);
+        }
+    }//GEN-LAST:event_formWindowIconified
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -473,20 +524,20 @@ public class TriviaMainWindow extends javax.swing.JFrame {
             final PopupMenu popup = new PopupMenu();
             final TrayIcon trayIcon = new TrayIcon(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/tray.png")));
             final SystemTray tray = SystemTray.getSystemTray();
-            
+
             MenuItem minimizeItem = new MenuItem("Minimize");
             minimizeItem.addActionListener((ActionEvent e) -> {
-                getMainWindow().setVisible(false);
+                getMainWindow().setState(ICONIFIED);
             });
             MenuItem exitItem = new MenuItem("Exit");
             exitItem.addActionListener((ActionEvent e) -> {
                 tray.remove(trayIcon);
                 System.exit(0);
             });
-            
+
             popup.add(minimizeItem);
             popup.add(exitItem);
-            
+
             trayIcon.setPopupMenu(popup);
             trayIcon.addMouseListener(new MouseListener() {
                 @Override
@@ -535,6 +586,7 @@ public class TriviaMainWindow extends javax.swing.JFrame {
                     = Arrays.asList(mapper.readValue(Paths.get(UserStorage.STORAGE_DATE_FILE_NAME).toFile(), User[].class
                     ));
         } catch (IOException e) {
+            appendToPane("can't read user's data");
             logger.error(e.getMessage());
         }
         return users;
