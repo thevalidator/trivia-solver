@@ -5,7 +5,7 @@ package ru.thevalidator.galaxytriviasolver;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 import javax.swing.UIManager;
-import ru.thevalidator.galaxytriviasolver.gui.AppWindow;
+import ru.thevalidator.galaxytriviasolver.gui.TriviaMainWindow;
 
 /**
  *
@@ -21,7 +21,7 @@ public class GalaxyTriviaSolver {
             //UIManager.put("TextComponent.arc", 999);
             FlatDarkLaf.setup();
             
-            new AppWindow().setVisible(true);
+            new TriviaMainWindow().setVisible(true);
         });
     }
 }

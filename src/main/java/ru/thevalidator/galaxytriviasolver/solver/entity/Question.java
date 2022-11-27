@@ -2,7 +2,7 @@
  * Copyright (C) 2022 thevalidator
  */
 
-package ru.thevalidator.galaxytriviasolver.entity;
+package ru.thevalidator.galaxytriviasolver.solver.entity;
 
 /**
  * @author thevalidator <the.validator@yandex.ru>

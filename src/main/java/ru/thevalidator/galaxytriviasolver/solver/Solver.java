@@ -4,8 +4,8 @@
 
 package ru.thevalidator.galaxytriviasolver.solver;
 
-import ru.thevalidator.galaxytriviasolver.entity.Answer;
-import ru.thevalidator.galaxytriviasolver.entity.Question;
+import ru.thevalidator.galaxytriviasolver.solver.entity.Answer;
+import ru.thevalidator.galaxytriviasolver.solver.entity.Question;
 
 /**
  * @author thevalidator <the.validator@yandex.ru>
