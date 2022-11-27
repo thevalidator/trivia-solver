@@ -70,28 +70,29 @@ public class TriviaMainWindow extends javax.swing.JFrame {
     private void initComponents() {
 
         jMenuItem2 = new javax.swing.JMenuItem();
-        jPanel1 = new javax.swing.JPanel();
+        bottomContainer = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         logTextArea = new javax.swing.JTextArea();
-        jLabel1 = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
+        logHeaderLabel = new javax.swing.JLabel();
+        leftUpperContainer = new javax.swing.JPanel();
         accountComboBox = new javax.swing.JComboBox<>();
         topicComboBox = new javax.swing.JComboBox<>();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         currentLocaleLabel = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        startButton = new javax.swing.JButton();
+        rightUpperContainer = new javax.swing.JPanel();
+        totalGamesLabel = new javax.swing.JLabel();
+        totalGamesValueLabel = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
-        jLabel10 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
-        jLabel13 = new javax.swing.JLabel();
-        jLabel14 = new javax.swing.JLabel();
-        jLabel15 = new javax.swing.JLabel();
-        jLabel16 = new javax.swing.JLabel();
-        jLabel17 = new javax.swing.JLabel();
+        averagePointsLabel = new javax.swing.JLabel();
+        averagePointsValueLabel = new javax.swing.JLabel();
+        winLabel = new javax.swing.JLabel();
+        winValueLabel = new javax.swing.JLabel();
+        drawLabel = new javax.swing.JLabel();
+        drawValueLabel = new javax.swing.JLabel();
+        lostLabel = new javax.swing.JLabel();
+        lostValueLabel = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
@@ -100,7 +101,8 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         enServerCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         esServerCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         ptServerCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        headlessModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        anonymModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         jMenuItem3 = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
@@ -140,29 +142,29 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         logTextArea.setMinimumSize(new java.awt.Dimension(232, 82));
         jScrollPane1.setViewportView(logTextArea);
 
-        jLabel1.setBackground(new java.awt.Color(51, 51, 51));
-        jLabel1.setFont(new java.awt.Font("OCR A Extended", 1, 14)); // NOI18N
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("STATUS");
-        jLabel1.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
-        jLabel1.setAlignmentY(0.0F);
+        logHeaderLabel.setBackground(new java.awt.Color(51, 51, 51));
+        logHeaderLabel.setFont(new java.awt.Font("OCR A Extended", 1, 14)); // NOI18N
+        logHeaderLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        logHeaderLabel.setText("STATUS");
+        logHeaderLabel.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+        logHeaderLabel.setAlignmentY(0.0F);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout bottomContainerLayout = new javax.swing.GroupLayout(bottomContainer);
+        bottomContainer.setLayout(bottomContainerLayout);
+        bottomContainerLayout.setHorizontalGroup(
+            bottomContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(bottomContainerLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(bottomContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(logHeaderLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+        bottomContainerLayout.setVerticalGroup(
+            bottomContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomContainerLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(logHeaderLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -177,6 +179,8 @@ public class TriviaMainWindow extends javax.swing.JFrame {
 
         topicComboBox.setBackground(new java.awt.Color(51, 51, 51));
         topicComboBox.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        topicComboBox.setMinimumSize(new java.awt.Dimension(270, 32));
+        topicComboBox.setPreferredSize(new java.awt.Dimension(270, 32));
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel4.setText("account");
@@ -188,24 +192,42 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         currentLocaleLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         currentLocaleLabel.setText("EN");
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        startButton.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
+        startButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        startButton.setForeground(new java.awt.Color(0, 0, 0));
+        startButton.setText("START");
+        startButton.setAlignmentY(0.0F);
+        startButton.setBorderPainted(false);
+        startButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        startButton.setMargin(new java.awt.Insets(3, 14, 3, 14));
+        startButton.setMaximumSize(new java.awt.Dimension(80, 35));
+        startButton.setMinimumSize(new java.awt.Dimension(80, 35));
+        startButton.setPreferredSize(new java.awt.Dimension(80, 35));
+        startButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                startButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout leftUpperContainerLayout = new javax.swing.GroupLayout(leftUpperContainer);
+        leftUpperContainer.setLayout(leftUpperContainerLayout);
+        leftUpperContainerLayout.setHorizontalGroup(
+            leftUpperContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(leftUpperContainerLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(currentLocaleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(leftUpperContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4)
                     .addComponent(accountComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5)
-                    .addComponent(topicComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(topicComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(startButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(75, Short.MAX_VALUE))
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        leftUpperContainerLayout.setVerticalGroup(
+            leftUpperContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(leftUpperContainerLayout.createSequentialGroup()
                 .addGap(14, 14, 14)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -213,147 +235,149 @@ public class TriviaMainWindow extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(topicComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(leftUpperContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(topicComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(currentLocaleLabel))
-                .addContainerGap(81, Short.MAX_VALUE))
+                .addGap(26, 26, 26)
+                .addComponent(startButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel2.setText("TOTAL GAMES:");
-        jLabel2.setMaximumSize(new java.awt.Dimension(80, 16));
-        jLabel2.setMinimumSize(new java.awt.Dimension(80, 16));
-        jLabel2.setPreferredSize(new java.awt.Dimension(80, 16));
+        totalGamesLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        totalGamesLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        totalGamesLabel.setText("TOTAL GAMES:");
+        totalGamesLabel.setMaximumSize(new java.awt.Dimension(80, 16));
+        totalGamesLabel.setMinimumSize(new java.awt.Dimension(80, 16));
+        totalGamesLabel.setPreferredSize(new java.awt.Dimension(80, 16));
 
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel3.setText("-");
-        jLabel3.setMaximumSize(new java.awt.Dimension(70, 16));
-        jLabel3.setMinimumSize(new java.awt.Dimension(70, 16));
-        jLabel3.setPreferredSize(new java.awt.Dimension(70, 16));
+        totalGamesValueLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        totalGamesValueLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        totalGamesValueLabel.setText("-");
+        totalGamesValueLabel.setMaximumSize(new java.awt.Dimension(70, 16));
+        totalGamesValueLabel.setMinimumSize(new java.awt.Dimension(70, 16));
+        totalGamesValueLabel.setPreferredSize(new java.awt.Dimension(70, 16));
 
-        jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel10.setText("AVG POINTS:");
-        jLabel10.setMaximumSize(new java.awt.Dimension(80, 16));
-        jLabel10.setMinimumSize(new java.awt.Dimension(80, 16));
-        jLabel10.setPreferredSize(new java.awt.Dimension(80, 16));
+        averagePointsLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        averagePointsLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        averagePointsLabel.setText("AVG POINTS:");
+        averagePointsLabel.setMaximumSize(new java.awt.Dimension(80, 16));
+        averagePointsLabel.setMinimumSize(new java.awt.Dimension(80, 16));
+        averagePointsLabel.setPreferredSize(new java.awt.Dimension(80, 16));
 
-        jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel11.setText("-");
-        jLabel11.setMaximumSize(new java.awt.Dimension(70, 16));
-        jLabel11.setMinimumSize(new java.awt.Dimension(70, 16));
-        jLabel11.setPreferredSize(new java.awt.Dimension(70, 16));
+        averagePointsValueLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        averagePointsValueLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        averagePointsValueLabel.setText("-");
+        averagePointsValueLabel.setMaximumSize(new java.awt.Dimension(70, 16));
+        averagePointsValueLabel.setMinimumSize(new java.awt.Dimension(70, 16));
+        averagePointsValueLabel.setPreferredSize(new java.awt.Dimension(70, 16));
 
-        jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel12.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
-        jLabel12.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel12.setText("WIN:");
-        jLabel12.setMaximumSize(new java.awt.Dimension(80, 16));
-        jLabel12.setMinimumSize(new java.awt.Dimension(80, 16));
-        jLabel12.setPreferredSize(new java.awt.Dimension(80, 16));
+        winLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        winLabel.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
+        winLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        winLabel.setText("WIN:");
+        winLabel.setMaximumSize(new java.awt.Dimension(80, 16));
+        winLabel.setMinimumSize(new java.awt.Dimension(80, 16));
+        winLabel.setPreferredSize(new java.awt.Dimension(80, 16));
 
-        jLabel13.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel13.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
-        jLabel13.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel13.setText("-");
-        jLabel13.setMaximumSize(new java.awt.Dimension(70, 16));
-        jLabel13.setMinimumSize(new java.awt.Dimension(70, 16));
-        jLabel13.setPreferredSize(new java.awt.Dimension(70, 16));
+        winValueLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        winValueLabel.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
+        winValueLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        winValueLabel.setText("-");
+        winValueLabel.setMaximumSize(new java.awt.Dimension(70, 16));
+        winValueLabel.setMinimumSize(new java.awt.Dimension(70, 16));
+        winValueLabel.setPreferredSize(new java.awt.Dimension(70, 16));
 
-        jLabel14.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel14.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Yellow"));
-        jLabel14.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel14.setText("DRAW:");
-        jLabel14.setMaximumSize(new java.awt.Dimension(80, 16));
-        jLabel14.setMinimumSize(new java.awt.Dimension(80, 16));
-        jLabel14.setPreferredSize(new java.awt.Dimension(80, 16));
+        drawLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        drawLabel.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Yellow"));
+        drawLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        drawLabel.setText("DRAW:");
+        drawLabel.setMaximumSize(new java.awt.Dimension(80, 16));
+        drawLabel.setMinimumSize(new java.awt.Dimension(80, 16));
+        drawLabel.setPreferredSize(new java.awt.Dimension(80, 16));
 
-        jLabel15.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel15.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Yellow"));
-        jLabel15.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel15.setText("-");
-        jLabel15.setMaximumSize(new java.awt.Dimension(70, 16));
-        jLabel15.setMinimumSize(new java.awt.Dimension(70, 16));
-        jLabel15.setPreferredSize(new java.awt.Dimension(70, 16));
+        drawValueLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        drawValueLabel.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Yellow"));
+        drawValueLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        drawValueLabel.setText("-");
+        drawValueLabel.setMaximumSize(new java.awt.Dimension(70, 16));
+        drawValueLabel.setMinimumSize(new java.awt.Dimension(70, 16));
+        drawValueLabel.setPreferredSize(new java.awt.Dimension(70, 16));
 
-        jLabel16.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel16.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
-        jLabel16.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel16.setText("LOST:");
-        jLabel16.setMaximumSize(new java.awt.Dimension(80, 16));
-        jLabel16.setMinimumSize(new java.awt.Dimension(80, 16));
-        jLabel16.setPreferredSize(new java.awt.Dimension(80, 16));
+        lostLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lostLabel.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
+        lostLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lostLabel.setText("LOST:");
+        lostLabel.setMaximumSize(new java.awt.Dimension(80, 16));
+        lostLabel.setMinimumSize(new java.awt.Dimension(80, 16));
+        lostLabel.setPreferredSize(new java.awt.Dimension(80, 16));
 
-        jLabel17.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel17.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
-        jLabel17.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel17.setText("-");
-        jLabel17.setMaximumSize(new java.awt.Dimension(70, 16));
-        jLabel17.setMinimumSize(new java.awt.Dimension(70, 16));
-        jLabel17.setPreferredSize(new java.awt.Dimension(70, 16));
+        lostValueLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lostValueLabel.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
+        lostValueLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lostValueLabel.setText("-");
+        lostValueLabel.setMaximumSize(new java.awt.Dimension(70, 16));
+        lostValueLabel.setMinimumSize(new java.awt.Dimension(70, 16));
+        lostValueLabel.setPreferredSize(new java.awt.Dimension(70, 16));
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
+        javax.swing.GroupLayout rightUpperContainerLayout = new javax.swing.GroupLayout(rightUpperContainer);
+        rightUpperContainer.setLayout(rightUpperContainerLayout);
+        rightUpperContainerLayout.setHorizontalGroup(
+            rightUpperContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(rightUpperContainerLayout.createSequentialGroup()
+                .addGroup(rightUpperContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(rightUpperContainerLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(rightUpperContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(rightUpperContainerLayout.createSequentialGroup()
+                                .addComponent(totalGamesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(totalGamesValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(rightUpperContainerLayout.createSequentialGroup()
+                                .addComponent(averagePointsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(averagePointsValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(rightUpperContainerLayout.createSequentialGroup()
+                                .addComponent(winLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(winValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(rightUpperContainerLayout.createSequentialGroup()
+                                .addComponent(drawLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(drawValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(rightUpperContainerLayout.createSequentialGroup()
+                                .addComponent(lostLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(lostValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(rightUpperContainerLayout.createSequentialGroup()
                         .addGap(14, 14, 14)
                         .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        rightUpperContainerLayout.setVerticalGroup(
+            rightUpperContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(rightUpperContainerLayout.createSequentialGroup()
                 .addGap(32, 32, 32)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(rightUpperContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(totalGamesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(totalGamesValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(rightUpperContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(averagePointsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(averagePointsValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(rightUpperContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(winLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(winValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(rightUpperContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(drawLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(drawValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(rightUpperContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lostLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lostValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(57, Short.MAX_VALUE))
         );
 
@@ -386,8 +410,13 @@ public class TriviaMainWindow extends javax.swing.JFrame {
 
         jMenu2.add(serverMenu);
 
-        jMenuItem1.setText("Headless");
-        jMenu2.add(jMenuItem1);
+        headlessModeCheckBoxMenuItem.setSelected(true);
+        headlessModeCheckBoxMenuItem.setText("Headless mode");
+        jMenu2.add(headlessModeCheckBoxMenuItem);
+
+        anonymModeCheckBoxMenuItem.setSelected(true);
+        anonymModeCheckBoxMenuItem.setText("Anonymous mode");
+        jMenu2.add(anonymModeCheckBoxMenuItem);
 
         jMenuItem3.setText("Play Rides");
         jMenu2.add(jMenuItem3);
@@ -416,10 +445,10 @@ public class TriviaMainWindow extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(leftUpperContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(rightUpperContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(bottomContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -427,10 +456,10 @@ public class TriviaMainWindow extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(leftUpperContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(rightUpperContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(bottomContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -476,43 +505,49 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_formWindowIconified
 
+    private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_startButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JComboBox<String> accountComboBox;
+    private javax.swing.JCheckBoxMenuItem anonymModeCheckBoxMenuItem;
+    private javax.swing.JLabel averagePointsLabel;
+    private javax.swing.JLabel averagePointsValueLabel;
+    private javax.swing.JPanel bottomContainer;
     private javax.swing.JLabel currentLocaleLabel;
+    private javax.swing.JLabel drawLabel;
+    private javax.swing.JLabel drawValueLabel;
     private javax.swing.JCheckBoxMenuItem enServerCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem esServerCheckBoxMenuItem;
+    private javax.swing.JCheckBoxMenuItem headlessModeCheckBoxMenuItem;
     private javax.swing.JMenu helpMenu;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JPanel leftUpperContainer;
+    private javax.swing.JLabel logHeaderLabel;
     private javax.swing.JTextArea logTextArea;
+    private javax.swing.JLabel lostLabel;
+    private javax.swing.JLabel lostValueLabel;
     private javax.swing.JCheckBoxMenuItem ptServerCheckBoxMenuItem;
+    private javax.swing.JPanel rightUpperContainer;
     private javax.swing.JCheckBoxMenuItem ruServerCheckBoxMenuItem;
     private javax.swing.JMenu serverMenu;
+    private javax.swing.JButton startButton;
     private javax.swing.JComboBox<String> topicComboBox;
+    private javax.swing.JLabel totalGamesLabel;
+    private javax.swing.JLabel totalGamesValueLabel;
+    private javax.swing.JLabel winLabel;
+    private javax.swing.JLabel winValueLabel;
     // End of variables declaration//GEN-END:variables
 
     private JFrame getMainWindow() {
