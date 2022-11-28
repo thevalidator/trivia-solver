@@ -72,4 +72,13 @@ public enum Locale {
         return EN;
     }
 
+    public static String getLocaleURL(Locale locale) {
+        return switch (locale) {
+            case RU -> "https://galaxy.mobstudio.ru/web?lang=ru&p=38";
+            case EN -> "https://galaxy.mobstudio.ru/web?lang=en&p=38";
+            case ES -> "https://galaxy.mobstudio.ru/web?lang=es&p=38";
+            default -> "https://galaxy.mobstudio.ru/web?lang=pt&p=38";
+        };
+    }
+
 }
