@@ -4,7 +4,11 @@
 
 package ru.thevalidator.galaxytriviasolver.service;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ru.thevalidator.galaxytriviasolver.communication.Informer;
+import ru.thevalidator.galaxytriviasolver.module.base.GalaxyBaseRobot;
+import ru.thevalidator.galaxytriviasolver.module.base.impl.GalaxyBaseRobotImpl;
 import ru.thevalidator.galaxytriviasolver.module.trivia.State;
 
 
@@ -13,6 +17,7 @@ import ru.thevalidator.galaxytriviasolver.module.trivia.State;
  */
 public class Task extends Informer implements Runnable {
     
+    private static final Logger logger = LogManager.getLogger(Task.class);
     private boolean isActive;
     private final State state;
 
@@ -31,12 +36,12 @@ public class Task extends Informer implements Runnable {
     
     @Override
     public void run() {
-        informObservers("START TASK");
-        
-        System.out.println(state.getUser().getName() + " "  + state.getUser().getCode() + " " + state.getTopicIndex());
+        informObservers("STARTING");
+        GalaxyBaseRobot robot = new GalaxyBaseRobotImpl(state);
+        robot.openURL();
+        informObservers(state.getUser().getName() + " "  + state.getUser().getCode() + " " + state.getTopicIndex());
         isActive = false;
-        
-        informObservers("STOP TASK");
+        informObservers("STOPPED");
     }
 
     public boolean isActive() {
