@@ -31,11 +31,14 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingWorker;
 import javax.swing.text.BadLocationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.thevalidator.galaxytriviasolver.account.User;
 import ru.thevalidator.galaxytriviasolver.account.UserStorage;
+import ru.thevalidator.galaxytriviasolver.model.State;
+import ru.thevalidator.galaxytriviasolver.service.Task;
 import ru.thevalidator.galaxytriviasolver.web.Locale;
 
 /**
@@ -49,15 +52,20 @@ public class TriviaMainWindow extends javax.swing.JFrame {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm.ss");
     private UserStorage userStorage;
     private List<JCheckBoxMenuItem> servers;
-    //private Locale locale;
+    private State state;
+    private Task task;
+    private SwingWorker worker;
 
     public TriviaMainWindow() {
+        this.state = new State();
+        this.task = new Task(state);
         this.userStorage = new UserStorage(readUserData());
         this.servers = new ArrayList<>();
         initComponents();
         initLocale(Locale.getDefaultLocale());
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/clover.png")));
         addTrayIcon();
+        
     }
 
     /**
@@ -75,7 +83,7 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         logTextArea = new javax.swing.JTextArea();
         logHeaderLabel = new javax.swing.JLabel();
         leftUpperContainer = new javax.swing.JPanel();
-        accountComboBox = new javax.swing.JComboBox<>();
+        userComboBox = new javax.swing.JComboBox<>();
         topicComboBox = new javax.swing.JComboBox<>();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
@@ -118,6 +126,9 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         setResizable(false);
         setSize(new java.awt.Dimension(600, 500));
         addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
             public void windowIconified(java.awt.event.WindowEvent evt) {
                 formWindowIconified(evt);
             }
@@ -170,12 +181,12 @@ public class TriviaMainWindow extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        accountComboBox.setBackground(new java.awt.Color(51, 51, 51));
-        accountComboBox.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        accountComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(userStorage.getUserNames()));
-        accountComboBox.setToolTipText("");
-        accountComboBox.setMinimumSize(new java.awt.Dimension(270, 32));
-        accountComboBox.setPreferredSize(new java.awt.Dimension(270, 32));
+        userComboBox.setBackground(new java.awt.Color(51, 51, 51));
+        userComboBox.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        userComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(userStorage.getUserNames()));
+        userComboBox.setToolTipText("");
+        userComboBox.setMinimumSize(new java.awt.Dimension(270, 32));
+        userComboBox.setPreferredSize(new java.awt.Dimension(270, 32));
 
         topicComboBox.setBackground(new java.awt.Color(51, 51, 51));
         topicComboBox.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -219,7 +230,7 @@ public class TriviaMainWindow extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(leftUpperContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4)
-                    .addComponent(accountComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(userComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5)
                     .addComponent(topicComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(startButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -231,7 +242,7 @@ public class TriviaMainWindow extends javax.swing.JFrame {
                 .addGap(14, 14, 14)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(accountComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(userComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -506,13 +517,21 @@ public class TriviaMainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowIconified
 
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
-        // TODO add your handling code here:
+        if (!task.isActive()) {
+            startTask();
+        } else {
+            stopTask();
+        }
     }//GEN-LAST:event_startButtonActionPerformed
 
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        if (worker != null && !worker.isCancelled()) {
+            worker.cancel(true);
+        }
+    }//GEN-LAST:event_formWindowClosing
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
-    private javax.swing.JComboBox<String> accountComboBox;
     private javax.swing.JCheckBoxMenuItem anonymModeCheckBoxMenuItem;
     private javax.swing.JLabel averagePointsLabel;
     private javax.swing.JLabel averagePointsValueLabel;
@@ -546,6 +565,7 @@ public class TriviaMainWindow extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> topicComboBox;
     private javax.swing.JLabel totalGamesLabel;
     private javax.swing.JLabel totalGamesValueLabel;
+    private javax.swing.JComboBox<String> userComboBox;
     private javax.swing.JLabel winLabel;
     private javax.swing.JLabel winValueLabel;
     // End of variables declaration//GEN-END:variables
@@ -637,11 +657,42 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         }
     }
 
+    private void startTask() {
+        //task.addListener(this);
+        
+        User user = userStorage.getUser(userComboBox.getSelectedIndex());
+        int topicIndex = topicComboBox.getSelectedIndex();
+        state.setUser(user);
+        state.setTopicIndex(topicIndex);
+        task.setIsActive(true);
+        
+        
+        System.out.println("starting");
+        worker = new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                task.run();
+                return null;
+            }
+        };
+        worker.execute();
+        System.out.println("started");
+    }
+
+    private void stopTask() {
+        task.setIsActive(false);
+        System.out.println("stopped main");
+//        if (worker != null & !worker.isCancelled()) {
+//            appWindowLogger.debug("worker stop");
+//            worker.cancel(true);
+//        }
+    }
+
     //  LOG CONSOLE //
     private void appendToPane(String msg) {
         try {
             String timestamp = LocalDateTime.now().format(formatter);
-            String line = "[" + timestamp + "] -> " + msg + "\n";
+            String line = "[" + timestamp + "] - " + msg + "\n";
             logTextArea.setEditable(true);
             cleanConsole();
             logTextArea.append(line);
@@ -679,6 +730,7 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         for (JCheckBoxMenuItem s : servers) {
             if (s.getText().equals(locale.name())) {
                 s.setSelected(true);
+                state.setLocale(locale);
                 currentLocaleLabel.setText(locale.name());
                 topicComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(locale.getTopics()));
                 appendToPane(locale.name() + " server selected");

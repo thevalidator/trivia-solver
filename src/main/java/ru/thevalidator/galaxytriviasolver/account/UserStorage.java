@@ -30,8 +30,8 @@ public class UserStorage {
         return names;
     }
     
-    public String getUserCode(int index) {
-        return users[index].getCode();
+    public User getUser(int index) {
+        return users[index];
     }
 
 }
