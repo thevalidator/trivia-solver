@@ -37,7 +37,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.thevalidator.galaxytriviasolver.account.User;
 import ru.thevalidator.galaxytriviasolver.account.UserStorage;
-import ru.thevalidator.galaxytriviasolver.model.State;
+import ru.thevalidator.galaxytriviasolver.communication.Observer;
+import ru.thevalidator.galaxytriviasolver.module.trivia.State;
 import ru.thevalidator.galaxytriviasolver.service.Task;
 import ru.thevalidator.galaxytriviasolver.web.Locale;
 
@@ -45,7 +46,7 @@ import ru.thevalidator.galaxytriviasolver.web.Locale;
  *
  * @author thevalidator <the.validator@yandex.ru>
  */
-public class TriviaMainWindow extends javax.swing.JFrame {
+public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
     private static int MAX_LINES = 300;
     private static final Logger logger = LogManager.getLogger(TriviaMainWindow.class);
@@ -658,8 +659,7 @@ public class TriviaMainWindow extends javax.swing.JFrame {
     }
 
     private void startTask() {
-        //task.addListener(this);
-        
+        task.registerObserver(this);
         User user = userStorage.getUser(userComboBox.getSelectedIndex());
         int topicIndex = topicComboBox.getSelectedIndex();
         state.setUser(user);
@@ -667,7 +667,6 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         task.setIsActive(true);
         
         
-        System.out.println("starting");
         worker = new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() throws Exception {
@@ -676,12 +675,11 @@ public class TriviaMainWindow extends javax.swing.JFrame {
             }
         };
         worker.execute();
-        System.out.println("started");
     }
 
     private void stopTask() {
         task.setIsActive(false);
-        System.out.println("stopped main");
+        task.unregisterObserver(this);
 //        if (worker != null & !worker.isCancelled()) {
 //            appWindowLogger.debug("worker stop");
 //            worker.cancel(true);
@@ -738,6 +736,11 @@ public class TriviaMainWindow extends javax.swing.JFrame {
                 s.setSelected(false);
             }
         }
+    }
+
+    @Override
+    public void onUpdateRecieve(String message) {
+        appendToPane(message);
     }
 
 }

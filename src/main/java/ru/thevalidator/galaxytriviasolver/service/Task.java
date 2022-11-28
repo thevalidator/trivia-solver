@@ -4,17 +4,17 @@
 
 package ru.thevalidator.galaxytriviasolver.service;
 
-import ru.thevalidator.galaxytriviasolver.account.User;
-import ru.thevalidator.galaxytriviasolver.model.State;
+import ru.thevalidator.galaxytriviasolver.communication.Informer;
+import ru.thevalidator.galaxytriviasolver.module.trivia.State;
 
 
 /**
  * @author thevalidator <the.validator@yandex.ru>
  */
-public class Task implements Runnable {
+public class Task extends Informer implements Runnable {
     
     private boolean isActive;
-    private State state;
+    private final State state;
 
     public Task(State state) {
         this.state = state;
@@ -31,9 +31,12 @@ public class Task implements Runnable {
     
     @Override
     public void run() {
+        informObservers("START TASK");
+        
         System.out.println(state.getUser().getName() + " "  + state.getUser().getCode() + " " + state.getTopicIndex());
-        System.out.println("stopped task");
         isActive = false;
+        
+        informObservers("STOP TASK");
     }
 
     public boolean isActive() {
