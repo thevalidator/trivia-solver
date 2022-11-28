@@ -59,7 +59,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
     public TriviaMainWindow() {
         this.state = new State();
-        this.task = new Task(state);
+        this.task = null;
         this.userStorage = new UserStorage(readUserData());
         this.servers = new ArrayList<>();
         initComponents();
@@ -524,13 +524,32 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     }//GEN-LAST:event_formWindowIconified
 
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
-        if (!task.isActive()) {
+        if (task == null || !task.isActive()) {
             startTask();
         } else {
             stopTask();
         }
     }//GEN-LAST:event_startButtonActionPerformed
 
+    public void setStartButtonStatus(int status) {
+        switch (status) {
+            case 1:
+                startButton.setEnabled(true);
+                startButton.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
+                startButton.setText("STOP");
+                break;
+            case -1:
+                startButton.setEnabled(true);
+                startButton.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
+                startButton.setText("START");
+                break;
+            default:
+                startButton.setEnabled(false);
+                startButton.setText("WAIT");
+                break;
+        }
+    }
+    
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         if (worker != null && !worker.isCancelled()) {
             worker.cancel(true);
@@ -675,18 +694,22 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     }
 
     private void startTask() {
-        task.registerObserver(this);
+        setStartButtonStatus(0);
         User user = userStorage.getUser(userComboBox.getSelectedIndex());
         int topicIndex = topicComboBox.getSelectedIndex();
         state.setUser(user);
         state.setTopicIndex(topicIndex);
-        task.setIsActive(true);
         
+        if (task == null) {
+            task = new Task(state, this);
+        }
+        task.setIsActive(true);
         
         worker = new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() throws Exception {
                 task.run();
+                
                 return null;
             }
         };
@@ -694,8 +717,8 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     }
 
     private void stopTask() {
+        setStartButtonStatus(0);
         task.setIsActive(false);
-        task.unregisterObserver(this);
 //        if (worker != null & !worker.isCancelled()) {
 //            appWindowLogger.debug("worker stop");
 //            worker.cancel(true);
