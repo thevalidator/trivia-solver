@@ -15,9 +15,35 @@ public class State {
     private int topicIndex;
     private Locale locale;
     private User user;
+    private boolean isHeadless;
+    private boolean isAnonymous;
 
     public State() {
         statistic = new Statistic();
+    }
+
+    public boolean isHeadless() {
+        return isHeadless;
+    }
+
+    public void setIsHeadless(boolean isHeadless) {
+        this.isHeadless = isHeadless;
+    }
+
+    public boolean isAnonymous() {
+        return isAnonymous;
+    }
+
+    public void setIsAnonymous(boolean isAnonymous) {
+        this.isAnonymous = isAnonymous;
+    }
+
+    public Statistic getStatistic() {
+        return statistic;
+    }
+
+    public Locale getLocale() {
+        return locale;
     }
 
     public int getTopicIndex() {
