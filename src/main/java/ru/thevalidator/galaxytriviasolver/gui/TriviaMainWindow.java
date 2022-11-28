@@ -110,6 +110,9 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         enServerCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         esServerCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         ptServerCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        jMenu3 = new javax.swing.JMenu();
+        jCheckBoxMenuItem1 = new javax.swing.JCheckBoxMenuItem();
+        jCheckBoxMenuItem2 = new javax.swing.JCheckBoxMenuItem();
         headlessModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         anonymModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         jMenuItem3 = new javax.swing.JMenuItem();
@@ -422,6 +425,21 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
         jMenu2.add(serverMenu);
 
+        jMenu3.setText("TOP list");
+
+        jCheckBoxMenuItem1.setText("Be In list");
+        jMenu3.add(jCheckBoxMenuItem1);
+
+        jCheckBoxMenuItem2.setText("Be on TOP");
+        jCheckBoxMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBoxMenuItem2ActionPerformed(evt);
+            }
+        });
+        jMenu3.add(jCheckBoxMenuItem2);
+
+        jMenu2.add(jMenu3);
+
         headlessModeCheckBoxMenuItem.setSelected(true);
         state.setIsHeadless(true);
         headlessModeCheckBoxMenuItem.setText("Headless mode");
@@ -566,6 +584,10 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         }
     }//GEN-LAST:event_headlessModeCheckBoxMenuItemActionPerformed
 
+    private void jCheckBoxMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxMenuItem2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jCheckBoxMenuItem2ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JCheckBoxMenuItem anonymModeCheckBoxMenuItem;
@@ -579,10 +601,13 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JCheckBoxMenuItem esServerCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem headlessModeCheckBoxMenuItem;
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
+    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem2;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
