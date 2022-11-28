@@ -423,7 +423,13 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         jMenu2.add(serverMenu);
 
         headlessModeCheckBoxMenuItem.setSelected(true);
+        state.setIsHeadless(true);
         headlessModeCheckBoxMenuItem.setText("Headless mode");
+        headlessModeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                headlessModeCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
         jMenu2.add(headlessModeCheckBoxMenuItem);
 
         anonymModeCheckBoxMenuItem.setSelected(true);
@@ -530,6 +536,16 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
             worker.cancel(true);
         }
     }//GEN-LAST:event_formWindowClosing
+
+    private void headlessModeCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_headlessModeCheckBoxMenuItemActionPerformed
+        if (headlessModeCheckBoxMenuItem.isSelected()) {
+            appendToPane("HEADLESS MODE ON");
+            state.setIsHeadless(true);
+        } else {
+            appendToPane("HEADLESS MODE OFF");
+            state.setIsHeadless(false);
+        }
+    }//GEN-LAST:event_headlessModeCheckBoxMenuItemActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
@@ -691,11 +707,9 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         try {
             String timestamp = LocalDateTime.now().format(formatter);
             String line = "[" + timestamp + "] - " + msg + "\n";
-            logTextArea.setEditable(true);
             cleanConsole();
             logTextArea.append(line);
             logTextArea.setCaretPosition(logTextArea.getDocument().getLength());
-            logTextArea.setEditable(false);
         } catch (Exception e) {
             logger.error("APPEND METHOD: {}", e.getMessage());
         }

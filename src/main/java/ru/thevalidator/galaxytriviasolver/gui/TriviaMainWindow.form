@@ -73,9 +73,12 @@
             </Menu>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="headlessModeCheckBoxMenuItem">
               <Properties>
-                <Property name="selected" type="boolean" value="true"/>
+                <Property name="selected" type="boolean" value="true" postCode="state.setIsHeadless(true);"/>
                 <Property name="text" type="java.lang.String" value="Headless mode"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="headlessModeCheckBoxMenuItemActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="anonymModeCheckBoxMenuItem">
               <Properties>
