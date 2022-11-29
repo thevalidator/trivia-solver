@@ -123,12 +123,12 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Trivia solver");
-        setAlwaysOnTop(true);
         setBackground(new java.awt.Color(51, 51, 51));
         setMaximumSize(new java.awt.Dimension(700, 600));
         setMinimumSize(new java.awt.Dimension(600, 500));
         setResizable(false);
         setSize(new java.awt.Dimension(600, 500));
+        setType(java.awt.Window.Type.UTILITY);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -427,10 +427,10 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
         jMenu3.setText("TOP list");
 
-        jCheckBoxMenuItem1.setText("Be In list");
+        jCheckBoxMenuItem1.setText("Stay In list");
         jMenu3.add(jCheckBoxMenuItem1);
 
-        jCheckBoxMenuItem2.setText("Be on TOP");
+        jCheckBoxMenuItem2.setText("Get on TOP");
         jCheckBoxMenuItem2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jCheckBoxMenuItem2ActionPerformed(evt);
@@ -751,7 +751,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     }
 
     //  LOG CONSOLE //
-    private void appendToPane(String msg) {
+    public void appendToPane(String msg) {
         try {
             String timestamp = LocalDateTime.now().format(formatter);
             String line = "[" + timestamp + "] - " + msg + "\n";

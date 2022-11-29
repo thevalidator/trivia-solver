@@ -3,6 +3,7 @@
  */
 package ru.thevalidator.galaxytriviasolver.service;
 
+import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.thevalidator.galaxytriviasolver.gui.TriviaMainWindow;
@@ -36,20 +37,26 @@ public class Task implements Runnable {
 
     @Override
     public void run() {
+        window.setStartButtonStatus(1);
+        window.appendToPane("STARTED");
+        GalaxyBaseRobot robot = new GalaxyBaseRobotImpl(state);
+        ((GalaxyBaseRobotImpl) robot).registerObserver(window);
         try {
-            window.setStartButtonStatus(1);
-            GalaxyBaseRobot robot = new GalaxyBaseRobotImpl(state);
-            ((GalaxyBaseRobotImpl) robot).registerObserver(window);
 
             robot.openURL();
-            
-            ((GalaxyBaseRobotImpl) robot).unregisterObserver(window);
-            robot.terminate();
+            robot.login();
+            while (isActive) {
+                TimeUnit.SECONDS.sleep(6);
+            }
+
         } catch (Exception e) {
             logger.error(e.getMessage());
         } finally {
+            ((GalaxyBaseRobotImpl) robot).unregisterObserver(window);
+            robot.terminate();
             isActive = false;
             window.setStartButtonStatus(-1);
+            window.appendToPane("STOPPED");
         }
     }
 
