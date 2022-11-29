@@ -6,24 +6,32 @@ package ru.thevalidator.galaxytriviasolver.module.base.impl;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import static org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClickable;
 import static org.openqa.selenium.support.ui.ExpectedConditions.presenceOfElementLocated;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.thevalidator.galaxytriviasolver.communication.Informer;
+import ru.thevalidator.galaxytriviasolver.exception.LoginErrorException;
 import ru.thevalidator.galaxytriviasolver.module.base.GalaxyBaseRobot;
 import ru.thevalidator.galaxytriviasolver.module.trivia.State;
 import ru.thevalidator.galaxytriviasolver.web.Locale;
@@ -33,6 +41,8 @@ import static ru.thevalidator.galaxytriviasolver.web.Locator.*;
 public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
 
     private static final Logger logger = LogManager.getLogger(GalaxyBaseRobotImpl.class);
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy_HHmmss");
+
     private final State state;
     private WebDriver driver;
 
@@ -75,7 +85,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             options.setHeadless(true);
         }
         WebDriver webDriver = new ChromeDriver(options);
-        webDriver.manage().window().setSize(new Dimension(1600, 900));
+        webDriver.manage().window().setSize(new Dimension(1600, 845));
         webDriver.manage().window().setPosition((new Point(-5, 0)));
 
         return webDriver;
@@ -84,94 +94,88 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     private WebDriverWait wait(int beforeMillis) {
         return new WebDriverWait(driver, Duration.ofMillis(beforeMillis));
     }
-    
+
+    private void takeScreenshot(String pathname) {
+        try {
+            File src = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+            FileUtils.copyFile(src, new File(pathname));
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
     private void saveDataToFile(String pathname, String text) {
-        try ( FileOutputStream fos = new FileOutputStream(pathname);
-                DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos))) {
+        try ( FileOutputStream fos = new FileOutputStream(pathname);  DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos))) {
             outStream.writeUTF(text);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
-    
+
+    private String getFileNameTimeStamp() {
+        String path = "logs" + File.separator;
+        return path + LocalDateTime.now().format(formatter);
+    }
+
     private void closePopup(int timeToWait) {
         try {
-            while (!wait(timeToWait).until(presenceOfElementLocated(By.xpath(BASE_POPUP_DIV))).isDisplayed()) {
-                
-                driver.findElement(By.xpath(BASE_POPUP_CLOSE_BUTTON)).click();
-                
-//                if (!driver.findElements(By.xpath(locator.getQuestionFooter())).isEmpty()) {
-//                    driver.findElement(By.xpath(locator.getFooterCancelButton())).click();
-//                } else {
-//                    driver.findElement(By.xpath(locator.getPopupCloseButton())).click();
-//                }
-                
-            }
-        } catch (Exception e) {
-            //logger.error("close popup erro: {}", e.getMessage());
-        }
-    }
-
-    @Override
-    public void openURL() {
-        try {
-            driver = createWebDriver();
-            driver.get(Locale.getLocaleURL(state.getLocale()));
-            wait(20_000).until(visibilityOfElementLocated(By.xpath(Locator.BASE_COOKIES_CLOSE_BTN))).click();
-            driver.findElement(By.xpath(Locator.BASE_HAVE_ACCOUNT_BTN)).isDisplayed();
-        } catch (Exception e) {
-            logger.error("OPEN URL: {}", e.getMessage());
-            informObservers("ERROR: " + e.getMessage());
-        }
-    }
-
-    @Override
-    public void login() {
-        //for (int i = 0; i < 10; i++) {
-            try {
-                driver.findElement(By.xpath(BASE_HAVE_ACCOUNT_BTN)).click();
-                driver.findElement(By.xpath(BASE_RECOVERY_CODE_FIELD)).sendKeys(state.getUser().getCode());
-                driver.findElement(By.xpath(BASE_FOOTER_ACCEPT_BUTTON)).click();
-                TimeUnit.SECONDS.sleep(2);
-                if (driver.findElement(By.xpath(BASE_AUTH_USER_CONTENT)).isDisplayed()) {
-                    informObservers("logged in successfully");
+            while (!wait(timeToWait).until(presenceOfElementLocated(By.xpath(getBasePopupDiv()))).isDisplayed()) {
+                if (!driver.findElements(By.xpath(getBasePopupCloseBtn())).isEmpty()) {
+                    driver.findElement(By.xpath(getBasePopupCloseBtn())).click();
+                } else {
+                    driver.findElement(By.xpath(getBaseFooterCancelBtn())).click();
                 }
-                closePopup(2_500);
-                
-            } catch (Exception e) {
-                logger.error("LOGIN: {}", e.getMessage());
-                informObservers("LOGIN ERROR");
-                saveDataToFile("logs/1.log", Arrays.toString(e.getStackTrace()));
             }
-        //}
+        } catch (Exception e) {
+            //no popup found, do nothing
+        }
+    }
 
-//        if (driver == null) {
-//            return;
-//        }
-//        for (int i = 1; i < 4; i++) {
-//            try {
-//                driver.findElement(By.xpath(locator.getHaveAccountButton())).click();
-//                driver.findElement(By.xpath(locator.getRecoveryCodeField())).sendKeys(recoveryCode);
-//                driver.findElement(By.xpath(locator.getSendCodeButton())).click();
-//                closePopup(2_000);
-//                if (isAuthorized()) {
-//                    messageNotify("login success");
-//                    break;
-//                }
-//            } catch (Exception e) {
-//                takeScreenshot(getFileNameTimeStamp() + "_login.png");
-//                messageNotify("LOGIN ERROR TRY " + i);
-//                logger.error("LOGIN ERROR: {}", e.getMessage());
-//                if (i == 3) {
-//                    throw new LoginErrorException(e.getMessage());
-//                }
-//            }
-//        }
+    private void openURL() {
+        driver = createWebDriver();
+        driver.get(Locale.getLocaleURL(state.getLocale()));
+        wait(20_000).until(visibilityOfElementLocated(By.xpath(Locator.getBaseCookiesCloseBtn()))).click();
+        driver.findElement(By.xpath(Locator.getBaseHaveAccountBtn())).isDisplayed();
+    }
+
+    @Override
+    public void login() throws LoginErrorException {
+        for (int i = 1; i < 6; i++) {
+            try {
+                openURL();
+                driver.findElement(By.xpath(getBaseHaveAccountBtn())).click();
+                driver.findElement(By.xpath(getBaseRecoveryCodeField())).sendKeys(state.getUser().getCode());
+                driver.findElement(By.xpath(getBaseFooterAcceptBtn())).click();
+                TimeUnit.SECONDS.sleep(2);
+                if (wait(6_000).until(presenceOfElementLocated(By.xpath(getBaseAuthUserContent()))).isDisplayed()) {
+                    informObservers("logged in successfully");
+                    break;
+                }
+            } catch (Exception e) {
+                String fileName = getFileNameTimeStamp() + "_login";
+                takeScreenshot(fileName + ".png");
+                saveDataToFile(fileName + ".log", Arrays.toString(e.getStackTrace()));
+                if (i == 5) {
+                    informObservers("LOGIN ERROR: couldn't log in 5 times in a row, task stopped");
+                    throw new LoginErrorException(e.getMessage());
+                } else {
+                    int timeToWait = (2 * i) + ((i - 1) * 5);
+                    informObservers("LOGIN ERROR: try " + i + " was unsuccessfull, next try in " + timeToWait);
+                    driver.quit();
+                    try {
+                        TimeUnit.MINUTES.sleep(timeToWait);
+                    } catch (InterruptedException ex) {
+                    }
+                }
+            }
+        }
+
     }
 
     @Override
     public void openGames() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        closePopup(2_500);
+        wait(15_000).until(elementToBeClickable(By.xpath(getBaseMenuGamesBtn(state.getLocale())))).click();
     }
 
     @Override
