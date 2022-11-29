@@ -34,20 +34,76 @@ import ru.thevalidator.galaxytriviasolver.communication.Informer;
 import ru.thevalidator.galaxytriviasolver.exception.LoginErrorException;
 import ru.thevalidator.galaxytriviasolver.module.base.GalaxyBaseRobot;
 import ru.thevalidator.galaxytriviasolver.module.trivia.State;
+import ru.thevalidator.galaxytriviasolver.module.trivia.Unlim;
 import ru.thevalidator.galaxytriviasolver.web.Locale;
 import ru.thevalidator.galaxytriviasolver.web.Locator;
 import static ru.thevalidator.galaxytriviasolver.web.Locator.*;
 
 public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
+    
+    class TriviaUserStats {
+        
+        private int userPoints;
+        private double userCoins;
+        private int tenthPlacePoints;
+        private int firstPlacePoints;
+        
+
+        public TriviaUserStats() {
+            this.userCoins = 0;
+            this.userPoints = 0;
+            this.tenthPlacePoints = 0;
+            this.firstPlacePoints = 0;
+        }
+        
+        public boolean isUnlimAvailable(Unlim type, int times) {
+            return (userCoins - (type.getPrice() * times)) > 0;
+        }
+
+        public int getUserPoints() {
+            return userPoints;
+        }
+
+        public void setUserPoints(int userPoints) {
+            this.userPoints = userPoints;
+        }
+
+        public double getUserCoins() {
+            return userCoins;
+        }
+
+        public void setUserCoins(double userCoins) {
+            this.userCoins = userCoins;
+        }
+
+        public int getTenthPlacePoints() {
+            return tenthPlacePoints;
+        }
+
+        public void setTenthPlacePoints(int tenthPlacePoints) {
+            this.tenthPlacePoints = tenthPlacePoints;
+        }
+
+        public int getFirstPlacePoints() {
+            return firstPlacePoints;
+        }
+
+        public void setFirstPlacePoints(int firstPlacePoints) {
+            this.firstPlacePoints = firstPlacePoints;
+        }
+        
+    }
 
     private static final Logger logger = LogManager.getLogger(GalaxyBaseRobotImpl.class);
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy_HHmmss");
 
     private final State state;
     private WebDriver driver;
+    private TriviaUserStats userStats;
 
     public GalaxyBaseRobotImpl(State state) {
         this.state = state;
+        this.userStats = new TriviaUserStats();
     }
 
     private WebDriver createWebDriver() {
@@ -180,12 +236,43 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
 
     @Override
     public void selectTriviaGame() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        closePopup(2_500);
+        wait(15_000).until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
+        wait(15_000).until(visibilityOfElementLocated(By.xpath(Locator.getGamesTriviaBtn(state.getLocale())))).click();
+        informObservers("opening Trivia");
+        updateTriviaUsersData();
     }
 
     @Override
     public void selectRidesGame() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        closePopup(2_500);
+        wait(15_000).until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
+        wait(15_000).until(visibilityOfElementLocated(By.xpath(Locator.getGamesRidesBtn(state.getLocale())))).click();
+        informObservers("opening Rides");
+    }
+    
+    private void updateTriviaUsersData() {
+        closePopup(2_500);
+        String userBalance = wait(10_000).until(visibilityOfElementLocated(By.xpath(Locator.getBaseUserBalance()))).getText();
+        wait(15_000).until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
+        String dailyPoints = wait(10_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaOwnDailyResult()))).getText();
+        informObservers("balance: " + userBalance + " daily points: " + dailyPoints);
+        
+        driver.findElement(By.xpath(Locator.getTriviaDailyRatingsPageBtn())).click();
+        closePopup(2_500);
+        wait(15_000).until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
+        String first = wait(10_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaPositionDailyResult(1)))).getText();
+        String tenth = wait(10_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaPositionDailyResult(10)))).getText();
+        informObservers("first: " + first + " tenth: " + tenth);
+        driver.switchTo().defaultContent();
+        driver.findElement(By.xpath(Locator.getBaseBackBtn())).click();
+        
+        userStats.setFirstPlacePoints(Integer.parseInt(first));
+        userStats.setTenthPlacePoints(Integer.parseInt(tenth));
+        userStats.setUserCoins(Double.parseDouble(userBalance));
+        userStats.setUserPoints(Integer.parseInt(dailyPoints));
+        
+        informObservers("unlim available: " + userStats.isUnlimAvailable(Unlim.MIN, 1));
     }
 
     @Override
