@@ -13,6 +13,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -28,10 +29,13 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import static org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClickable;
+import static org.openqa.selenium.support.ui.ExpectedConditions.frameToBeAvailableAndSwitchToIt;
 import static org.openqa.selenium.support.ui.ExpectedConditions.presenceOfElementLocated;
+import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfAllElementsLocatedBy;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.thevalidator.galaxytriviasolver.communication.Informer;
+import ru.thevalidator.galaxytriviasolver.exception.CanNotPlayException;
 import ru.thevalidator.galaxytriviasolver.exception.LoginErrorException;
 import ru.thevalidator.galaxytriviasolver.module.base.GalaxyBaseRobot;
 import ru.thevalidator.galaxytriviasolver.module.trivia.State;
@@ -237,7 +241,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     @Override
     public void selectTriviaGame() {
         closePopup(2_500);
-        wait(15_000).until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
+        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
         wait(15_000).until(visibilityOfElementLocated(By.xpath(Locator.getGamesTriviaBtn(state.getLocale())))).click();
         informObservers("opening Trivia");
         updateTriviaUsersData();
@@ -246,7 +250,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     @Override
     public void selectRidesGame() {
         closePopup(2_500);
-        wait(15_000).until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
+        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
         wait(15_000).until(visibilityOfElementLocated(By.xpath(Locator.getGamesRidesBtn(state.getLocale())))).click();
         informObservers("opening Rides");
     }
@@ -254,13 +258,13 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     private void updateTriviaUsersData() {
         closePopup(2_500);
         String userBalance = wait(10_000).until(visibilityOfElementLocated(By.xpath(Locator.getBaseUserBalance()))).getText();
-        wait(15_000).until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
+        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
         String dailyPoints = wait(10_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaOwnDailyResult()))).getText();
         informObservers("balance: " + userBalance + " daily points: " + dailyPoints);
 
         driver.findElement(By.xpath(Locator.getTriviaDailyRatingsPageBtn())).click();
         closePopup(2_500);
-        wait(15_000).until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
+        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
         String first = wait(10_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaPositionDailyResult(1)))).getText();
         String tenth = wait(10_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaPositionDailyResult(10)))).getText();
         informObservers("first: " + first + " tenth: " + tenth);
@@ -276,15 +280,38 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     }
 
     @Override
-    public void startTriviaGame() {
+    public void startTriviaGame() throws CanNotPlayException {
         closePopup(1_500);
-        wait(15_000).until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
+        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
         String attempts = wait(10_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaEnergyCount()))).getText();
         if (!attempts.equals("0")) {
             WebElement anonSwitcher = driver.findElement(By.xpath(Locator.getTriviaAnonymousToggle()));//wait(15_000).until(presenceOfElementLocated(By.xpath(Locator.getTriviaAnonymousToggle())));
             switchAnonToggle(anonSwitcher);
             driver.findElement(By.xpath(Locator.getTriviaStartBtn(state.getLocale()))).click();
+            driver.switchTo().defaultContent();
+            closePopup(1_500);
+            wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
+            List<WebElement> topics = wait(10_000).until(visibilityOfAllElementsLocatedBy(By.xpath(Locator.getTriviaTopicDiv())));
+            String selectedTopic = state.getLocale().getTopics()[state.getTopicIndex()];
+            if (state.getTopicIndex() != 0) {
+                WebElement topic = getTopic(selectedTopic, topics);
+                topic.click();
+                boolean isStarted = wait(40_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaGameProcessFrame()))).isDisplayed();
+                informObservers("game started: " + isStarted);
+                boolean isFinished = wait(70_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaGameResultsFrame()))).isDisplayed();
+                informObservers("game finished: " + isFinished);
+            }
         }
+    }
+    
+    private WebElement getTopic(String topic, List<WebElement> topics) throws CanNotPlayException {
+        for (WebElement t : topics) {
+            if (t.getText().equalsIgnoreCase(topic)) {
+                return t;
+            }
+        }
+        
+        throw new CanNotPlayException("no selected topic found");
     }
 
     private void switchAnonToggle(WebElement anonSwitcher) {
