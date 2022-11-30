@@ -156,6 +156,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         WebDriver webDriver = new ChromeDriver(options);
         webDriver.manage().window().setSize(new Dimension(1600, 845));
         webDriver.manage().window().setPosition((new Point(-5, 0)));
+        webDriver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
 
         return webDriver;
     }
@@ -188,7 +189,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
 
     private void closePopup(int timeToWait) {
         try {
-            while (!wait(timeToWait).until(presenceOfElementLocated(By.xpath(getBasePopupDiv()))).isDisplayed()) {
+            while (!wait(timeToWait).until(visibilityOfAllElementsLocatedBy(By.xpath("//div[@data-component-name='dialog__html']//iframe"))).isEmpty()) {
                 if (!driver.findElements(By.xpath(getBasePopupCloseBtn())).isEmpty()) {
                     driver.findElement(By.xpath(getBasePopupCloseBtn())).click();
                 } else {
@@ -216,7 +217,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                 driver.findElement(By.xpath(getBaseRecoveryCodeField())).sendKeys(state.getUser().getCode());
                 driver.findElement(By.xpath(getBaseFooterAcceptBtn())).click();
                 TimeUnit.SECONDS.sleep(2);
-                if (wait(6_000).until(presenceOfElementLocated(By.xpath(getBaseAuthUserContent()))).isDisplayed()) {
+                if (wait(30_000).until(presenceOfElementLocated(By.xpath(getBaseAuthUserContent()))).isDisplayed()) {
                     informObservers("logged in successfully");
                     break;
                 }
@@ -228,6 +229,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                     informObservers("LOGIN ERROR: couldn't log in 5 times in a row, task stopped");
                     throw new LoginErrorException(e.getMessage());
                 } else {
+                    logger.error(e.getMessage());   //need to be deleted
                     int timeToWait = (2 * i) + ((i - 1) * 5);
                     informObservers("LOGIN ERROR: try " + i + " was unsuccessfull, next try in " + timeToWait);
                     driver.quit();
@@ -310,8 +312,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                 topic = topics.get(randomIndex);
             }
             topic.click();
-            boolean isStarted = wait(40_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaGameProcessFrame()))).isDisplayed();
-            informObservers("game started: " + isStarted);
+            
         }
     }
 
@@ -335,19 +336,25 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     @Override
     public void playTriviaGame() {
         while (true) {
+            boolean isStarted = wait(50_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaGameProcessFrame()))).isDisplayed();
+            informObservers("game started: " + isStarted);
             answerQuestions();
             boolean isFinished = wait(30_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaGameResultsFrame()))).isDisplayed();
-            driver.switchTo().defaultContent();
-            closePopup(1_000);
-            driver.switchTo().frame(driver.findElement(By.xpath(Locator.getBaseContentIframe())));
             informObservers("game finished: " + isFinished);
-            String attempts = driver.findElement(By.xpath(Locator.getTriviaEnergyCount())).getText();
-            String points = driver.findElement(By.xpath(Locator.getTriviaResultPoints())).getText();
+            
+            driver.switchTo().frame(driver.findElement(By.xpath(Locator.getTriviaGameResultsFrame())));
+            
+            String attempts = driver.findElement(By.xpath(Locator.getTriviaEnergyCount())).getText().trim();
+            String points = driver.findElement(By.xpath(Locator.getTriviaResultPoints())).getText().trim();
             String attr = driver.findElement(By.xpath(Locator.getTriviaResultDiv())).getAttribute("class");
             informObservers("att: " + attempts + " pts: " + points + " attr: " + attr);
             if (attempts.equals("0")) {
+                informObservers("not enough energy");
                 break;
             }
+            driver.switchTo().defaultContent();
+            closePopup(2_000);
+            driver.switchTo().frame(driver.findElement(By.xpath(Locator.getTriviaGameResultsFrame())));
             driver.findElement(By.xpath(Locator.getTriviaPlayAgainBtn(state.getLocale()))).click();
         }
 
@@ -363,7 +370,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             questionNumber = wait(3_000).until(presenceOfElementLocated(By.xpath(Locator.getTriviaQuestionHeader()))).getText();
             try {
                 if (i != 0 && i != 4) {
-                    TimeUnit.SECONDS.sleep(random.nextInt(10) + 1);
+                    TimeUnit.SECONDS.sleep(random.nextInt(10) + 2);
                 } else {
                     TimeUnit.SECONDS.sleep(1);
                 }

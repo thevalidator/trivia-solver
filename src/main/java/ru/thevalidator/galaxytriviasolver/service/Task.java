@@ -43,10 +43,13 @@ public class Task implements Runnable {
         ((GalaxyBaseRobotImpl) robot).registerObserver(window);
         try {
 
-            robot.openURL();
             robot.login();
+            robot.openGames();
+            robot.selectTriviaGame();
+            robot.startTriviaGame();
+            robot.playTriviaGame();
             while (isActive) {
-                TimeUnit.SECONDS.sleep(6);
+                TimeUnit.SECONDS.sleep(5);
             }
 
         } catch (Exception e) {
