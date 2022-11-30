@@ -23,6 +23,7 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -40,14 +41,13 @@ import ru.thevalidator.galaxytriviasolver.web.Locator;
 import static ru.thevalidator.galaxytriviasolver.web.Locator.*;
 
 public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
-    
+
     class TriviaUserStats {
-        
+
         private int userPoints;
         private double userCoins;
         private int tenthPlacePoints;
         private int firstPlacePoints;
-        
 
         public TriviaUserStats() {
             this.userCoins = 0;
@@ -55,7 +55,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             this.tenthPlacePoints = 0;
             this.firstPlacePoints = 0;
         }
-        
+
         public boolean isUnlimAvailable(Unlim type, int times) {
             return (userCoins - (type.getPrice() * times)) > 0;
         }
@@ -91,7 +91,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         public void setFirstPlacePoints(int firstPlacePoints) {
             this.firstPlacePoints = firstPlacePoints;
         }
-        
+
     }
 
     private static final Logger logger = LogManager.getLogger(GalaxyBaseRobotImpl.class);
@@ -250,14 +250,14 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         wait(15_000).until(visibilityOfElementLocated(By.xpath(Locator.getGamesRidesBtn(state.getLocale())))).click();
         informObservers("opening Rides");
     }
-    
+
     private void updateTriviaUsersData() {
         closePopup(2_500);
         String userBalance = wait(10_000).until(visibilityOfElementLocated(By.xpath(Locator.getBaseUserBalance()))).getText();
         wait(15_000).until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
         String dailyPoints = wait(10_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaOwnDailyResult()))).getText();
         informObservers("balance: " + userBalance + " daily points: " + dailyPoints);
-        
+
         driver.findElement(By.xpath(Locator.getTriviaDailyRatingsPageBtn())).click();
         closePopup(2_500);
         wait(15_000).until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
@@ -266,13 +266,41 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         informObservers("first: " + first + " tenth: " + tenth);
         driver.switchTo().defaultContent();
         driver.findElement(By.xpath(Locator.getBaseBackBtn())).click();
-        
+
         userStats.setFirstPlacePoints(Integer.parseInt(first));
         userStats.setTenthPlacePoints(Integer.parseInt(tenth));
         userStats.setUserCoins(Double.parseDouble(userBalance));
         userStats.setUserPoints(Integer.parseInt(dailyPoints));
-        
+
         informObservers("unlim available: " + userStats.isUnlimAvailable(Unlim.MIN, 1));
+    }
+
+    @Override
+    public void startTriviaGame() {
+        closePopup(1_500);
+        wait(15_000).until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
+        String attempts = wait(10_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaEnergyCount()))).getText();
+        if (!attempts.equals("0")) {
+            WebElement anonSwitcher = driver.findElement(By.xpath(Locator.getTriviaAnonymousToggle()));//wait(15_000).until(presenceOfElementLocated(By.xpath(Locator.getTriviaAnonymousToggle())));
+            switchAnonToggle(anonSwitcher);
+            driver.findElement(By.xpath(Locator.getTriviaStartBtn(state.getLocale()))).click();
+        }
+    }
+
+    private void switchAnonToggle(WebElement anonSwitcher) {
+        if (state.isAnonymous() && !anonSwitcher.getAttribute("class").contains("checked")) {
+            anonSwitcher.click();
+        } else if (!state.isAnonymous() && anonSwitcher.getAttribute("class").contains("checked")) {
+            anonSwitcher.click();
+        }
+    }
+
+    private void playTriviaGame() {
+
+    }
+
+    private void startAgainTriviaGame() {
+
     }
 
     @Override

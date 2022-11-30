@@ -10,5 +10,6 @@ package ru.thevalidator.galaxytriviasolver.module.trivia;
 public interface TriviaRobot {
     
     void selectTriviaGame();
+    void startTriviaGame();
 
 }
