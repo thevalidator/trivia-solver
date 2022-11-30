@@ -102,7 +102,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="anonymModeCheckBoxMenuItem">
               <Properties>
-                <Property name="selected" type="boolean" value="true"/>
+                <Property name="selected" type="boolean" value="true" postCode="state.setIsAnonymous(true);"/>
                 <Property name="text" type="java.lang.String" value="Anonymous mode"/>
               </Properties>
               <Events>

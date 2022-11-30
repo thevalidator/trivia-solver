@@ -451,6 +451,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         jMenu2.add(headlessModeCheckBoxMenuItem);
 
         anonymModeCheckBoxMenuItem.setSelected(true);
+        state.setIsAnonymous(true);
         anonymModeCheckBoxMenuItem.setText("Anonymous mode");
         anonymModeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
