@@ -452,6 +452,11 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
         anonymModeCheckBoxMenuItem.setSelected(true);
         anonymModeCheckBoxMenuItem.setText("Anonymous mode");
+        anonymModeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                anonymModeCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
         jMenu2.add(anonymModeCheckBoxMenuItem);
 
         jMenuItem3.setText("Play Rides");
@@ -587,6 +592,16 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private void jCheckBoxMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxMenuItem2ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jCheckBoxMenuItem2ActionPerformed
+
+    private void anonymModeCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_anonymModeCheckBoxMenuItemActionPerformed
+        if (anonymModeCheckBoxMenuItem.isSelected()) {
+            appendToPane("ANONYMOUS MODE ON");
+            state.setIsAnonymous(true);
+        } else {
+            appendToPane("ANONYMOUS MODE OFF");
+            state.setIsAnonymous(false);
+        }
+    }//GEN-LAST:event_anonymModeCheckBoxMenuItemActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
