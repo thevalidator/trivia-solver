@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -27,10 +28,11 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import static org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClickable;
 import static org.openqa.selenium.support.ui.ExpectedConditions.frameToBeAvailableAndSwitchToIt;
+import static org.openqa.selenium.support.ui.ExpectedConditions.not;
 import static org.openqa.selenium.support.ui.ExpectedConditions.presenceOfElementLocated;
+import static org.openqa.selenium.support.ui.ExpectedConditions.textToBe;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfAllElementsLocatedBy;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -40,6 +42,10 @@ import ru.thevalidator.galaxytriviasolver.exception.LoginErrorException;
 import ru.thevalidator.galaxytriviasolver.module.base.GalaxyBaseRobot;
 import ru.thevalidator.galaxytriviasolver.module.trivia.State;
 import ru.thevalidator.galaxytriviasolver.module.trivia.Unlim;
+import ru.thevalidator.galaxytriviasolver.module.trivia.solver.Solver;
+import ru.thevalidator.galaxytriviasolver.module.trivia.solver.entity.Answer;
+import ru.thevalidator.galaxytriviasolver.module.trivia.solver.entity.Question;
+import ru.thevalidator.galaxytriviasolver.module.trivia.solver.impl.SolverImpl;
 import ru.thevalidator.galaxytriviasolver.web.Locale;
 import ru.thevalidator.galaxytriviasolver.web.Locator;
 import static ru.thevalidator.galaxytriviasolver.web.Locator.*;
@@ -100,14 +106,17 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
 
     private static final Logger logger = LogManager.getLogger(GalaxyBaseRobotImpl.class);
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy_HHmmss");
+    private static Random random = new Random();
 
     private final State state;
     private WebDriver driver;
     private TriviaUserStats userStats;
+    private final Solver solver;
 
     public GalaxyBaseRobotImpl(State state) {
         this.state = state;
         this.userStats = new TriviaUserStats();
+        this.solver = new SolverImpl();
     }
 
     private WebDriver createWebDriver() {
@@ -298,19 +307,16 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                 topic.click();
                 boolean isStarted = wait(40_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaGameProcessFrame()))).isDisplayed();
                 informObservers("game started: " + isStarted);
-                boolean isFinished = wait(70_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaGameResultsFrame()))).isDisplayed();
-                informObservers("game finished: " + isFinished);
             }
         }
     }
-    
+
     private WebElement getTopic(String topic, List<WebElement> topics) throws CanNotPlayException {
         for (WebElement t : topics) {
             if (t.getText().equalsIgnoreCase(topic)) {
                 return t;
             }
         }
-        
         throw new CanNotPlayException("no selected topic found");
     }
 
@@ -323,7 +329,45 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     }
 
     private void playTriviaGame() {
+        answerQuestions();
+        boolean isFinished = wait(70_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaGameResultsFrame()))).isDisplayed();
+        informObservers("game finished: " + isFinished);
+    }
 
+    private void answerQuestions() {
+        String questionNumber = null;
+        for (int i = 0; i < 5; i++) {
+            driver.switchTo().defaultContent();
+            closePopup(1_000);
+            driver.switchTo().frame(driver.findElement(By.xpath(Locator.getTriviaGameProcessFrame())));//wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
+            //WebElement questionNumberHeader = wait(3_000).until(presenceOfElementLocated(By.xpath(Locator.getTriviaQuestionHeader())));
+            questionNumber = wait(3_000).until(presenceOfElementLocated(By.xpath(Locator.getTriviaQuestionHeader()))).getText();
+            try {
+                if (i != 0 && i != 4) {
+                    TimeUnit.SECONDS.sleep(random.nextInt(10) + 1);
+                } else {
+                    TimeUnit.SECONDS.sleep(1);
+                }
+            } catch (InterruptedException e) {
+            }
+            clickCorrectAnswer();
+            wait(25_000).until(not(textToBe(By.xpath(Locator.getTriviaQuestionHeader()), questionNumber)));
+        }
+    }
+    
+    private void clickCorrectAnswer() {
+        List<WebElement> elements = driver.findElements(By.xpath(Locator.getTriviaQuestionAnswer()));
+        Answer[] answers = new Answer[4];
+        int index = 0;
+        for (WebElement e : elements) {
+            String text = e.getText();
+            String rel = e.getAttribute("rel");
+            Answer answer = new Answer(text, rel, index);
+            answers[index++] = answer;
+        }
+        Question question = new Question("q", answers);
+        Answer correctAnswer = solver.getCorrectAnswer(question);
+        elements.get(correctAnswer.getIndex()).click();
     }
 
     private void startAgainTriviaGame() {
