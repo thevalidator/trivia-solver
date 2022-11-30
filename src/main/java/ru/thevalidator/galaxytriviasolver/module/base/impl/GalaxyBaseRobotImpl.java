@@ -302,12 +302,16 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
             List<WebElement> topics = wait(10_000).until(visibilityOfAllElementsLocatedBy(By.xpath(Locator.getTriviaTopicDiv())));
             String selectedTopic = state.getLocale().getTopics()[state.getTopicIndex()];
+            WebElement topic;
             if (state.getTopicIndex() != 0) {
-                WebElement topic = getTopic(selectedTopic, topics);
-                topic.click();
-                boolean isStarted = wait(40_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaGameProcessFrame()))).isDisplayed();
-                informObservers("game started: " + isStarted);
+                topic = getTopic(selectedTopic, topics);
+            } else {
+                int randomIndex = random.nextInt(topics.size());
+                topic = topics.get(randomIndex);
             }
+            topic.click();
+            boolean isStarted = wait(40_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaGameProcessFrame()))).isDisplayed();
+            informObservers("game started: " + isStarted);
         }
     }
 
@@ -328,10 +332,18 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         }
     }
 
-    private void playTriviaGame() {
+    @Override
+    public void playTriviaGame() {
         answerQuestions();
-        boolean isFinished = wait(70_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaGameResultsFrame()))).isDisplayed();
+        boolean isFinished = wait(30_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaGameResultsFrame()))).isDisplayed();
+        driver.switchTo().defaultContent();
+        closePopup(1_000);
+        driver.switchTo().frame(driver.findElement(By.xpath(Locator.getBaseContentIframe())));
         informObservers("game finished: " + isFinished);
+        String attempts = driver.findElement(By.xpath(Locator.getTriviaEnergyCount())).getText();
+        String points = driver.findElement(By.xpath(Locator.getTriviaResultPoints())).getText();
+        String attr = driver.findElement(By.xpath(Locator.getTriviaResultDiv())).getAttribute("class");
+        informObservers("att: " + attempts + " pts: " + points + " attr: " + attr);
     }
 
     private void answerQuestions() {
@@ -354,7 +366,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             wait(25_000).until(not(textToBe(By.xpath(Locator.getTriviaQuestionHeader()), questionNumber)));
         }
     }
-    
+
     private void clickCorrectAnswer() {
         List<WebElement> elements = driver.findElements(By.xpath(Locator.getTriviaQuestionAnswer()));
         Answer[] answers = new Answer[4];

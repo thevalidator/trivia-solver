@@ -13,5 +13,6 @@ public interface TriviaRobot {
     
     void selectTriviaGame();
     void startTriviaGame() throws CanNotPlayException;
+    void playTriviaGame();
 
 }
