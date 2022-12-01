@@ -9,10 +9,11 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -40,6 +41,7 @@ import ru.thevalidator.galaxytriviasolver.communication.Informer;
 import ru.thevalidator.galaxytriviasolver.exception.CanNotPlayException;
 import ru.thevalidator.galaxytriviasolver.exception.LoginErrorException;
 import ru.thevalidator.galaxytriviasolver.module.base.GalaxyBaseRobot;
+import ru.thevalidator.galaxytriviasolver.module.trivia.GameResult;
 import ru.thevalidator.galaxytriviasolver.module.trivia.State;
 import ru.thevalidator.galaxytriviasolver.module.trivia.Unlim;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.Solver;
@@ -165,7 +167,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         return new WebDriverWait(driver, Duration.ofMillis(beforeMillis));
     }
 
-    private void takeScreenshot(String pathname) {
+    public void takeScreenshot(String pathname) {
         try {
             File src = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
             FileUtils.copyFile(src, new File(pathname));
@@ -174,15 +176,18 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         }
     }
 
-    private void saveDataToFile(String pathname, String text) {
+    public void saveDataToFile(String pathname, Exception exception) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        exception.printStackTrace(pw);
         try ( FileOutputStream fos = new FileOutputStream(pathname);  DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos))) {
-            outStream.writeUTF(text);
+            outStream.writeUTF(sw.toString());
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private String getFileNameTimeStamp() {
+    public String getFileNameTimeStamp() {
         String path = "logs" + File.separator;
         return path + LocalDateTime.now().format(formatter);
     }
@@ -224,7 +229,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             } catch (Exception e) {
                 String fileName = getFileNameTimeStamp() + "_login";
                 takeScreenshot(fileName + ".png");
-                saveDataToFile(fileName + ".log", Arrays.toString(e.getStackTrace()));
+                saveDataToFile(fileName + ".log", e);
                 if (i == 5) {
                     informObservers("LOGIN ERROR: couldn't log in 5 times in a row, task stopped");
                     throw new LoginErrorException(e.getMessage());
@@ -312,7 +317,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                 topic = topics.get(randomIndex);
             }
             topic.click();
-            
+
         }
     }
 
@@ -341,21 +346,22 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             answerQuestions();
             boolean isFinished = wait(30_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaGameResultsFrame()))).isDisplayed();
             informObservers("game finished: " + isFinished);
-            
+
             driver.switchTo().frame(driver.findElement(By.xpath(Locator.getTriviaGameResultsFrame())));
-            
+
             String attempts = driver.findElement(By.xpath(Locator.getTriviaEnergyCount())).getText().trim();
             String points = driver.findElement(By.xpath(Locator.getTriviaResultPoints())).getText().trim();
-            String attr = driver.findElement(By.xpath(Locator.getTriviaResultDiv())).getAttribute("class");
-            informObservers("att: " + attempts + " pts: " + points + " attr: " + attr);
+            GameResult result = getTriviaRoundResult();
+
+            //String attr = driver.findElement(By.xpath(Locator.getTriviaResultDiv())).getAttribute("class");
+            //informObservers("att: " + attempts + " pts: " + points + " attr: " + attr);
+            gameResultNotifyObservers(result, Integer.parseInt(points));
+
             if (attempts.equals("0")) {
                 informObservers("not enough energy");
                 break;
             }
-            driver.switchTo().defaultContent();
-            closePopup(2_000);
-            driver.switchTo().frame(driver.findElement(By.xpath(Locator.getTriviaGameResultsFrame())));
-            driver.findElement(By.xpath(Locator.getTriviaPlayAgainBtn(state.getLocale()))).click();
+            startAgainTriviaGame();
         }
 
     }
@@ -396,8 +402,36 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         elements.get(correctAnswer.getIndex()).click();
     }
 
-    private void startAgainTriviaGame() {
+    private GameResult getTriviaRoundResult() {
+        //closePopup(2_000);
+        String result = driver.findElement(By.xpath(Locator.getTriviaResultHeader())).getText().trim();
+        if (result.contains(Locale.getWinText(state.getLocale()))) {
+            return GameResult.WIN;
+        } else if (result.contains(Locale.getDrawText(state.getLocale()))) {
+            return GameResult.DRAW;
+        } else {
+            return GameResult.LOST;
+        }
+    }
 
+    private void startAgainTriviaGame() {
+        driver.switchTo().defaultContent();
+        closePopup(2_000);
+        wait(5_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getTriviaGameResultsFrame())));
+        driver.findElement(By.xpath(Locator.getTriviaPlayAgainBtn(state.getLocale()))).click();
+    }
+
+    @Override
+    public int getSleepTime() {
+
+        String statusMessage = driver.findElement(By.xpath(Locator.getTriviaEnergyTimer())).getText();
+        informObservers(statusMessage);
+        int timeInSeconds = Integer.parseInt(statusMessage.substring(0, statusMessage.indexOf(" ")));
+        if (statusMessage.contains("мин") || statusMessage.contains("min")) {
+            timeInSeconds = timeInSeconds * 60;
+        }
+
+        return timeInSeconds;
     }
 
     @Override

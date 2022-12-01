@@ -6,6 +6,7 @@ package ru.thevalidator.galaxytriviasolver.service;
 import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.thevalidator.galaxytriviasolver.exception.LoginErrorException;
 import ru.thevalidator.galaxytriviasolver.gui.TriviaMainWindow;
 import ru.thevalidator.galaxytriviasolver.module.base.GalaxyBaseRobot;
 import ru.thevalidator.galaxytriviasolver.module.base.impl.GalaxyBaseRobotImpl;
@@ -41,25 +42,42 @@ public class Task implements Runnable {
         window.appendToPane("STARTED");
         GalaxyBaseRobot robot = new GalaxyBaseRobotImpl(state);
         ((GalaxyBaseRobotImpl) robot).registerObserver(window);
-        try {
+        int sleepTimeInSeconds = 0;
+        while (isActive) {
+            try {
 
-            robot.login();
-            robot.openGames();
-            robot.selectTriviaGame();
-            robot.startTriviaGame();
-            robot.playTriviaGame();
-            while (isActive) {
-                TimeUnit.SECONDS.sleep(5);
+                robot.login();
+                robot.openGames();
+                robot.selectTriviaGame();
+                robot.startTriviaGame();
+                robot.playTriviaGame();
+                sleepTimeInSeconds = robot.getSleepTime();
+                //robot.terminate();
+
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+                String filename = ((GalaxyBaseRobotImpl) robot).getFileNameTimeStamp();
+                ((GalaxyBaseRobotImpl) robot).takeScreenshot(filename);
+                ((GalaxyBaseRobotImpl) robot).saveDataToFile(filename, e);
+                if (e instanceof LoginErrorException) {
+                    isActive = false;
+                }
+            } finally {
+                robot.terminate();
+                if (isActive) {
+                    try {
+                        int time = 120 + sleepTimeInSeconds;
+                        sleepTimeInSeconds = 0;
+                        window.appendToPane("SLEEPING " + time + " secs");
+                        TimeUnit.SECONDS.sleep(time);
+                    } catch (InterruptedException ex) {
+                    }
+                } else {
+                    ((GalaxyBaseRobotImpl) robot).unregisterObserver(window);
+                    window.setStartButtonStatus(-1);
+                    window.appendToPane("STOPPED");
+                }
             }
-
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-        } finally {
-            ((GalaxyBaseRobotImpl) robot).unregisterObserver(window);
-            robot.terminate();
-            isActive = false;
-            window.setStartButtonStatus(-1);
-            window.appendToPane("STOPPED");
         }
     }
 

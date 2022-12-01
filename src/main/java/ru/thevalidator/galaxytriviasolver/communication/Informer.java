@@ -5,6 +5,7 @@ package ru.thevalidator.galaxytriviasolver.communication;
 
 import java.util.HashSet;
 import java.util.Set;
+import ru.thevalidator.galaxytriviasolver.module.trivia.GameResult;
 
 /**
  * @author thevalidator <the.validator@yandex.ru>
@@ -51,6 +52,19 @@ public abstract class Informer {
         }
         for (Observer observer : observersCopy) {
             observer.onUpdateRecieve(message);
+        }
+    }
+    
+    public void gameResultNotifyObservers(GameResult result, int points) {
+        Set<Observer> observersCopy;
+        synchronized (MONITOR) {
+            if (observers == null) {
+                return;
+            }
+            observersCopy = new HashSet<>(observers);
+        }
+        for (Observer observer : observersCopy) {
+            observer.onGameResultUpdateRecieve(result, points);
         }
     }
 }

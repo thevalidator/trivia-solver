@@ -38,6 +38,7 @@ import org.apache.logging.log4j.Logger;
 import ru.thevalidator.galaxytriviasolver.account.User;
 import ru.thevalidator.galaxytriviasolver.account.UserStorage;
 import ru.thevalidator.galaxytriviasolver.communication.Observer;
+import ru.thevalidator.galaxytriviasolver.module.trivia.GameResult;
 import ru.thevalidator.galaxytriviasolver.module.trivia.State;
 import ru.thevalidator.galaxytriviasolver.service.Task;
 import ru.thevalidator.galaxytriviasolver.web.Locale;
@@ -66,7 +67,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         initLocale(Locale.getDefaultLocale());
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/clover.png")));
         addTrayIcon();
-        
+
     }
 
     /**
@@ -573,7 +574,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 break;
         }
     }
-    
+
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         if (worker != null && !worker.isCancelled()) {
             worker.cancel(true);
@@ -740,17 +741,17 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         int topicIndex = topicComboBox.getSelectedIndex();
         state.setUser(user);
         state.setTopicIndex(topicIndex);
-        
+
         if (task == null) {
             task = new Task(state, this);
         }
         task.setIsActive(true);
-        
+
         worker = new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() throws Exception {
                 task.run();
-                
+
                 return null;
             }
         };
@@ -819,6 +820,30 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     @Override
     public void onUpdateRecieve(String message) {
         appendToPane(message);
+    }
+
+    @Override
+    public void onGameResultUpdateRecieve(GameResult result, int points) {
+        switch (result) {
+            case WIN:
+                appendToPane("WIN");
+                state.incrementWin();
+                state.addPoints(points);
+                break;
+            case DRAW:
+                appendToPane("DRAW");
+                state.incrementDraw();
+                break;
+            default:
+                appendToPane("LOST");
+                state.incrementLost();
+                break;
+        }
+        totalGamesValueLabel.setText(String.valueOf(state.getTotalGamesPlayed()));
+        winValueLabel.setText(String.valueOf(state.getWinCount()));
+        lostValueLabel.setText(String.valueOf(state.getLostCount()));
+        drawValueLabel.setText(String.valueOf(state.getDrawCount()));
+        averagePointsValueLabel.setText(String.valueOf(state.getAveragePoints()));
     }
 
 }
