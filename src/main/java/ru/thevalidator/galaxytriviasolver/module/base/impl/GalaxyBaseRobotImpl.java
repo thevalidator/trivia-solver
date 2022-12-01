@@ -415,6 +415,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         } else if (result.contains(Locale.getDrawText(state.getLocale()))) {
             return GameResult.DRAW;
         } else {
+            takeScreenshot(getFileNameTimeStamp() + "_lost.png");
             return GameResult.LOST;
         }
     }

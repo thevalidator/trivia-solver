@@ -67,7 +67,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         initLocale(Locale.getDefaultLocale());
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/clover.png")));
         addTrayIcon();
-
+        optionsMenu.setToolTipText("Not available in demo mode");
     }
 
     /**
@@ -238,8 +238,10 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                     .addComponent(userComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5)
                     .addComponent(topicComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(startButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(75, Short.MAX_VALUE))
+                    .addGroup(leftUpperContainerLayout.createSequentialGroup()
+                        .addComponent(startButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(190, 190, 190)))
+                .addGap(75, 75, 75))
         );
         leftUpperContainerLayout.setVerticalGroup(
             leftUpperContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -262,6 +264,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         totalGamesLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         totalGamesLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         totalGamesLabel.setText("TOTAL GAMES:");
+        totalGamesLabel.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         totalGamesLabel.setMaximumSize(new java.awt.Dimension(80, 16));
         totalGamesLabel.setMinimumSize(new java.awt.Dimension(80, 16));
         totalGamesLabel.setPreferredSize(new java.awt.Dimension(80, 16));
@@ -552,13 +555,11 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         if (task == null || !task.isActive()) {
             userComboBox.setEnabled(false);
             topicComboBox.setEnabled(false);
-            optionsMenu.setEnabled(false);
             startTask();
         } else {
             stopTask();
             userComboBox.setEnabled(true);
             topicComboBox.setEnabled(true);
-            optionsMenu.setEnabled(true);
         }
     }//GEN-LAST:event_startButtonActionPerformed
 
