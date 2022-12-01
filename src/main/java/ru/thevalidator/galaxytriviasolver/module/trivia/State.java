@@ -94,12 +94,12 @@ public class State {
             return statistic.lostCount;
         }
 
-        public int getTotalGames() {
+        public int getTotalGamesPlayed() {
             return (statistic.winCount + statistic.lostCount + statistic.drawCount);
         }
 
         public int getAveragePoints() {
-            return (statistic.pointCount / getTotalGames());
+            return (statistic.pointCount / getTotalGamesPlayed());
         }
 
     class Statistic {
