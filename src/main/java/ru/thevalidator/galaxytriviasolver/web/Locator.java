@@ -36,6 +36,7 @@ public final class Locator {
     public static final String getTriviaResultHeader() {return "//div[@class='s__quiz_title_result']";}
     public static final String getTriviaResultDiv() {return "//div[contains(@class,'s__quiz_result_self')]";}
     public static final String getTriviaResultPoints() {return getTriviaResultDiv() + "//div[@class='s__quiz_result_count']";}
+    public static final String getTriviaEnergyTimer() {return "//div[@class='s__quiz_energy_banner_text']/p";}
     
     
     public static final String getTriviaGameProcessFrame() {return "//div[@class='auth-user']//iframe[contains(@src, 'quiz_current_game')]";}
