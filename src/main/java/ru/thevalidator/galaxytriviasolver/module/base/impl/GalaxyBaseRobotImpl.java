@@ -276,7 +276,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         String userBalance = wait(10_000).until(visibilityOfElementLocated(By.xpath(Locator.getBaseUserBalance()))).getText();
         wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
         String dailyPoints = wait(10_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaOwnDailyResult()))).getText();
-        informObservers("balance: " + userBalance + " daily points: " + dailyPoints);
+        //informObservers("balance: " + userBalance + " daily points: " + dailyPoints);
 
         driver.findElement(By.xpath(Locator.getTriviaDailyRatingsPageBtn())).click();
         closePopup(2_500);
@@ -292,7 +292,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         userStats.setUserCoins(Double.parseDouble(userBalance));
         userStats.setUserPoints(Integer.parseInt(dailyPoints));
 
-        informObservers("unlim available: " + userStats.isUnlimAvailable(Unlim.MIN, 1));
+        informObservers("balance: " + userBalance + " daily points: " + dailyPoints + " unlim available: " + userStats.isUnlimAvailable(Unlim.MIN, 1));
     }
 
     @Override
@@ -341,11 +341,11 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     @Override
     public void playTriviaGame() {
         while (true) {
-            boolean isStarted = wait(50_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaGameProcessFrame()))).isDisplayed();
-            informObservers("game started: " + isStarted);
+            /*boolean isStarted = */wait(50_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaGameProcessFrame()))).isDisplayed();
+            informObservers("game started");
             answerQuestions();
-            boolean isFinished = wait(30_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaGameResultsFrame()))).isDisplayed();
-            informObservers("game finished: " + isFinished);
+            /*boolean isFinished = */wait(30_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaGameResultsFrame()))).isDisplayed();
+            informObservers("game finished");
 
             driver.switchTo().frame(driver.findElement(By.xpath(Locator.getTriviaGameResultsFrame())));
 
@@ -356,10 +356,15 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             //String attr = driver.findElement(By.xpath(Locator.getTriviaResultDiv())).getAttribute("class");
             //informObservers("att: " + attempts + " pts: " + points + " attr: " + attr);
             gameResultNotifyObservers(result, Integer.parseInt(points));
-
+            
             if (attempts.equals("0")) {
                 informObservers("not enough energy");
                 break;
+            } else if (attempts.isEmpty()) {
+                String unlimLeftTime = driver.findElement(By.xpath(Locator.getTriviaEnergyTimer())).getText();
+                informObservers("unlim is active (" + unlimLeftTime + " letf)");
+            } else {
+                informObservers("games left: " + attempts);
             }
             startAgainTriviaGame();
         }
@@ -423,9 +428,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
 
     @Override
     public int getSleepTime() {
-
         String statusMessage = driver.findElement(By.xpath(Locator.getTriviaEnergyTimer())).getText();
-        informObservers(statusMessage);
         int timeInSeconds = Integer.parseInt(statusMessage.substring(0, statusMessage.indexOf(" ")));
         if (statusMessage.contains("мин") || statusMessage.contains("min")) {
             timeInSeconds = timeInSeconds * 60;

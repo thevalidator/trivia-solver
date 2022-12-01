@@ -68,9 +68,11 @@ public class Task implements Runnable {
                     try {
                         int time = 120 + sleepTimeInSeconds;
                         sleepTimeInSeconds = 0;
-                        window.appendToPane("SLEEPING " + time + " secs");
+                        String message = time > 60 ? (String.valueOf(time / 60) + " min") : (String.valueOf(time) + " sec");
+                        window.appendToPane("SLEEPING " + message);
                         TimeUnit.SECONDS.sleep(time);
                     } catch (InterruptedException ex) {
+                        return;
                     }
                 } else {
                     ((GalaxyBaseRobotImpl) robot).unregisterObserver(window);
