@@ -105,7 +105,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         lostValueLabel = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        jMenu2 = new javax.swing.JMenu();
+        optionsMenu = new javax.swing.JMenu();
         serverMenu = new javax.swing.JMenu();
         ruServerCheckBoxMenuItem = new JCheckBoxMenuItem();
         enServerCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -400,7 +400,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         jMenu1.setText("Menu");
         jMenuBar1.add(jMenu1);
 
-        jMenu2.setText("Options");
+        optionsMenu.setText("Options");
 
         serverMenu.setText("Server");
 
@@ -424,7 +424,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         serverMenu.add(ptServerCheckBoxMenuItem);
         servers.add(ptServerCheckBoxMenuItem);
 
-        jMenu2.add(serverMenu);
+        optionsMenu.add(serverMenu);
 
         jMenu3.setText("TOP list");
 
@@ -439,7 +439,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         });
         jMenu3.add(jCheckBoxMenuItem2);
 
-        jMenu2.add(jMenu3);
+        optionsMenu.add(jMenu3);
 
         headlessModeCheckBoxMenuItem.setSelected(true);
         state.setIsHeadless(true);
@@ -449,7 +449,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 headlessModeCheckBoxMenuItemActionPerformed(evt);
             }
         });
-        jMenu2.add(headlessModeCheckBoxMenuItem);
+        optionsMenu.add(headlessModeCheckBoxMenuItem);
 
         anonymModeCheckBoxMenuItem.setSelected(true);
         state.setIsAnonymous(true);
@@ -459,12 +459,12 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 anonymModeCheckBoxMenuItemActionPerformed(evt);
             }
         });
-        jMenu2.add(anonymModeCheckBoxMenuItem);
+        optionsMenu.add(anonymModeCheckBoxMenuItem);
 
         jMenuItem3.setText("Play Rides");
-        jMenu2.add(jMenuItem3);
+        optionsMenu.add(jMenuItem3);
 
-        jMenuBar1.add(jMenu2);
+        jMenuBar1.add(optionsMenu);
 
         helpMenu.setText("Help");
 
@@ -550,9 +550,15 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
         if (task == null || !task.isActive()) {
+            userComboBox.setEnabled(false);
+            topicComboBox.setEnabled(false);
+            optionsMenu.setEnabled(false);
             startTask();
         } else {
             stopTask();
+            userComboBox.setEnabled(true);
+            topicComboBox.setEnabled(true);
+            optionsMenu.setEnabled(true);
         }
     }//GEN-LAST:event_startButtonActionPerformed
 
@@ -623,7 +629,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem2;
@@ -635,6 +640,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JTextArea logTextArea;
     private javax.swing.JLabel lostLabel;
     private javax.swing.JLabel lostValueLabel;
+    private javax.swing.JMenu optionsMenu;
     private javax.swing.JCheckBoxMenuItem ptServerCheckBoxMenuItem;
     private javax.swing.JPanel rightUpperContainer;
     private javax.swing.JCheckBoxMenuItem ruServerCheckBoxMenuItem;
@@ -825,19 +831,19 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     @Override
     public void onGameResultUpdateRecieve(GameResult result, int points) {
         switch (result) {
-            case WIN:
+            case WIN -> {
                 appendToPane("WIN");
                 state.incrementWin();
                 state.addPoints(points);
-                break;
-            case DRAW:
+            }
+            case DRAW -> {
                 appendToPane("DRAW");
                 state.incrementDraw();
-                break;
-            default:
+            }
+            default -> {
                 appendToPane("LOST");
                 state.incrementLost();
-                break;
+            }
         }
         totalGamesValueLabel.setText(String.valueOf(state.getTotalGamesPlayed()));
         winValueLabel.setText(String.valueOf(state.getWinCount()));
