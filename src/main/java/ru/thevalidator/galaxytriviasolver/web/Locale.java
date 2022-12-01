@@ -80,5 +80,23 @@ public enum Locale {
             default -> "https://galaxy.mobstudio.ru/web?lang=pt&p=38";
         };
     }
+    
+    public static String getWinText(Locale locale) {
+        return switch (locale) {
+            case RU -> "ПОБЕДИЛ";
+            case EN -> "YOU WIN!";
+            case ES -> "GANASTE";
+            default -> "VOCÊ VENCEU!";
+        };
+    }
+    
+    public static String getDrawText(Locale locale) {
+        return switch (locale) {
+            case RU -> "НИЧЬЯ";
+            case EN -> "DRAW!";
+            case ES -> "¡EMPATE!";
+            default -> "EMPATE!";
+        };
+    }
 
 }
