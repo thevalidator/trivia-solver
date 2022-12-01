@@ -76,17 +76,20 @@
                 <Property name="text" type="java.lang.String" value="TOP list"/>
               </Properties>
               <SubComponents>
-                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="jCheckBoxMenuItem1">
+                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="stayInTopCheckBoxMenuItem">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Stay In list"/>
+                    <Property name="text" type="java.lang.String" value="Stay In TOP"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="stayInTopCheckBoxMenuItemActionPerformed"/>
+                  </Events>
                 </MenuItem>
-                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="jCheckBoxMenuItem2">
+                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="getOnTopCheckBoxMenuItem">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Get on TOP"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCheckBoxMenuItem2ActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="getOnTopCheckBoxMenuItemActionPerformed"/>
                   </Events>
                 </MenuItem>
               </SubComponents>

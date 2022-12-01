@@ -112,8 +112,8 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         esServerCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         ptServerCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         jMenu3 = new javax.swing.JMenu();
-        jCheckBoxMenuItem1 = new javax.swing.JCheckBoxMenuItem();
-        jCheckBoxMenuItem2 = new javax.swing.JCheckBoxMenuItem();
+        stayInTopCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        getOnTopCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         headlessModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         anonymModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         jMenuItem3 = new javax.swing.JMenuItem();
@@ -431,16 +431,21 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
         jMenu3.setText("TOP list");
 
-        jCheckBoxMenuItem1.setText("Stay In list");
-        jMenu3.add(jCheckBoxMenuItem1);
-
-        jCheckBoxMenuItem2.setText("Get on TOP");
-        jCheckBoxMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+        stayInTopCheckBoxMenuItem.setText("Stay In TOP");
+        stayInTopCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBoxMenuItem2ActionPerformed(evt);
+                stayInTopCheckBoxMenuItemActionPerformed(evt);
             }
         });
-        jMenu3.add(jCheckBoxMenuItem2);
+        jMenu3.add(stayInTopCheckBoxMenuItem);
+
+        getOnTopCheckBoxMenuItem.setText("Get on TOP");
+        getOnTopCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                getOnTopCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu3.add(getOnTopCheckBoxMenuItem);
 
         optionsMenu.add(jMenu3);
 
@@ -598,9 +603,16 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         }
     }//GEN-LAST:event_headlessModeCheckBoxMenuItemActionPerformed
 
-    private void jCheckBoxMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxMenuItem2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBoxMenuItem2ActionPerformed
+    private void getOnTopCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getOnTopCheckBoxMenuItemActionPerformed
+        if (getOnTopCheckBoxMenuItem.isSelected()) {
+            stayInTopCheckBoxMenuItem.setSelected(false);
+            appendToPane("GET ON TOP MODE ON");
+            state.setShouldGetOnTop(true);
+        } else {
+            appendToPane("GET ON TOP MODE OFF");
+            state.setShouldGetOnTop(false);
+        }
+    }//GEN-LAST:event_getOnTopCheckBoxMenuItemActionPerformed
 
     private void anonymModeCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_anonymModeCheckBoxMenuItemActionPerformed
         if (anonymModeCheckBoxMenuItem.isSelected()) {
@@ -611,6 +623,17 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
             state.setIsAnonymous(false);
         }
     }//GEN-LAST:event_anonymModeCheckBoxMenuItemActionPerformed
+
+    private void stayInTopCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stayInTopCheckBoxMenuItemActionPerformed
+        if (stayInTopCheckBoxMenuItem.isSelected()) {
+            getOnTopCheckBoxMenuItem.setSelected(false);
+            appendToPane("STAY IN TOP MODE ON");
+            state.setShouldStayInTop(true);
+        } else {
+            appendToPane("STAY IN TOP MODE OFF");
+            state.setShouldStayInTop(false);
+        }
+    }//GEN-LAST:event_stayInTopCheckBoxMenuItemActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
@@ -623,10 +646,9 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JLabel drawValueLabel;
     private javax.swing.JCheckBoxMenuItem enServerCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem esServerCheckBoxMenuItem;
+    private javax.swing.JCheckBoxMenuItem getOnTopCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem headlessModeCheckBoxMenuItem;
     private javax.swing.JMenu helpMenu;
-    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
-    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem2;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JMenu jMenu1;
@@ -647,6 +669,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JCheckBoxMenuItem ruServerCheckBoxMenuItem;
     private javax.swing.JMenu serverMenu;
     private javax.swing.JButton startButton;
+    private javax.swing.JCheckBoxMenuItem stayInTopCheckBoxMenuItem;
     private javax.swing.JComboBox<String> topicComboBox;
     private javax.swing.JLabel totalGamesLabel;
     private javax.swing.JLabel totalGamesValueLabel;

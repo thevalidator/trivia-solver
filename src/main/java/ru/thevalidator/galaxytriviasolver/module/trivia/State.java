@@ -17,9 +17,27 @@ public class State {
     private User user;
     private boolean isHeadless;
     private boolean isAnonymous;
+    private boolean shouldStayInTop;
+    private boolean shouldGetOnTop;
 
     public State() {
         statistic = new Statistic();
+    }
+
+    public boolean shouldGetOnTop() {
+        return shouldGetOnTop;
+    }
+
+    public void setShouldGetOnTop(boolean shouldGetOnTop) {
+        this.shouldGetOnTop = shouldGetOnTop;
+    }
+
+    public boolean shouldStayInTop() {
+        return shouldStayInTop;
+    }
+
+    public void setShouldStayInTop(boolean shouldStayInTop) {
+        this.shouldStayInTop = shouldStayInTop;
     }
 
     public boolean isHeadless() {
