@@ -57,7 +57,7 @@ public class Task implements Runnable {
             } catch (Exception e) {
                 logger.error(e.getMessage());
                 String filename = ((GalaxyBaseRobotImpl) robot).getFileNameTimeStamp();
-                ((GalaxyBaseRobotImpl) robot).takeScreenshot(filename);
+                ((GalaxyBaseRobotImpl) robot).takeScreenshot(filename + ".png");
                 ((GalaxyBaseRobotImpl) robot).saveDataToFile(filename, e);
                 if (e instanceof LoginErrorException) {
                     isActive = false;

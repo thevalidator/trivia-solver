@@ -530,7 +530,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 + "then start the app, choose account with\n"
                 + "topic and click start button.\n"
                 + "\n\n"
-                + "v1.0.0.0-c001 (dev)\n"
+                + "v1.0.0.0-c002 (dev)\n"
                 + "[thevalidator]\n"
                 + "2022, November");
         jTextArea.setColumns(20);
@@ -608,6 +608,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
             stayInTopCheckBoxMenuItem.setSelected(false);
             appendToPane("GET ON TOP MODE ON");
             state.setShouldGetOnTop(true);
+            state.setShouldStayInTop(false);
         } else {
             appendToPane("GET ON TOP MODE OFF");
             state.setShouldGetOnTop(false);
@@ -629,6 +630,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
             getOnTopCheckBoxMenuItem.setSelected(false);
             appendToPane("STAY IN TOP MODE ON");
             state.setShouldStayInTop(true);
+            state.setShouldGetOnTop(false);
         } else {
             appendToPane("STAY IN TOP MODE OFF");
             state.setShouldStayInTop(false);

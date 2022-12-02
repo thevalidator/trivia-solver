@@ -4,6 +4,8 @@
 
 package ru.thevalidator.galaxytriviasolver.web;
 
+import ru.thevalidator.galaxytriviasolver.module.trivia.Unlim;
+
 /**
  * @author thevalidator <the.validator@yandex.ru>
  */
@@ -37,11 +39,19 @@ public final class Locator {
     public static final String getTriviaResultDiv() {return "//div[contains(@class,'s__quiz_result_self')]";}
     public static final String getTriviaResultPoints() {return getTriviaResultDiv() + "//div[@class='s__quiz_result_count']";}
     public static final String getTriviaEnergyTimer() {return "//div[@class='s__quiz_energy_banner_text']/p";}
-    
+    public static final String getTriviaReturnToMainPageBtn() {return "//a[contains(@data-href, 'quiz_index')]";}
+    public static final String getTriviaUnlimShopBtn() {return "//a[contains(@data-href, 'quiz_energy_shop_index')]";}
     
     public static final String getTriviaGameProcessFrame() {return "//div[@class='auth-user']//iframe[contains(@src, 'quiz_current_game')]";}
     public static final String getTriviaGameResultsFrame() {return "//div[@class='auth-user']//iframe[contains(@src, 'quiz_results')]";}
     
+    
+    public static final String getTriviaBuyUnlimBtn(Unlim option) {
+        if (option.getId() < 0 || option.getId() > 3) {
+            throw new IllegalArgumentException("Value must be from 1 to 3");
+        }
+        return "//div[@class='s__card_unlim_wrap']//div[contains(@data-href, 'quiz_energy_shop_buy&item_id=" + option.getId() + "')]";
+    }
     
     public static final String getTriviaPositionDailyResult(int position) {
         if (position < 1 || position > 10) {
