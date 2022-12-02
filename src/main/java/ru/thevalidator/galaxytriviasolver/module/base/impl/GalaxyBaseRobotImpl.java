@@ -408,6 +408,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                                     + " coins: " + userStats.getUserCoins();
                             logger.error(message);
                             informObservers("Top list target is UNREACHABLE!");
+                            wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
                             break;
                         }
                     } else {
