@@ -296,8 +296,8 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         userStats.setUserCoins(Double.parseDouble(userBalance));
         userStats.setUserDailyPoints(Integer.parseInt(dailyPoints));
 
-        informObservers("first: " + first + " tenth: " + tenth);
-        informObservers("balance: " + userBalance + " daily points: " + dailyPoints + " min unlim available: " + userStats.isUnlimAvailable(Unlim.MIN, 1));
+        informObservers("TOPLIST: 1st: " + first + " 10th: " + tenth);
+        informObservers("balance: " + userBalance + " daily points: " + dailyPoints);
     }
 
     @Override
@@ -363,8 +363,6 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             String points = driver.findElement(By.xpath(Locator.getTriviaResultPoints())).getText().trim();
             GameResult result = getTriviaRoundResult();
 
-            //String attr = driver.findElement(By.xpath(Locator.getTriviaResultDiv())).getAttribute("class");
-            //informObservers("att: " + attempts + " pts: " + points + " attr: " + attr);
             gameResultNotifyObservers(result, Integer.parseInt(points));
 
             if (attempts.equals("0")) {
@@ -375,24 +373,28 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                     driver.findElement(By.xpath(Locator.getTriviaReturnToMainPageBtn())).click();
                     //check if on default frame
                     updateTriviaUsersData();
-
+                    
+                    informObservers("1st: " + userStats.getFirstPlacePoints() 
+                            + " 10th: " + userStats.getTenthPlacePoints() 
+                            + " YOU: " + userStats.getUserDailyPoints());
+                    
                     int pointsDiff = state.shouldGetOnTop()
                             ? userStats.getFirstPlacePoints() - userStats.getUserDailyPoints()
                             : userStats.getTenthPlacePoints() - userStats.getUserDailyPoints();
 
+                    driver.switchTo().defaultContent();
                     if (pointsDiff > 0) {
                         int currentTimeInSeconds = LocalTime.now(ZoneId.of("Europe/Moscow")).toSecondOfDay();
                         int timeLeftInSeconds = currentTimeInSeconds > TriviaUserStatsData.START_TIME_IN_SECONDS
                                 ? TriviaUserStatsData.ONE_DAY_TIME_IN_SECONDS - currentTimeInSeconds + TriviaUserStatsData.START_TIME_IN_SECONDS
                                 : TriviaUserStatsData.START_TIME_IN_SECONDS - currentTimeInSeconds;
                         int hoursLeft = Math.round(timeLeftInSeconds / 3_600F);
+                        informObservers("Diff: " + pointsDiff + " hours left: " + hoursLeft + " coins: " + userStats.getUserCoins());
                         if (pointsDiff <= TriviaUserStatsData.AVERAGE_POINTS_PER_HOUR * hoursLeft
                                 && userStats.isUnlimAvailable(Unlim.MAX, (int) Math.ceil(hoursLeft / 4))) {
-                            String message = "Top list target is REACHABLE! BUYING UNLIM! Diff: " + pointsDiff + " hour left: " + hoursLeft;
-                            informObservers(message);
                             
+                            informObservers("BUYING UNLIM TO REACH THE TARGET!");
                             buyUnlimOption(Unlim.MAX);
-                            driver.switchTo().defaultContent();
                             try {
                                 startTriviaGame();
                                 continue;
@@ -401,15 +403,28 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                                 logger.error(ex.getMessage());
                             }
                         } else {
-                            String message = "Top list target is UNREACHABLE! Diff: " + pointsDiff + " hour left: " + hoursLeft;
+                            String message = "Top list target is UNREACHABLE!" + pointsDiff
+                                    + " hour left: " + hoursLeft
+                                    + " coins: " + userStats.getUserCoins();
                             logger.error(message);
-                            informObservers(message);
+                            informObservers("Top list target is UNREACHABLE!");
                             break;
                         }
                     } else {
-                        informObservers("Top list target is OK! Diff: " + pointsDiff);
-                        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
-                        break;
+                        if (pointsDiff > -5_000) {
+                            buyUnlimOption(Unlim.MAX);
+                            try {
+                                startTriviaGame();
+                                continue;
+                            } catch (CanNotPlayException ex) {
+                                takeScreenshot(getFileNameTimeStamp() + "_continueAfterUnlim2.png");
+                                logger.error(ex.getMessage());
+                            }
+                        } else {
+                            informObservers("Top list target is OK!");
+                            wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
+                            break;
+                        }
                     }
                 } else {
                     informObservers("not enough energy");
