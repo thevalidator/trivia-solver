@@ -322,7 +322,6 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                 topic = topics.get(randomIndex);
             }
             topic.click();
-
         } else {
             System.out.println("SLEEEP");
         }
@@ -390,7 +389,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                             String message = "Top list target is REACHABLE! BUYING UNLIM! Diff: " + pointsDiff + " hour left: " + hoursLeft;
                             informObservers(message);
                             
-                            buyUnlimOption(Unlim.MIN);
+                            buyUnlimOption(Unlim.MAX);
                             driver.switchTo().defaultContent();
                             try {
                                 startTriviaGame();
