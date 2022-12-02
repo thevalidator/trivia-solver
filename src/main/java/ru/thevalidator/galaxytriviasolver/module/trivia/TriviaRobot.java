@@ -12,7 +12,7 @@ import ru.thevalidator.galaxytriviasolver.exception.CanNotPlayException;
 public interface TriviaRobot {
     
     void selectTriviaGame();
-    void startTriviaGame() throws CanNotPlayException;
+    boolean startTriviaGame() throws CanNotPlayException;
     void playTriviaGame();
     int getSleepTime();
 

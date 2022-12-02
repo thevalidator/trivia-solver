@@ -301,7 +301,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     }
 
     @Override
-    public void startTriviaGame() throws CanNotPlayException {
+    public boolean startTriviaGame() throws CanNotPlayException {
         closePopup(1_500);
         wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
         String attempts = wait(10_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaEnergyCount()))).getText();
@@ -322,8 +322,10 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                 topic = topics.get(randomIndex);
             }
             topic.click();
+            return true;
         } else {
-            System.out.println("SLEEEP");
+            informObservers("no attempls available");
+            return false;
         }
     }
 

@@ -49,8 +49,9 @@ public class Task implements Runnable {
                 robot.login();
                 robot.openGames();
                 robot.selectTriviaGame();
-                robot.startTriviaGame();
-                robot.playTriviaGame();
+                if (robot.startTriviaGame()) {
+                    robot.playTriviaGame();
+                }
                 sleepTimeInSeconds = robot.getSleepTime();
                 //robot.terminate();
 
