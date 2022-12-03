@@ -10,5 +10,6 @@ package ru.thevalidator.galaxytriviasolver.module.rides;
 public interface RidesRobot {
     
     void selectRidesGame();
+    boolean startRidesGame();
 
 }
