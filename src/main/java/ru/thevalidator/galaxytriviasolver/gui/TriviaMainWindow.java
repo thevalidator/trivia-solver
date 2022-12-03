@@ -116,7 +116,8 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         getOnTopCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         headlessModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         anonymModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        jMenuItem3 = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        playRidesCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
 
@@ -469,8 +470,17 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         });
         optionsMenu.add(anonymModeCheckBoxMenuItem);
 
-        jMenuItem3.setText("Play Rides");
-        optionsMenu.add(jMenuItem3);
+        jMenu2.setText("Advanced");
+
+        playRidesCheckBoxMenuItem.setText("PlayRides");
+        playRidesCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                playRidesCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu2.add(playRidesCheckBoxMenuItem);
+
+        optionsMenu.add(jMenu2);
 
         jMenuBar1.add(optionsMenu);
 
@@ -637,6 +647,16 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         }
     }//GEN-LAST:event_stayInTopCheckBoxMenuItemActionPerformed
 
+    private void playRidesCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playRidesCheckBoxMenuItemActionPerformed
+        if (playRidesCheckBoxMenuItem.isSelected()) {
+            appendToPane("PLAY RIDES MODE ON");
+            state.setShouldPlayRides(true);
+        } else {
+            appendToPane("PLAY RIDES MODE OFF");
+            state.setShouldPlayRides(false);
+        }
+    }//GEN-LAST:event_playRidesCheckBoxMenuItemActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JCheckBoxMenuItem anonymModeCheckBoxMenuItem;
@@ -654,10 +674,10 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JPanel leftUpperContainer;
@@ -666,6 +686,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JLabel lostLabel;
     private javax.swing.JLabel lostValueLabel;
     private javax.swing.JMenu optionsMenu;
+    private javax.swing.JCheckBoxMenuItem playRidesCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem ptServerCheckBoxMenuItem;
     private javax.swing.JPanel rightUpperContainer;
     private javax.swing.JCheckBoxMenuItem ruServerCheckBoxMenuItem;
