@@ -33,6 +33,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import static org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClickable;
 import static org.openqa.selenium.support.ui.ExpectedConditions.frameToBeAvailableAndSwitchToIt;
+import static org.openqa.selenium.support.ui.ExpectedConditions.invisibilityOfElementLocated;
 import static org.openqa.selenium.support.ui.ExpectedConditions.not;
 import static org.openqa.selenium.support.ui.ExpectedConditions.presenceOfElementLocated;
 import static org.openqa.selenium.support.ui.ExpectedConditions.textToBe;
@@ -219,6 +220,11 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     }
 
     @Override
+    public void switchToDefaultContent() {
+        driver.switchTo().defaultContent();
+    }
+
+    @Override
     public void login() throws LoginErrorException {
         for (int i = 1; i < 6; i++) {
             try {
@@ -324,7 +330,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             topic.click();
             return true;
         } else {
-            informObservers("no attempls available");
+            informObservers("TRIVIA: no attempts available");
             return false;
         }
     }
@@ -421,11 +427,10 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                                 takeScreenshot(getFileNameTimeStamp() + "_continueAfterUnlim2.png");
                                 logger.error(ex.getMessage());
                             }
-                        } else {
-                            informObservers("Top list target is OK!");
-                            wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
-                            break;
                         }
+                        informObservers("Top list target is OK!");
+                        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
+                        break;
                     }
                 } else {
                     informObservers("not enough energy");
@@ -548,27 +553,64 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     public boolean startRidesGame() {
         closePopup(1_500);
         wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
-        informObservers("switch");
-        String attempts = wait(10_000).until(visibilityOfElementLocated(By.xpath("//div[@id='js-race-attempts-count']"))).getText();
+        String attempts = wait(10_000).until(visibilityOfElementLocated(By.xpath("//div[@id='js-race-attempts-count']"))).getText().trim();
         informObservers("att: " + attempts);
-        System.out.println("att: " + attempts);
+        if (attempts.equals("0")) {
+            return false;
+        } 
         driver.findElement(By.xpath("//a[@id='js-button-start-race']")).click();
-        informObservers("started");
-        //play again //div[@style='display: block;']//a[contains(@data-href, 'a=cars_race')]
-        /*
-        play again active
-        
-        <a w="346" decor="0 3" 
-        bgcolor="#E42681" 
-        action="post" 
-        class="s__28997 button button-raised button-decor3" 
-        style="width: 346px; margin: 0px 0px 43px;" 
-        data-href="http:////prefix/#%20%20%20%7Cw=346%20%20%7Cdecor=0%203%20%20%7Cbgcolor=#E42681%20%20%7Cclass=s__28997%20%20%7Cbutton=1%20%20%7Cstyle=width:%20346px;%20margin:%200px%200px%2043px;%20%20%7Chref=https://galaxy.mobstudio.ru/services/?userID=69225986&amp;password=d43de2010a9d55473b1b23b15225e5b3&amp;a=cars_race&amp;%20%20%7Caction=post%20%20%7C">
-        <div class="button__wrapper">Новая гонка!</div>
-        </a>
-        
-         */
+
         return true;
+    }
+
+    @Override
+    public void playRidesGame() {
+        while (true) {
+            wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
+            informObservers("searching for the opponent");
+            wait(5_000).until(visibilityOfElementLocated(By.xpath("//div[@id='waitOverlay']")));
+            wait(25_000).until(invisibilityOfElementLocated(By.xpath("//div[@id='waitOverlay']")));
+            informObservers("started");
+            try {
+                TimeUnit.MILLISECONDS.sleep(4_800);
+                //useNos();
+                try {
+                    wait(500).until(elementToBeClickable(By.xpath("//div[@id='nitroButton']"))).click();
+                } catch (Exception e) {
+
+                }
+                wait(15_000).until(
+                        visibilityOfElementLocated(
+                                By.xpath("//div[@id='js-msg-box-query']//button[contains(@class, 'overlay-close-button')]")
+                        )
+                ).click();
+                while (true) {
+                    wait(3_000).until(
+                            visibilityOfElementLocated(
+                                    By.xpath("//div[@id='js-msg-box-query']//button[contains(@class, 'overlay-close-button')]")
+                            )
+                    ).click();
+                }
+            } catch (Exception e) {
+            }
+            
+            wait(3_000).until(visibilityOfElementLocated(By.xpath("//div[@style='display: block;' and contains(@class, 'overlay_cars_race')]")));
+            informObservers("finished");
+            driver.switchTo().defaultContent();
+            closePopup(1_500);
+            wait(5_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
+            
+            //race again button
+            WebElement raceAgainBtn = driver.findElement(By.xpath("//div[@style='display: block;']/span/div/div/a[1]"));
+
+            if (raceAgainBtn.getAttribute("action") != null) {
+                raceAgainBtn.click();
+            } else {
+                informObservers("no attempts left");
+                break;
+            }
+        }
+
     }
 
 }

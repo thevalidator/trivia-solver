@@ -11,5 +11,6 @@ public interface RidesRobot {
     
     void selectRidesGame();
     boolean startRidesGame();
+    void playRidesGame();
 
 }

@@ -19,9 +19,18 @@ public class State {
     private boolean isAnonymous;
     private boolean shouldStayInTop;
     private boolean shouldGetOnTop;
+    private boolean shouldPlayRides;
 
     public State() {
         statistic = new Statistic();
+    }
+
+    public boolean shouldPlayRides() {
+        return shouldPlayRides;
+    }
+
+    public void setShouldPlayRides(boolean shouldPlayRides) {
+        this.shouldPlayRides = shouldPlayRides;
     }
 
     public boolean shouldGetOnTop() {

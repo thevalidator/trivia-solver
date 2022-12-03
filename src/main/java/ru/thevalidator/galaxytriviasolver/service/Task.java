@@ -53,7 +53,19 @@ public class Task implements Runnable {
                     robot.playTriviaGame();
                 }
                 sleepTimeInSeconds = robot.getSleepTime();
-                //robot.terminate();
+                if (state.shouldPlayRides()) {
+                    robot.switchToDefaultContent();
+                    robot.openGames();
+                    robot.selectRidesGame();
+                    if (robot.startRidesGame()) {
+                        robot.playRidesGame();
+                    }
+                }
+
+//                while (isActive) {
+//                    TimeUnit.SECONDS.sleep(10);
+//                }
+                //sleepTimeInSeconds = robot.getSleepTime();
 
             } catch (Exception e) {
                 logger.error(e.getMessage());
@@ -67,7 +79,7 @@ public class Task implements Runnable {
                 robot.terminate();
                 if (isActive) {
                     try {
-                        int time = 120 + sleepTimeInSeconds;
+                        int time = state.shouldPlayRides() ? sleepTimeInSeconds : 120 + sleepTimeInSeconds;
                         sleepTimeInSeconds = 0;
                         String message = time > 60 ? (String.valueOf(time / 60) + " min") : (String.valueOf(time) + " sec");
                         window.appendToPane("SLEEPING " + message);
