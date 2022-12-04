@@ -24,7 +24,7 @@ public class State {
 
     public State() {
         statistic = new Statistic();
-        nosDelayTime = 5_000;
+        nosDelayTime = 5_200;
     }
 
     public int getNosDelayTime() {

@@ -104,16 +104,16 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         lostLabel = new javax.swing.JLabel();
         lostValueLabel = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
         optionsMenu = new javax.swing.JMenu();
         serverMenu = new javax.swing.JMenu();
         ruServerCheckBoxMenuItem = new JCheckBoxMenuItem();
         enServerCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         esServerCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         ptServerCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        jMenu3 = new javax.swing.JMenu();
+        topListStrategyMenu = new javax.swing.JMenu();
         stayInTopCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         getOnTopCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        passiveModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         headlessModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         anonymModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         advancedMenu = new javax.swing.JMenu();
@@ -404,9 +404,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 .addContainerGap(57, Short.MAX_VALUE))
         );
 
-        jMenu1.setText("Menu");
-        jMenuBar1.add(jMenu1);
-
         optionsMenu.setText("Options");
 
         serverMenu.setText("Server");
@@ -433,7 +430,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
         optionsMenu.add(serverMenu);
 
-        jMenu3.setText("TOP list");
+        topListStrategyMenu.setText("TOP list strategy");
 
         stayInTopCheckBoxMenuItem.setText("Stay In TOP");
         stayInTopCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -441,7 +438,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 stayInTopCheckBoxMenuItemActionPerformed(evt);
             }
         });
-        jMenu3.add(stayInTopCheckBoxMenuItem);
+        topListStrategyMenu.add(stayInTopCheckBoxMenuItem);
 
         getOnTopCheckBoxMenuItem.setText("Get on TOP");
         getOnTopCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -449,9 +446,13 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 getOnTopCheckBoxMenuItemActionPerformed(evt);
             }
         });
-        jMenu3.add(getOnTopCheckBoxMenuItem);
+        topListStrategyMenu.add(getOnTopCheckBoxMenuItem);
 
-        optionsMenu.add(jMenu3);
+        optionsMenu.add(topListStrategyMenu);
+
+        passiveModeCheckBoxMenuItem.setSelected(true);
+        passiveModeCheckBoxMenuItem.setText("Passive mode");
+        optionsMenu.add(passiveModeCheckBoxMenuItem);
 
         headlessModeCheckBoxMenuItem.setSelected(true);
         state.setIsHeadless(true);
@@ -717,8 +718,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JMenu helpMenu;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JScrollPane jScrollPane1;
@@ -729,6 +728,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JLabel lostLabel;
     private javax.swing.JLabel lostValueLabel;
     private javax.swing.JMenu optionsMenu;
+    private javax.swing.JCheckBoxMenuItem passiveModeCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem playRidesCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem ptServerCheckBoxMenuItem;
     private javax.swing.JPanel rightUpperContainer;
@@ -738,6 +738,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JMenuItem showNOSDelayMenuItem;
     private javax.swing.JButton startButton;
     private javax.swing.JCheckBoxMenuItem stayInTopCheckBoxMenuItem;
+    private javax.swing.JMenu topListStrategyMenu;
     private javax.swing.JComboBox<String> topicComboBox;
     private javax.swing.JLabel totalGamesLabel;
     private javax.swing.JLabel totalGamesValueLabel;

@@ -334,6 +334,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             } else {
                 int randomIndex = random.nextInt(topics.size());
                 topic = topics.get(randomIndex);
+                informObservers("TRIVIA: selected topic - '" + state.getLocale().getTopics()[randomIndex] + "'");
             }
             topic.click();
             return true;
