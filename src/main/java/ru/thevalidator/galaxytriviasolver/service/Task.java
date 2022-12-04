@@ -65,7 +65,6 @@ public class Task implements Runnable {
 //                while (isActive) {
 //                    TimeUnit.SECONDS.sleep(10);
 //                }
-                //sleepTimeInSeconds = robot.getSleepTime();
 
             } catch (Exception e) {
                 logger.error(e.getMessage());

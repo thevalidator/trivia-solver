@@ -291,8 +291,17 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         driver.findElement(By.xpath(Locator.getTriviaDailyRatingsPageBtn())).click();
         closePopup(2_500);
         wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
-        String first = wait(10_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaPositionDailyResult(1)))).getText();
-        String tenth = wait(10_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaPositionDailyResult(10)))).getText();
+        String tenth = "0";
+        String first = tenth;
+        try {
+            first = wait(10_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaPositionDailyResult(1)))).getText();
+        } catch (Exception e) {
+        }
+        try {
+            tenth = wait(10_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaPositionDailyResult(10)))).getText();
+        } catch (Exception e) {
+        }
+        
 
         driver.switchTo().defaultContent();
         driver.findElement(By.xpath(Locator.getBaseBackBtn())).click();
@@ -572,7 +581,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             wait(25_000).until(invisibilityOfElementLocated(By.xpath("//div[@id='waitOverlay']")));
             informObservers("started");
             try {
-                TimeUnit.MILLISECONDS.sleep(4_800);
+                TimeUnit.MILLISECONDS.sleep(4_600);
                 //useNos();
                 try {
                     wait(500).until(elementToBeClickable(By.xpath("//div[@id='nitroButton']"))).click();
