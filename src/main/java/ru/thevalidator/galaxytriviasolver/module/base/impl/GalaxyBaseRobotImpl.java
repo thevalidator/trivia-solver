@@ -562,7 +562,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         closePopup(1_500);
         wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
         String attempts = wait(10_000).until(visibilityOfElementLocated(By.xpath("//div[@id='js-race-attempts-count']"))).getText().trim();
-        informObservers("att: " + attempts);
+        informObservers("Race attempts: " + attempts);
         if (attempts.equals("0")) {
             return false;
         }
@@ -573,12 +573,13 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
 
     @Override
     public void playRidesGame() {
+        int wins = 0;
         while (true) {
             wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
-            informObservers("searching for the opponent");
+            informObservers("Race: searching for the opponent");
             wait(25_000).until(visibilityOfElementLocated(By.xpath("//div[@id='waitOverlay']")));
             wait(25_000).until(invisibilityOfElementLocated(By.xpath("//div[@id='waitOverlay']")));
-            informObservers("started");
+            informObservers("Race started");
             try {
                 long start = System.currentTimeMillis();
 
@@ -607,9 +608,10 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
 
             WebElement resultDiv = wait(3_000).until(visibilityOfElementLocated(By.xpath("//div[@style='display: block;' and contains(@class, 'overlay_cars_race')]")));
             if (resultDiv.getAttribute("id").contains("lose")) {
-                informObservers("finished - LOST");
+                informObservers("Race finished - LOST");
             } else {
-                informObservers("finished - WIN");
+                informObservers("Race finished - WIN");
+                wins++;
             }
 
             driver.switchTo().defaultContent();
@@ -622,7 +624,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             if (raceAgainBtn.getAttribute("action") != null) {
                 raceAgainBtn.click();
             } else {
-                informObservers("no attempts left");
+                informObservers("Race: no attempts left, won " + wins + " races.");
                 break;
             }
         }
