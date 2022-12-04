@@ -20,9 +20,19 @@ public class State {
     private boolean shouldStayInTop;
     private boolean shouldGetOnTop;
     private boolean shouldPlayRides;
+    private int nosDelayTime;
 
     public State() {
         statistic = new Statistic();
+        nosDelayTime = 5_000;
+    }
+
+    public int getNosDelayTime() {
+        return nosDelayTime;
+    }
+
+    public void setNosDelayTime(int nosDelayTime) {
+        this.nosDelayTime = nosDelayTime;
     }
 
     public boolean shouldPlayRides() {
@@ -108,26 +118,26 @@ public class State {
     public void addPoints(int amount) {
         statistic.pointCount += amount;
     }
-    
-            public int getWinCount() {
-            return statistic.winCount;
-        }
 
-        public int getDrawCount() {
-            return statistic.drawCount;
-        }
+    public int getWinCount() {
+        return statistic.winCount;
+    }
 
-        public int getLostCount() {
-            return statistic.lostCount;
-        }
+    public int getDrawCount() {
+        return statistic.drawCount;
+    }
 
-        public int getTotalGamesPlayed() {
-            return (statistic.winCount + statistic.lostCount + statistic.drawCount);
-        }
+    public int getLostCount() {
+        return statistic.lostCount;
+    }
 
-        public int getAveragePoints() {
-            return (statistic.pointCount / getTotalGamesPlayed());
-        }
+    public int getTotalGamesPlayed() {
+        return (statistic.winCount + statistic.lostCount + statistic.drawCount);
+    }
+
+    public int getAveragePoints() {
+        return (statistic.pointCount / getTotalGamesPlayed());
+    }
 
     class Statistic {
 

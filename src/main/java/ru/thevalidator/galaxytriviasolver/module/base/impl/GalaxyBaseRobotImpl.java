@@ -301,7 +301,6 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             tenth = wait(10_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaPositionDailyResult(10)))).getText();
         } catch (Exception e) {
         }
-        
 
         driver.switchTo().defaultContent();
         driver.findElement(By.xpath(Locator.getBaseBackBtn())).click();
@@ -566,7 +565,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         informObservers("att: " + attempts);
         if (attempts.equals("0")) {
             return false;
-        } 
+        }
         driver.findElement(By.xpath("//a[@id='js-button-start-race']")).click();
 
         return true;
@@ -577,12 +576,15 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         while (true) {
             wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
             informObservers("searching for the opponent");
-            wait(5_000).until(visibilityOfElementLocated(By.xpath("//div[@id='waitOverlay']")));
+            wait(25_000).until(visibilityOfElementLocated(By.xpath("//div[@id='waitOverlay']")));
             wait(25_000).until(invisibilityOfElementLocated(By.xpath("//div[@id='waitOverlay']")));
             informObservers("started");
             try {
-                TimeUnit.MILLISECONDS.sleep(4_600);
-                //useNos();
+                long start = System.currentTimeMillis();
+
+                while ((System.currentTimeMillis() - start) < state.getNosDelayTime()) {
+                    java.lang.Thread.onSpinWait();
+                }
                 try {
                     wait(500).until(elementToBeClickable(By.xpath("//div[@id='nitroButton']"))).click();
                 } catch (Exception e) {
@@ -602,13 +604,18 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                 }
             } catch (Exception e) {
             }
-            
-            wait(3_000).until(visibilityOfElementLocated(By.xpath("//div[@style='display: block;' and contains(@class, 'overlay_cars_race')]")));
-            informObservers("finished");
+
+            WebElement resultDiv = wait(3_000).until(visibilityOfElementLocated(By.xpath("//div[@style='display: block;' and contains(@class, 'overlay_cars_race')]")));
+            if (resultDiv.getAttribute("id").contains("lose")) {
+                informObservers("finished - LOST");
+            } else {
+                informObservers("finished - WIN");
+            }
+
             driver.switchTo().defaultContent();
             closePopup(1_500);
             wait(5_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
-            
+
             //race again button
             WebElement raceAgainBtn = driver.findElement(By.xpath("//div[@style='display: block;']/span/div/div/a[1]"));
 

@@ -116,8 +116,11 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         getOnTopCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         headlessModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         anonymModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        jMenu2 = new javax.swing.JMenu();
+        advancedMenu = new javax.swing.JMenu();
+        RidesMenu = new javax.swing.JMenu();
         playRidesCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        setNOSDelayMenuItem = new javax.swing.JMenuItem();
+        showNOSDelayMenuItem = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
 
@@ -470,7 +473,9 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         });
         optionsMenu.add(anonymModeCheckBoxMenuItem);
 
-        jMenu2.setText("Advanced");
+        advancedMenu.setText("Advanced");
+
+        RidesMenu.setText("Rides");
 
         playRidesCheckBoxMenuItem.setText("PlayRides");
         playRidesCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -478,9 +483,27 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 playRidesCheckBoxMenuItemActionPerformed(evt);
             }
         });
-        jMenu2.add(playRidesCheckBoxMenuItem);
+        RidesMenu.add(playRidesCheckBoxMenuItem);
 
-        optionsMenu.add(jMenu2);
+        setNOSDelayMenuItem.setText("Set NOS delay");
+        setNOSDelayMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                setNOSDelayMenuItemActionPerformed(evt);
+            }
+        });
+        RidesMenu.add(setNOSDelayMenuItem);
+
+        showNOSDelayMenuItem.setText("Show NOS delay");
+        showNOSDelayMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showNOSDelayMenuItemActionPerformed(evt);
+            }
+        });
+        RidesMenu.add(showNOSDelayMenuItem);
+
+        advancedMenu.add(RidesMenu);
+
+        optionsMenu.add(advancedMenu);
 
         jMenuBar1.add(optionsMenu);
 
@@ -657,8 +680,29 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         }
     }//GEN-LAST:event_playRidesCheckBoxMenuItemActionPerformed
 
+    private void setNOSDelayMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setNOSDelayMenuItemActionPerformed
+        String m = JOptionPane.showInputDialog("Type new NOS delay value (3100-7600)");
+        try {
+            int newNOSValue = Integer.parseInt(m);
+            if (newNOSValue > 3_100 && newNOSValue < 7_600) {
+                this.state.setNosDelayTime(newNOSValue);
+                this.appendToPane("New NOS delay: " + m + " ms");
+            } else {
+                throw new IllegalArgumentException();
+            }
+        } catch (Exception e) {
+            this.appendToPane("incorrect NOS delay value");
+        }        
+    }//GEN-LAST:event_setNOSDelayMenuItemActionPerformed
+
+    private void showNOSDelayMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showNOSDelayMenuItemActionPerformed
+        this.appendToPane("NOS delay: " + state.getNosDelayTime() + " ms");
+    }//GEN-LAST:event_showNOSDelayMenuItemActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenu RidesMenu;
     private javax.swing.JMenuItem aboutMenuItem;
+    private javax.swing.JMenu advancedMenu;
     private javax.swing.JCheckBoxMenuItem anonymModeCheckBoxMenuItem;
     private javax.swing.JLabel averagePointsLabel;
     private javax.swing.JLabel averagePointsValueLabel;
@@ -674,7 +718,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem2;
@@ -691,6 +734,8 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JPanel rightUpperContainer;
     private javax.swing.JCheckBoxMenuItem ruServerCheckBoxMenuItem;
     private javax.swing.JMenu serverMenu;
+    private javax.swing.JMenuItem setNOSDelayMenuItem;
+    private javax.swing.JMenuItem showNOSDelayMenuItem;
     private javax.swing.JButton startButton;
     private javax.swing.JCheckBoxMenuItem stayInTopCheckBoxMenuItem;
     private javax.swing.JComboBox<String> topicComboBox;
