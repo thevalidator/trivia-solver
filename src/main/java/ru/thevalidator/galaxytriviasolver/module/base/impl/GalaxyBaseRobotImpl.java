@@ -365,7 +365,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     public void playTriviaGame() {
         while (true) {
             /*boolean isStarted = */
-            wait(50_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaGameProcessFrame()))).isDisplayed();
+            wait(70_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaGameProcessFrame()))).isDisplayed();
             informObservers("game started");
             answerQuestions();
             /*boolean isFinished = */
@@ -469,7 +469,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             wait(6_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getTriviaGameProcessFrame())));
             //wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
 
-            questionText = wait(6_000).until(presenceOfElementLocated(By.xpath(Locator.getTriviaQuestionHeader()))).getText();
+            questionText = wait(20_000).until(presenceOfElementLocated(By.xpath(Locator.getTriviaQuestionHeader()))).getText();
             try {
                 if (i != 0 && i != 4) {
                     TimeUnit.SECONDS.sleep(random.nextInt(10) + 2);
