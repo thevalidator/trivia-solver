@@ -201,7 +201,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
 
     private void closePopup(int timeToWait) {
         try {
-            while (!wait(timeToWait).until(visibilityOfAllElementsLocatedBy(By.xpath("//div[@data-component-name='dialog__html']//iframe"))).isEmpty()) {
+            while (!wait(timeToWait).until(visibilityOfAllElementsLocatedBy(By.xpath(getBasePopupIframe()))).isEmpty()) {
                 if (!driver.findElements(By.xpath(getBasePopupCloseBtn())).isEmpty()) {
                     driver.findElement(By.xpath(getBasePopupCloseBtn())).click();
                 } else {
@@ -335,7 +335,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             } else {
                 int randomIndex = random.nextInt(topics.size());
                 topic = topics.get(randomIndex);
-                informObservers("TRIVIA: selected topic - '" + state.getLocale().getTopics()[randomIndex] + "'");
+                informObservers("TRIVIA: selected topic - '" + state.getLocale().getTopics()[randomIndex + 1] + "'");
             }
             topic.click();
             return true;
