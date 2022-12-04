@@ -114,7 +114,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
 
     private static final Logger logger = LogManager.getLogger(GalaxyBaseRobotImpl.class);
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy_HHmmss");
-    private static Random random = new Random();
+    private static final Random random = new Random();
 
     private final State state;
     private WebDriver driver;
@@ -397,14 +397,22 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                     int pointsDiff = state.shouldGetOnTop()
                             ? userStats.getFirstPlacePoints() - userStats.getUserDailyPoints()
                             : userStats.getTenthPlacePoints() - userStats.getUserDailyPoints();
+                    
+                    int currentTimeInSeconds = LocalTime.now(ZoneId.of("Europe/Moscow")).toSecondOfDay();
+                    int timeLeftInSeconds = currentTimeInSeconds > TriviaUserStatsData.START_TIME_IN_SECONDS
+                            ? TriviaUserStatsData.ONE_DAY_TIME_IN_SECONDS - currentTimeInSeconds + TriviaUserStatsData.START_TIME_IN_SECONDS
+                            : TriviaUserStatsData.START_TIME_IN_SECONDS - currentTimeInSeconds;
+                    int hoursLeft = Math.round(timeLeftInSeconds / 3_600F);
+                    
+                    if (state.isPassive() && state.shouldGetOnTop() && pointsDiff < 8_000) {
+                        break;
+                    } else if (state.isPassive() && state.shouldStayInTop() && hoursLeft > 10 && pointsDiff < 45_000) {
+                        break;
+                    }
 
                     driver.switchTo().defaultContent();
                     if (pointsDiff > 0) {
-                        int currentTimeInSeconds = LocalTime.now(ZoneId.of("Europe/Moscow")).toSecondOfDay();
-                        int timeLeftInSeconds = currentTimeInSeconds > TriviaUserStatsData.START_TIME_IN_SECONDS
-                                ? TriviaUserStatsData.ONE_DAY_TIME_IN_SECONDS - currentTimeInSeconds + TriviaUserStatsData.START_TIME_IN_SECONDS
-                                : TriviaUserStatsData.START_TIME_IN_SECONDS - currentTimeInSeconds;
-                        int hoursLeft = Math.round(timeLeftInSeconds / 3_600F);
+                        
                         informObservers("Diff: " + pointsDiff + " hours left: " + hoursLeft + " coins: " + userStats.getUserCoins());
                         if (pointsDiff <= TriviaUserStatsData.AVERAGE_POINTS_PER_HOUR * hoursLeft
                                 && userStats.isUnlimAvailable(Unlim.MAX, (int) Math.ceil(hoursLeft / 4))) {

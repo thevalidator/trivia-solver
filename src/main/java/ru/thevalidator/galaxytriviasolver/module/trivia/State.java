@@ -11,7 +11,7 @@ import ru.thevalidator.galaxytriviasolver.web.Locale;
  */
 public class State {
 
-    private Statistic statistic;
+    private final Statistic statistic;
     private int topicIndex;
     private Locale locale;
     private User user;
@@ -20,11 +20,20 @@ public class State {
     private boolean shouldStayInTop;
     private boolean shouldGetOnTop;
     private boolean shouldPlayRides;
+    private boolean isPassive;
     private int nosDelayTime;
 
     public State() {
         statistic = new Statistic();
         nosDelayTime = 5_200;
+    }
+
+    public boolean isPassive() {
+        return isPassive;
+    }
+
+    public void setIsPassive(boolean isPassive) {
+        this.isPassive = isPassive;
     }
 
     public int getNosDelayTime() {

@@ -452,6 +452,12 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
         passiveModeCheckBoxMenuItem.setSelected(true);
         passiveModeCheckBoxMenuItem.setText("Passive mode");
+        state.setIsPassive(true);
+        passiveModeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                passiveModeCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
         optionsMenu.add(passiveModeCheckBoxMenuItem);
 
         headlessModeCheckBoxMenuItem.setSelected(true);
@@ -564,7 +570,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 + "then start the app, choose account with\n"
                 + "topic and click start button.\n"
                 + "\n\n"
-                + "v1.0.0.0-c003 (dev)\n"
+                + "v1.0.0.0-c004 (pre-release)\n"
                 + "[thevalidator]\n"
                 + "2022, November");
         jTextArea.setColumns(20);
@@ -699,6 +705,16 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private void showNOSDelayMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showNOSDelayMenuItemActionPerformed
         this.appendToPane("NOS delay: " + state.getNosDelayTime() + " ms");
     }//GEN-LAST:event_showNOSDelayMenuItemActionPerformed
+
+    private void passiveModeCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passiveModeCheckBoxMenuItemActionPerformed
+        if (passiveModeCheckBoxMenuItem.isSelected()) {
+            appendToPane("PASSIVE MODE ON");
+            state.setIsPassive(true);
+        } else {
+            appendToPane("PASSIVE MODE OFF");
+            state.setIsPassive(false);
+        }
+    }//GEN-LAST:event_passiveModeCheckBoxMenuItemActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu RidesMenu;
