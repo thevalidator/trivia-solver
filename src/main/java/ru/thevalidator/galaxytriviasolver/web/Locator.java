@@ -19,6 +19,7 @@ public final class Locator {
     public static final String getBaseAuthUserContent() {return "//div[@class='auth-user']//div[@class='app-content mdc-drawer-app-content']";}
     public static final String getBaseUserBalance() {return "//span[@id='drawer_balance']";} //a[@class='mdc-list-item drawer__current-user__balance']//span[@id='drawer_balance']
     
+    public static final String getBasePopupIframe() {return "//div[@data-component-name='dialog__html']//iframe";}
     public static final String getBasePopupDiv() {return "//div[@class='dialog mdc-dialog mdc-dialog--open']";}
     public static final String getBaseFooterAcceptBtn() {return "//footer//button[@data-mdc-dialog-action='accept']";}
     public static final String getBaseFooterCancelBtn() {return "//footer//button[@data-mdc-dialog-action='cancel']";}
@@ -45,6 +46,13 @@ public final class Locator {
     public static final String getTriviaGameProcessFrame() {return "//div[@class='auth-user']//iframe[contains(@src, 'quiz_current_game')]";}
     public static final String getTriviaGameResultsFrame() {return "//div[@class='auth-user']//iframe[contains(@src, 'quiz_results')]";}
     
+    public static final String getRidesGameAttemptsCounter() {return "//div[@id='js-race-attempts-count']";}
+    public static final String getRidesStartRaceBtn() {return "//a[@id='js-button-start-race']";}
+    public static final String getRidesWaitOverlay() {return "//div[@id='waitOverlay']";}
+    public static final String getRidesNitroBtn() {return "//div[@id='nitroButton']";}
+    public static final String getRidesPopupCloseBtn() {return "//div[@id='js-msg-box-query']//button[contains(@class, 'overlay-close-button')]";}
+    public static final String getRidesResultsDiv() {return "//div[@style='display: block;' and contains(@class, 'overlay_cars_race')]";}
+    public static final String getRidesRaceAgainBtn() {return "//div[@style='display: block;']/span/div/div/a[1]";}
     
     public static final String getTriviaBuyUnlimBtn(Unlim option) {
         if (option.getId() < 0 || option.getId() > 3) {

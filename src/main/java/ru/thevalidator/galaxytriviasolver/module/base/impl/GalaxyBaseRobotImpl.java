@@ -186,7 +186,8 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         exception.printStackTrace(pw);
-        try ( FileOutputStream fos = new FileOutputStream(pathname);  DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos))) {
+        try ( FileOutputStream fos = new FileOutputStream(pathname);  
+                DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos))) {
             outStream.writeUTF(sw.toString());
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -465,10 +466,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         for (int i = 0; i < 5; i++) {
             driver.switchTo().defaultContent();
             closePopup(1_000);
-            // work ok driver.switchTo().frame(driver.findElement(By.xpath(Locator.getTriviaGameProcessFrame())));
             wait(6_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getTriviaGameProcessFrame())));
-            //wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
-
             questionText = wait(20_000).until(presenceOfElementLocated(By.xpath(Locator.getTriviaQuestionHeader()))).getText();
             try {
                 if (i != 0 && i != 4) {
@@ -539,9 +537,6 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         driver.switchTo().defaultContent();
         wait(5_000).until(elementToBeClickable(By.xpath(Locator.getBaseFooterAcceptBtn()))).click();
         informObservers("UNLIM " + option.name() + " was bought");
-
-        //unlimOption = 0;
-        //shoppingNotify();
         try {
             TimeUnit.SECONDS.sleep(3);
         } catch (InterruptedException ex) {
@@ -562,12 +557,12 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     public boolean startRidesGame() {
         closePopup(1_500);
         wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
-        String attempts = wait(10_000).until(visibilityOfElementLocated(By.xpath("//div[@id='js-race-attempts-count']"))).getText().trim();
+        String attempts = wait(10_000).until(visibilityOfElementLocated(By.xpath(getRidesGameAttemptsCounter()))).getText().trim();
         informObservers("Race attempts: " + attempts);
         if (attempts.equals("0")) {
             return false;
         }
-        driver.findElement(By.xpath("//a[@id='js-button-start-race']")).click();
+        driver.findElement(By.xpath(getRidesStartRaceBtn())).click();
 
         return true;
     }
@@ -578,8 +573,8 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         while (true) {
             wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
             informObservers("Race: searching for the opponent");
-            wait(25_000).until(visibilityOfElementLocated(By.xpath("//div[@id='waitOverlay']")));
-            wait(25_000).until(invisibilityOfElementLocated(By.xpath("//div[@id='waitOverlay']")));
+            wait(25_000).until(visibilityOfElementLocated(By.xpath(getRidesWaitOverlay())));
+            wait(25_000).until(invisibilityOfElementLocated(By.xpath(getRidesWaitOverlay())));
             informObservers("Race started");
             try {
                 long start = System.currentTimeMillis();
@@ -588,26 +583,26 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                     java.lang.Thread.onSpinWait();
                 }
                 try {
-                    wait(500).until(elementToBeClickable(By.xpath("//div[@id='nitroButton']"))).click();
+                    wait(500).until(elementToBeClickable(By.xpath(getRidesNitroBtn()))).click();
                 } catch (Exception e) {
 
                 }
                 wait(15_000).until(
                         visibilityOfElementLocated(
-                                By.xpath("//div[@id='js-msg-box-query']//button[contains(@class, 'overlay-close-button')]")
+                                By.xpath(getRidesPopupCloseBtn())
                         )
                 ).click();
                 while (true) {
                     wait(3_000).until(
                             visibilityOfElementLocated(
-                                    By.xpath("//div[@id='js-msg-box-query']//button[contains(@class, 'overlay-close-button')]")
+                                    By.xpath(getRidesPopupCloseBtn())
                             )
                     ).click();
                 }
             } catch (Exception e) {
             }
 
-            WebElement resultDiv = wait(3_000).until(visibilityOfElementLocated(By.xpath("//div[@style='display: block;' and contains(@class, 'overlay_cars_race')]")));
+            WebElement resultDiv = wait(3_000).until(visibilityOfElementLocated(By.xpath(getRidesResultsDiv())));
             if (resultDiv.getAttribute("id").contains("lose")) {
                 informObservers("Race finished - LOST");
             } else {
@@ -620,7 +615,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             wait(5_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
 
             //race again button
-            WebElement raceAgainBtn = driver.findElement(By.xpath("//div[@style='display: block;']/span/div/div/a[1]"));
+            WebElement raceAgainBtn = driver.findElement(By.xpath(getRidesRaceAgainBtn()));
 
             if (raceAgainBtn.getAttribute("action") != null) {
                 raceAgainBtn.click();
