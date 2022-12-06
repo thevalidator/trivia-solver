@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.thevalidator</groupId>
     <artifactId>galaxy-trivia-solver</artifactId>
-    <version>1.0.0.0-c003</version>
+    <version>1.0.0.0-c004</version>
     <packaging>jar</packaging>
     <url>https://github.com/thevalidator/trivia-solver</url>
     
@@ -165,7 +165,7 @@
                 </executions>
             </plugin>
             
-            <plugin>
+<!--            <plugin>
                 <groupId>com.github.wvengen</groupId>
                 <artifactId>proguard-maven-plugin</artifactId>
                 <version>2.6.0</version>
@@ -176,7 +176,7 @@
                             <goal>proguard</goal>
                         </goals>
                         <configuration>
-                            <injar>${project.build.finalName}-jar-with-dependencies.jar</injar>  <!--make sure to obfuscate the jar with dependencies -->
+                            <injar>${project.build.finalName}-jar-with-dependencies.jar</injar>  make sure to obfuscate the jar with dependencies 
                             <proGuardVersion>5.2</proGuardVersion>
                             <options>
                                 <option>-allowaccessmodification</option>
@@ -184,14 +184,14 @@
                                 <option>-dontpreverify</option>
                                 <option>-dontshrink</option>
                                 <option>-dontnote</option>
-                                <option>-dontwarn</option>  <!--added option to ignore com.sun missing classes -->
-<!--                                <option>-dontobfuscate</option>-->
+                                <option>-dontwarn</option>  added option to ignore com.sun missing classes 
+                                <option>-dontobfuscate</option>
                                 <option>-keepattributes Signature</option>
                                 <option>-keepattributes *Annotation*</option>
                                 <option>-keep class sun.misc.Unsafe { *; }</option>
                                 <option>-keep class ru.thevalidator.galaxytriviasolver.GalaxyTriviaSolver { *; }</option>
                                 <option>-keep class java.lang.String { *; }</option>
-                                <!--                                <option>
+                                                                <option>
                                     -keepclassmembers,allowoptimization enum * {
                                     public static **[] values();
                                     public static ** valueOf(java.lang.String);
@@ -202,7 +202,7 @@
                                     java.lang.Class class$(java.lang.String, boolean);
                                     }
                                 </option>
-                                <option>-keep class java.lang.** { *; }</option>-->
+                                <option>-keep class java.lang.** { *; }</option>
                             </options>
                             <libs>
                                 <lib>${java.home}/lib/jrt-fs.jar</lib>
@@ -224,7 +224,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
             
             
             <plugin>
