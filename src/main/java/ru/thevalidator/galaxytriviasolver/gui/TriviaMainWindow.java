@@ -91,6 +91,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         jLabel5 = new javax.swing.JLabel();
         currentLocaleLabel = new javax.swing.JLabel();
         startButton = new javax.swing.JButton();
+        hardStopButton = new javax.swing.JButton();
         rightUpperContainer = new javax.swing.JPanel();
         totalGamesLabel = new javax.swing.JLabel();
         totalGamesValueLabel = new javax.swing.JLabel();
@@ -113,9 +114,10 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         topListStrategyMenu = new javax.swing.JMenu();
         stayInTopCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         getOnTopCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        anonymModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        silentModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         passiveModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         headlessModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        anonymModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         advancedMenu = new javax.swing.JMenu();
         RidesMenu = new javax.swing.JMenu();
         playRidesCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -220,12 +222,28 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         startButton.setBorderPainted(false);
         startButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         startButton.setMargin(new java.awt.Insets(3, 14, 3, 14));
-        startButton.setMaximumSize(new java.awt.Dimension(80, 35));
-        startButton.setMinimumSize(new java.awt.Dimension(80, 35));
-        startButton.setPreferredSize(new java.awt.Dimension(80, 35));
+        startButton.setMaximumSize(new java.awt.Dimension(117, 35));
+        startButton.setMinimumSize(new java.awt.Dimension(117, 35));
+        startButton.setPreferredSize(new java.awt.Dimension(117, 35));
         startButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 startButtonActionPerformed(evt);
+            }
+        });
+
+        hardStopButton.setBackground(javax.swing.UIManager.getDefaults().getColor("Objects.RedStatus"));
+        hardStopButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        hardStopButton.setForeground(new java.awt.Color(0, 0, 0));
+        hardStopButton.setText("HARD STOP");
+        hardStopButton.setBorderPainted(false);
+        hardStopButton.setEnabled(false);
+        hardStopButton.setMargin(new java.awt.Insets(3, 14, 3, 14));
+        hardStopButton.setMaximumSize(new java.awt.Dimension(117, 35));
+        hardStopButton.setMinimumSize(new java.awt.Dimension(117, 35));
+        hardStopButton.setPreferredSize(new java.awt.Dimension(117, 35));
+        hardStopButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                hardStopButtonActionPerformed(evt);
             }
         });
 
@@ -241,10 +259,12 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                     .addComponent(jLabel4)
                     .addComponent(userComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5)
-                    .addComponent(topicComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(leftUpperContainerLayout.createSequentialGroup()
-                        .addComponent(startButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(190, 190, 190)))
+                    .addGroup(leftUpperContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(leftUpperContainerLayout.createSequentialGroup()
+                            .addComponent(startButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(hardStopButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(topicComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(75, 75, 75))
         );
         leftUpperContainerLayout.setVerticalGroup(
@@ -261,7 +281,9 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                     .addComponent(topicComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(currentLocaleLabel))
                 .addGap(26, 26, 26)
-                .addComponent(startButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(leftUpperContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(startButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(hardStopButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -450,6 +472,24 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
         optionsMenu.add(topListStrategyMenu);
 
+        anonymModeCheckBoxMenuItem.setSelected(true);
+        state.setIsAnonymous(true);
+        anonymModeCheckBoxMenuItem.setText("Anonymous mode");
+        anonymModeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                anonymModeCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        optionsMenu.add(anonymModeCheckBoxMenuItem);
+
+        silentModeCheckBoxMenuItem.setText("Silent mode");
+        silentModeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                silentModeCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        optionsMenu.add(silentModeCheckBoxMenuItem);
+
         passiveModeCheckBoxMenuItem.setSelected(true);
         passiveModeCheckBoxMenuItem.setText("Passive mode");
         state.setIsPassive(true);
@@ -469,16 +509,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
             }
         });
         optionsMenu.add(headlessModeCheckBoxMenuItem);
-
-        anonymModeCheckBoxMenuItem.setSelected(true);
-        state.setIsAnonymous(true);
-        anonymModeCheckBoxMenuItem.setText("Anonymous mode");
-        anonymModeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                anonymModeCheckBoxMenuItemActionPerformed(evt);
-            }
-        });
-        optionsMenu.add(anonymModeCheckBoxMenuItem);
 
         advancedMenu.setText("Advanced");
 
@@ -601,10 +631,9 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
             userComboBox.setEnabled(false);
             topicComboBox.setEnabled(false);
             startTask();
+            hardStopButton.setEnabled(true);
         } else {
             stopTask();
-            userComboBox.setEnabled(true);
-            topicComboBox.setEnabled(true);
         }
     }//GEN-LAST:event_startButtonActionPerformed
 
@@ -612,7 +641,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         switch (status) {
             case 1:
                 startButton.setEnabled(true);
-                startButton.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
+                startButton.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Yellow"));
                 startButton.setText("STOP");
                 break;
             case -1:
@@ -716,6 +745,22 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         }
     }//GEN-LAST:event_passiveModeCheckBoxMenuItemActionPerformed
 
+    private void hardStopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hardStopButtonActionPerformed
+        if (worker != null & !worker.isCancelled()) {
+            worker.cancel(true);
+            hardStopButton.setEnabled(false);
+            userComboBox.setEnabled(true);
+            topicComboBox.setEnabled(true);
+            setStartButtonStatus(-1);
+            appendToPane("STOPPED");
+        }
+    }//GEN-LAST:event_hardStopButtonActionPerformed
+
+    private void silentModeCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_silentModeCheckBoxMenuItemActionPerformed
+        // TODO add your handling code here:
+        throw new UnsupportedOperationException("silent mode is not implemented");
+    }//GEN-LAST:event_silentModeCheckBoxMenuItemActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu RidesMenu;
     private javax.swing.JMenuItem aboutMenuItem;
@@ -730,6 +775,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JCheckBoxMenuItem enServerCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem esServerCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem getOnTopCheckBoxMenuItem;
+    private javax.swing.JButton hardStopButton;
     private javax.swing.JCheckBoxMenuItem headlessModeCheckBoxMenuItem;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JLabel jLabel4;
@@ -752,6 +798,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JMenu serverMenu;
     private javax.swing.JMenuItem setNOSDelayMenuItem;
     private javax.swing.JMenuItem showNOSDelayMenuItem;
+    private javax.swing.JCheckBoxMenuItem silentModeCheckBoxMenuItem;
     private javax.swing.JButton startButton;
     private javax.swing.JCheckBoxMenuItem stayInTopCheckBoxMenuItem;
     private javax.swing.JMenu topListStrategyMenu;
@@ -876,10 +923,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private void stopTask() {
         setStartButtonStatus(0);
         task.setIsActive(false);
-//        if (worker != null & !worker.isCancelled()) {
-//            appWindowLogger.debug("worker stop");
-//            worker.cancel(true);
-//        }
     }
 
     //  LOG CONSOLE //

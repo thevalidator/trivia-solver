@@ -31,6 +31,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import static org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClickable;
 import static org.openqa.selenium.support.ui.ExpectedConditions.frameToBeAvailableAndSwitchToIt;
 import static org.openqa.selenium.support.ui.ExpectedConditions.invisibilityOfElementLocated;
@@ -127,6 +128,15 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         this.solver = new SolverImpl();
     }
 
+//    private WebDriver createWebDriver() {
+//        WebDriver driver = new FirefoxDriver();
+//        driver.manage().window().setSize(new Dimension(1600, 845));
+//        driver.manage().window().setPosition((new Point(-5, 0)));
+//        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
+//        
+//        return driver;
+//    }
+
     private WebDriver createWebDriver() {
         WebDriverManager.chromedriver().setup();
 
@@ -186,8 +196,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         exception.printStackTrace(pw);
-        try ( FileOutputStream fos = new FileOutputStream(pathname);  
-                DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos))) {
+        try ( FileOutputStream fos = new FileOutputStream(pathname);  DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos))) {
             outStream.writeUTF(sw.toString());
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -317,6 +326,9 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
 
     @Override
     public boolean startTriviaGame() throws CanNotPlayException {
+//        if () {
+//            for soft stop
+//        }
         closePopup(1_500);
         wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
         String attempts = wait(10_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaEnergyCount()))).getText();
@@ -397,13 +409,13 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                     int pointsDiff = state.shouldGetOnTop()
                             ? userStats.getFirstPlacePoints() - userStats.getUserDailyPoints()
                             : userStats.getTenthPlacePoints() - userStats.getUserDailyPoints();
-                    
+
                     int currentTimeInSeconds = LocalTime.now(ZoneId.of("Europe/Moscow")).toSecondOfDay();
                     int timeLeftInSeconds = currentTimeInSeconds > TriviaUserStatsData.START_TIME_IN_SECONDS
                             ? TriviaUserStatsData.ONE_DAY_TIME_IN_SECONDS - currentTimeInSeconds + TriviaUserStatsData.START_TIME_IN_SECONDS
                             : TriviaUserStatsData.START_TIME_IN_SECONDS - currentTimeInSeconds;
                     int hoursLeft = Math.round(timeLeftInSeconds / 3_600F);
-                    
+
                     if (state.isPassive() && state.shouldGetOnTop() && pointsDiff < 8_000) {
                         break;
                     } else if (state.isPassive() && state.shouldStayInTop() && hoursLeft > 10 && pointsDiff < 45_000) {
@@ -412,7 +424,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
 
                     driver.switchTo().defaultContent();
                     if (pointsDiff > 0) {
-                        
+
                         informObservers("Diff: " + pointsDiff + " hours left: " + hoursLeft + " coins: " + userStats.getUserCoins());
                         if (pointsDiff <= TriviaUserStatsData.AVERAGE_POINTS_PER_HOUR * hoursLeft
                                 && userStats.isUnlimAvailable(Unlim.MAX, (int) Math.ceil(hoursLeft / 4))) {
@@ -461,8 +473,8 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             } else {
                 informObservers("games left: " + attempts);
             }
-//            if (!isActive) {
-//                stop();
+//            if () {
+//                stop(); for soft stop
 //            }
             startAgainTriviaGame();
         }
