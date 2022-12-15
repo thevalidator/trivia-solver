@@ -47,6 +47,15 @@ public class Task implements Runnable {
             try {
 
                 robot.login();
+                
+                try {
+                    robot.openMail();
+                    TimeUnit.SECONDS.sleep(3);
+                } catch (Exception e) {
+                    logger.error("mail: " + e.getMessage());
+                    window.appendToPane("CHECK MAIL FAIL");
+                }
+                
                 robot.openGames();
                 robot.selectTriviaGame();
                 if (robot.startTriviaGame()) {

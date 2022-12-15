@@ -31,7 +31,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import static org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClickable;
 import static org.openqa.selenium.support.ui.ExpectedConditions.frameToBeAvailableAndSwitchToIt;
 import static org.openqa.selenium.support.ui.ExpectedConditions.invisibilityOfElementLocated;
@@ -53,7 +52,6 @@ import ru.thevalidator.galaxytriviasolver.module.trivia.solver.entity.Answer;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.entity.Question;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.impl.SolverImpl;
 import ru.thevalidator.galaxytriviasolver.web.Locale;
-import ru.thevalidator.galaxytriviasolver.web.Locator;
 import static ru.thevalidator.galaxytriviasolver.web.Locator.*;
 
 public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
@@ -225,8 +223,8 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     private void openURL() {
         driver = createWebDriver();
         driver.get(Locale.getLocaleURL(state.getLocale()));
-        wait(20_000).until(visibilityOfElementLocated(By.xpath(Locator.getBaseCookiesCloseBtn()))).click();
-        driver.findElement(By.xpath(Locator.getBaseHaveAccountBtn())).isDisplayed();
+        wait(20_000).until(visibilityOfElementLocated(By.xpath(getBaseCookiesCloseBtn()))).click();
+        driver.findElement(By.xpath(getBaseHaveAccountBtn())).isDisplayed();
     }
 
     @Override
@@ -270,6 +268,14 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     }
 
     @Override
+    public void openMail() {
+        closePopup(2_500);
+        wait(15_000).until(elementToBeClickable(By.xpath(getBaseMenuMailBtn(state.getLocale())))).click();
+        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
+        wait(15_000).until(visibilityOfElementLocated(By.xpath(getNotificationsBtn()))).click();
+    }
+
+    @Override
     public void openGames() {
         closePopup(2_500);
         wait(15_000).until(elementToBeClickable(By.xpath(getBaseMenuGamesBtn(state.getLocale())))).click();
@@ -278,8 +284,8 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     @Override
     public void selectTriviaGame() {
         closePopup(2_500);
-        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
-        wait(15_000).until(visibilityOfElementLocated(By.xpath(Locator.getGamesTriviaBtn(state.getLocale())))).click();
+        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
+        wait(15_000).until(visibilityOfElementLocated(By.xpath(getGamesTriviaBtn(state.getLocale())))).click();
         informObservers("opening Trivia");
         updateTriviaUsersData();
     }
@@ -287,33 +293,33 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     @Override
     public void selectRidesGame() {
         closePopup(2_500);
-        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
-        wait(15_000).until(visibilityOfElementLocated(By.xpath(Locator.getGamesRidesBtn(state.getLocale())))).click();
+        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
+        wait(15_000).until(visibilityOfElementLocated(By.xpath(getGamesRidesBtn(state.getLocale())))).click();
         informObservers("opening Rides");
     }
 
     private void updateTriviaUsersData() {
         closePopup(2_500);
-        String userBalance = wait(10_000).until(visibilityOfElementLocated(By.xpath(Locator.getBaseUserBalance()))).getText();
-        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
-        String dailyPoints = wait(10_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaOwnDailyResult()))).getText();
+        String userBalance = wait(10_000).until(visibilityOfElementLocated(By.xpath(getBaseUserBalance()))).getText();
+        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
+        String dailyPoints = wait(10_000).until(visibilityOfElementLocated(By.xpath(getTriviaOwnDailyResult()))).getText();
 
-        driver.findElement(By.xpath(Locator.getTriviaDailyRatingsPageBtn())).click();
+        driver.findElement(By.xpath(getTriviaDailyRatingsPageBtn())).click();
         closePopup(2_500);
-        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
+        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
         String tenth = "0";
         String first = tenth;
         try {
-            first = wait(10_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaPositionDailyResult(1)))).getText();
+            first = wait(10_000).until(visibilityOfElementLocated(By.xpath(getTriviaPositionDailyResult(1)))).getText();
         } catch (Exception e) {
         }
         try {
-            tenth = wait(10_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaPositionDailyResult(10)))).getText();
+            tenth = wait(10_000).until(visibilityOfElementLocated(By.xpath(getTriviaPositionDailyResult(10)))).getText();
         } catch (Exception e) {
         }
 
         driver.switchTo().defaultContent();
-        driver.findElement(By.xpath(Locator.getBaseBackBtn())).click();
+        driver.findElement(By.xpath(getBaseBackBtn())).click();
 
         userStats.setFirstPlacePoints(Integer.parseInt(first));
         userStats.setTenthPlacePoints(Integer.parseInt(tenth));
@@ -330,16 +336,16 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
 //            for soft stop
 //        }
         closePopup(1_500);
-        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
-        String attempts = wait(10_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaEnergyCount()))).getText();
+        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
+        String attempts = wait(10_000).until(visibilityOfElementLocated(By.xpath(getTriviaEnergyCount()))).getText();
         if (!attempts.equals("0")) {
-            WebElement anonSwitcher = driver.findElement(By.xpath(Locator.getTriviaAnonymousToggle()));//wait(15_000).until(presenceOfElementLocated(By.xpath(Locator.getTriviaAnonymousToggle())));
+            WebElement anonSwitcher = driver.findElement(By.xpath(getTriviaAnonymousToggle()));//wait(15_000).until(presenceOfElementLocated(By.xpath(getTriviaAnonymousToggle())));
             switchAnonToggle(anonSwitcher);
-            driver.findElement(By.xpath(Locator.getTriviaStartBtn(state.getLocale()))).click();
+            driver.findElement(By.xpath(getTriviaStartBtn(state.getLocale()))).click();
             driver.switchTo().defaultContent();
             closePopup(1_500);
-            wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
-            List<WebElement> topics = wait(10_000).until(visibilityOfAllElementsLocatedBy(By.xpath(Locator.getTriviaTopicDiv())));
+            wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
+            List<WebElement> topics = wait(10_000).until(visibilityOfAllElementsLocatedBy(By.xpath(getTriviaTopicDiv())));
             String selectedTopic = state.getLocale().getTopics()[state.getTopicIndex()];
             WebElement topic;
             if (state.getTopicIndex() != 0) {
@@ -378,17 +384,17 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     public void playTriviaGame() {
         while (true) {
             /*boolean isStarted = */
-            wait(70_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaGameProcessFrame()))).isDisplayed();
+            wait(70_000).until(visibilityOfElementLocated(By.xpath(getTriviaGameProcessFrame()))).isDisplayed();
             informObservers("game started");
             answerQuestions();
             /*boolean isFinished = */
-            wait(30_000).until(visibilityOfElementLocated(By.xpath(Locator.getTriviaGameResultsFrame()))).isDisplayed();
+            wait(30_000).until(visibilityOfElementLocated(By.xpath(getTriviaGameResultsFrame()))).isDisplayed();
             informObservers("game finished");
 
-            driver.switchTo().frame(driver.findElement(By.xpath(Locator.getTriviaGameResultsFrame())));
+            driver.switchTo().frame(driver.findElement(By.xpath(getTriviaGameResultsFrame())));
 
-            String attempts = driver.findElement(By.xpath(Locator.getTriviaEnergyCount())).getText().trim();
-            String points = driver.findElement(By.xpath(Locator.getTriviaResultPoints())).getText().trim();
+            String attempts = driver.findElement(By.xpath(getTriviaEnergyCount())).getText().trim();
+            String points = driver.findElement(By.xpath(getTriviaResultPoints())).getText().trim();
             GameResult result = getTriviaRoundResult();
 
             gameResultNotifyObservers(result, Integer.parseInt(points));
@@ -397,8 +403,8 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                 if (state.shouldGetOnTop() || state.shouldStayInTop()) {
                     driver.switchTo().defaultContent();
                     closePopup(1_500);
-                    driver.switchTo().frame(driver.findElement(By.xpath(Locator.getTriviaGameResultsFrame())));
-                    driver.findElement(By.xpath(Locator.getTriviaReturnToMainPageBtn())).click();
+                    driver.switchTo().frame(driver.findElement(By.xpath(getTriviaGameResultsFrame())));
+                    driver.findElement(By.xpath(getTriviaReturnToMainPageBtn())).click();
                     //check if on default frame
                     updateTriviaUsersData();
 
@@ -430,7 +436,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                                 && userStats.isUnlimAvailable(Unlim.MAX, (int) Math.ceil(hoursLeft / 4))) {
 
                             informObservers("BUYING UNLIM TO REACH THE TARGET!");
-                            buyUnlimOption(Unlim.MAX);
+                            buyUnlimOption(state.shouldStayInTop() ? Unlim.MID : Unlim.MAX);
                             try {
                                 startTriviaGame();
                                 continue;
@@ -444,7 +450,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                                     + " coins: " + userStats.getUserCoins();
                             logger.error(message);
                             informObservers("Top list target is UNREACHABLE!");
-                            wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
+                            wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
                             break;
                         }
                     } else {
@@ -459,7 +465,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                             }
                         }
                         informObservers("Top list target is OK!");
-                        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
+                        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
                         break;
                     }
                 } else {
@@ -468,7 +474,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                 }
 
             } else if (attempts.isEmpty()) {
-                String unlimLeftTime = driver.findElement(By.xpath(Locator.getTriviaEnergyTimer())).getText();
+                String unlimLeftTime = driver.findElement(By.xpath(getTriviaEnergyTimer())).getText();
                 informObservers("unlim is active (" + unlimLeftTime + " letf)");
             } else {
                 informObservers("games left: " + attempts);
@@ -486,8 +492,8 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         for (int i = 0; i < 5; i++) {
             driver.switchTo().defaultContent();
             closePopup(1_000);
-            wait(6_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getTriviaGameProcessFrame())));
-            questionText = wait(20_000).until(presenceOfElementLocated(By.xpath(Locator.getTriviaQuestionHeader()))).getText();
+            wait(6_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getTriviaGameProcessFrame())));
+            questionText = wait(20_000).until(presenceOfElementLocated(By.xpath(getTriviaQuestionHeader()))).getText();
             try {
                 if (i != 0 && i != 4) {
                     TimeUnit.SECONDS.sleep(random.nextInt(10) + 2);
@@ -497,12 +503,12 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             } catch (InterruptedException e) {
             }
             clickCorrectAnswer();
-            wait(33_000).until(not(textToBe(By.xpath(Locator.getTriviaQuestionHeader()), questionText)));
+            wait(33_000).until(not(textToBe(By.xpath(getTriviaQuestionHeader()), questionText)));
         }
     }
 
     private void clickCorrectAnswer() {
-        List<WebElement> elements = driver.findElements(By.xpath(Locator.getTriviaQuestionAnswer()));
+        List<WebElement> elements = driver.findElements(By.xpath(getTriviaQuestionAnswer()));
         Answer[] answers = new Answer[elements.size()];
         int index = 0;
         for (WebElement e : elements) {
@@ -518,7 +524,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
 
     private GameResult getTriviaRoundResult() {
         //closePopup(2_000);
-        String result = driver.findElement(By.xpath(Locator.getTriviaResultHeader())).getText().trim();
+        String result = driver.findElement(By.xpath(getTriviaResultHeader())).getText().trim();
         if (result.contains(Locale.getWinText(state.getLocale()))) {
             return GameResult.WIN;
         } else if (result.contains(Locale.getDrawText(state.getLocale()))) {
@@ -532,13 +538,13 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     private void startAgainTriviaGame() {
         driver.switchTo().defaultContent();
         closePopup(2_000);
-        wait(5_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getTriviaGameResultsFrame())));
-        driver.findElement(By.xpath(Locator.getTriviaPlayAgainBtn(state.getLocale()))).click();
+        wait(5_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getTriviaGameResultsFrame())));
+        driver.findElement(By.xpath(getTriviaPlayAgainBtn(state.getLocale()))).click();
     }
 
     @Override
     public int getSleepTime() {
-        String statusMessage = driver.findElement(By.xpath(Locator.getTriviaEnergyTimer())).getText();
+        String statusMessage = driver.findElement(By.xpath(getTriviaEnergyTimer())).getText();
         int timeInSeconds = Integer.parseInt(statusMessage.substring(0, statusMessage.indexOf(" ")));
         if (statusMessage.contains("мин") || statusMessage.contains("min")) {
             timeInSeconds = timeInSeconds * 60;
@@ -549,21 +555,21 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
 
     private void buyUnlimOption(Unlim option) {
         closePopup(1_500);
-        wait(10_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
-        driver.findElement(By.xpath(Locator.getTriviaUnlimShopBtn())).click();
+        wait(10_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
+        driver.findElement(By.xpath(getTriviaUnlimShopBtn())).click();
         closePopup(1_500);
-        wait(10_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
-        wait(5_000).until(elementToBeClickable(By.xpath(Locator.getTriviaBuyUnlimBtn(option)))).click();
+        wait(10_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
+        wait(5_000).until(elementToBeClickable(By.xpath(getTriviaBuyUnlimBtn(option)))).click();
         driver.switchTo().defaultContent();
-        wait(5_000).until(elementToBeClickable(By.xpath(Locator.getBaseFooterAcceptBtn()))).click();
+        wait(5_000).until(elementToBeClickable(By.xpath(getBaseFooterAcceptBtn()))).click();
         informObservers("UNLIM " + option.name() + " was bought");
         try {
             TimeUnit.SECONDS.sleep(3);
         } catch (InterruptedException ex) {
             logger.error(ex.getMessage());
         }
-        wait(10_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
-        driver.findElement(By.xpath(Locator.getTriviaReturnToMainPageBtn())).click();
+        wait(10_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
+        driver.findElement(By.xpath(getTriviaReturnToMainPageBtn())).click();
     }
 
     @Override
@@ -576,7 +582,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     @Override
     public boolean startRidesGame() {
         closePopup(1_500);
-        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
+        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
         String attempts = wait(10_000).until(visibilityOfElementLocated(By.xpath(getRidesGameAttemptsCounter()))).getText().trim();
         informObservers("Race attempts: " + attempts);
         if (attempts.equals("0")) {
@@ -591,7 +597,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     public void playRidesGame() {
         int wins = 0;
         while (true) {
-            wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
+            wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
             informObservers("Race: searching for the opponent");
             wait(25_000).until(visibilityOfElementLocated(By.xpath(getRidesWaitOverlay())));
             wait(25_000).until(invisibilityOfElementLocated(By.xpath(getRidesWaitOverlay())));
@@ -632,7 +638,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
 
             driver.switchTo().defaultContent();
             closePopup(1_500);
-            wait(5_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(Locator.getBaseContentIframe())));
+            wait(5_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
 
             //race again button
             WebElement raceAgainBtn = driver.findElement(By.xpath(getRidesRaceAgainBtn()));

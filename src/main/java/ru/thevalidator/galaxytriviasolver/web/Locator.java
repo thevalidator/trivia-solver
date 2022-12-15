@@ -28,6 +28,7 @@ public final class Locator {
     public static final String getBaseContentIframe() {return "//div[@class='auth-user']//iframe";}
     public static final String getBaseBackBtn() {return "//div[@class='auth-user']//div[@class='mdc-top-app-bar__navigation-icon app-bar__navigation-icon mdc-icon-button']";}
     
+    public static final String getNotificationsBtn() {return "//div[contains(@data-href, 'user_notifications')]";}
     
     public static final String getTriviaDailyRatingsPageBtn() {return "//div[@class='s__quiz_main_rating_card' and contains(@data-href, 'quiz_daily_rating')]";}
     public static final String getTriviaOwnDailyResult() {return (getTriviaDailyRatingsPageBtn() + "//div[@class='s__quiz_main_rating_card_count']");}
@@ -123,6 +124,17 @@ public final class Locator {
             default -> "Carros";
         };
         return "//div[@class='s__card__title']//div[text()='" + text + "']/../../../..";
+    }
+    
+    public static final String getBaseMenuMailBtn(Locale locale) {
+        String text;
+        text = switch (locale) {
+            case RU -> "Почта";
+            case EN -> "Mail";
+            case ES -> " Correo";
+            default -> "Correio";
+        };
+        return "//nav//span[text()='" + text + "']/..";
     }
 
 }
