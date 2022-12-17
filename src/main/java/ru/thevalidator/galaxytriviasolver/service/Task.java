@@ -18,6 +18,7 @@ import ru.thevalidator.galaxytriviasolver.module.trivia.State;
 public class Task implements Runnable {
 
     private static final Logger logger = LogManager.getLogger(Task.class);
+    private static final int TIME_TO_SLEEP_IN_SECONDS = 60;
     private boolean isActive;
     private final State state;
     private final TriviaMainWindow window;
@@ -42,26 +43,22 @@ public class Task implements Runnable {
         window.appendToPane("STARTED");
         GalaxyBaseRobot robot = new GalaxyBaseRobotImpl(state);
         ((GalaxyBaseRobotImpl) robot).registerObserver(window);
-        int sleepTimeInSeconds = 0;
+        int sleepTimeInSeconds = TIME_TO_SLEEP_IN_SECONDS;
         while (isActive) {
             try {
 
                 robot.login();
-                
-                try {
-                    robot.openMail();
-                    TimeUnit.SECONDS.sleep(3);
-                } catch (Exception e) {
-                    logger.error("mail: " + e.getMessage());
-                    window.appendToPane("CHECK MAIL FAIL");
-                }
+
+                robot.openMail();
                 
                 robot.openGames();
                 robot.selectTriviaGame();
                 if (robot.startTriviaGame()) {
                     robot.playTriviaGame();
                 }
+                
                 sleepTimeInSeconds = robot.getSleepTime();
+                
                 if (state.shouldPlayRides()) {
                     robot.switchToDefaultContent();
                     robot.openGames();
@@ -74,12 +71,12 @@ public class Task implements Runnable {
 //                while (isActive) {
 //                    TimeUnit.SECONDS.sleep(10);
 //                }
-
             } catch (Exception e) {
                 logger.error(e.getMessage());
                 String filename = ((GalaxyBaseRobotImpl) robot).getFileNameTimeStamp();
                 ((GalaxyBaseRobotImpl) robot).takeScreenshot(filename + ".png");
                 ((GalaxyBaseRobotImpl) robot).saveDataToFile(filename, e);
+                ((GalaxyBaseRobotImpl) robot).savePageSourceToFile(filename);
                 if (e instanceof LoginErrorException) {
                     isActive = false;
                 }
@@ -88,8 +85,8 @@ public class Task implements Runnable {
                 if (isActive) {
                     try {
                         int time = state.shouldPlayRides() ? sleepTimeInSeconds : 120 + sleepTimeInSeconds;
-                        sleepTimeInSeconds = 0;
-                        String message = time > 60 ? (String.valueOf(time / 60) + " min") : (String.valueOf(time) + " sec");
+                        sleepTimeInSeconds = TIME_TO_SLEEP_IN_SECONDS;
+                        String message = time >= 60 ? (String.valueOf(time / 60) + " min") : (String.valueOf(time) + " sec");
                         window.appendToPane("SLEEPING " + message);
                         TimeUnit.SECONDS.sleep(time);
                     } catch (InterruptedException ex) {
