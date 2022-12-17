@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2022 thevalidator
  */
-package ru.thevalidator.galaxytriviasolver.communication;
+package ru.thevalidator.galaxytriviasolver.notification;
 
 import java.util.HashSet;
 import java.util.Set;

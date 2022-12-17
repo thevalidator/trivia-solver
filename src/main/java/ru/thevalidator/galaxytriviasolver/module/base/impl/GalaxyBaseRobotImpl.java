@@ -22,7 +22,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,9 +43,10 @@ import static org.openqa.selenium.support.ui.ExpectedConditions.textToBe;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfAllElementsLocatedBy;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import ru.thevalidator.galaxytriviasolver.communication.Informer;
+import ru.thevalidator.galaxytriviasolver.notification.Informer;
 import ru.thevalidator.galaxytriviasolver.exception.CanNotPlayException;
 import ru.thevalidator.galaxytriviasolver.exception.LoginErrorException;
+import ru.thevalidator.galaxytriviasolver.identity.Identifier;
 import ru.thevalidator.galaxytriviasolver.module.base.GalaxyBaseRobot;
 import ru.thevalidator.galaxytriviasolver.module.trivia.GameResult;
 import ru.thevalidator.galaxytriviasolver.module.trivia.State;
@@ -55,6 +55,8 @@ import ru.thevalidator.galaxytriviasolver.module.trivia.solver.Solver;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.entity.trivia.Answer;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.entity.trivia.Question;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.impl.SolverImpl;
+import ru.thevalidator.galaxytriviasolver.module.trivia.solver.impl.SolverRestImpl;
+import ru.thevalidator.galaxytriviasolver.remote.Connector;
 import ru.thevalidator.galaxytriviasolver.web.Locale;
 import static ru.thevalidator.galaxytriviasolver.web.Locator.*;
 
@@ -127,7 +129,8 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     public GalaxyBaseRobotImpl(State state) {
         this.state = state;
         this.userStats = new TriviaUserStatsData();
-        this.solver = new SolverImpl();
+        this.solver = new SolverRestImpl(new Connector(Identifier.generateKey()));
+        //this.solver = new SolverImpl();
     }
 
 //    private WebDriver createWebDriver() {
@@ -291,6 +294,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             wait(15_000).until(visibilityOfElementLocated(By.xpath(getNotificationsBtn()))).click();
             TimeUnit.SECONDS.sleep(3);
         } catch (Exception e) {
+            driver.switchTo().defaultContent();
         }
     }
 

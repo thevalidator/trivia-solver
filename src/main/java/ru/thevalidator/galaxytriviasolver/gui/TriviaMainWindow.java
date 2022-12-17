@@ -18,6 +18,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
+import java.net.ProtocolException;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -33,13 +34,16 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingWorker;
 import javax.swing.text.BadLocationException;
+import org.apache.hc.core5.http.HttpStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.thevalidator.galaxytriviasolver.account.User;
 import ru.thevalidator.galaxytriviasolver.account.UserStorage;
-import ru.thevalidator.galaxytriviasolver.communication.Observer;
+import ru.thevalidator.galaxytriviasolver.notification.Observer;
+import ru.thevalidator.galaxytriviasolver.identity.Identifier;
 import ru.thevalidator.galaxytriviasolver.module.trivia.GameResult;
 import ru.thevalidator.galaxytriviasolver.module.trivia.State;
+import ru.thevalidator.galaxytriviasolver.remote.Connector;
 import ru.thevalidator.galaxytriviasolver.service.Task;
 import ru.thevalidator.galaxytriviasolver.web.Locale;
 
@@ -57,8 +61,10 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private State state;
     private Task task;
     private SwingWorker worker;
+    private final String pesonalCode;
 
     public TriviaMainWindow() {
+        this.pesonalCode = Identifier.generateKey();
         this.state = new State();
         this.task = null;
         this.userStorage = new UserStorage(readUserData());
@@ -105,6 +111,9 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         lostLabel = new javax.swing.JLabel();
         lostValueLabel = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
+        accountJMenu = new javax.swing.JMenu();
+        statusMenuItem = new javax.swing.JMenuItem();
+        uuidMenuItem = new javax.swing.JMenuItem();
         optionsMenu = new javax.swing.JMenu();
         serverMenu = new javax.swing.JMenu();
         ruServerCheckBoxMenuItem = new JCheckBoxMenuItem();
@@ -425,6 +434,26 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                     .addComponent(lostValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(57, Short.MAX_VALUE))
         );
+
+        accountJMenu.setText("Account");
+
+        statusMenuItem.setText("Status");
+        statusMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                statusMenuItemActionPerformed(evt);
+            }
+        });
+        accountJMenu.add(statusMenuItem);
+
+        uuidMenuItem.setText("Code");
+        uuidMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                uuidMenuItemActionPerformed(evt);
+            }
+        });
+        accountJMenu.add(uuidMenuItem);
+
+        jMenuBar1.add(accountJMenu);
 
         optionsMenu.setText("Options");
 
@@ -761,9 +790,45 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         throw new UnsupportedOperationException("silent mode is not implemented");
     }//GEN-LAST:event_silentModeCheckBoxMenuItemActionPerformed
 
+    private void uuidMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uuidMenuItemActionPerformed
+        Component component = new JLabel();
+
+        JScrollPane jScrollPane = new JScrollPane(component);
+        jScrollPane.setBorder(BorderFactory.createEmptyBorder());
+        JTextArea jTextArea = new JTextArea("-==" + pesonalCode + "==-");
+
+        jTextArea.setColumns(20);
+        jTextArea.setLineWrap(true);
+        jTextArea.setRows(5);
+        jScrollPane.setViewportView(jTextArea);
+
+        JOptionPane.showMessageDialog(this, jScrollPane, "Personal user code", JOptionPane.PLAIN_MESSAGE);
+    }//GEN-LAST:event_uuidMenuItemActionPerformed
+
+    private void statusMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_statusMenuItemActionPerformed
+        
+        int responseCode = 0;
+        try {
+            responseCode = Connector.getResponseCode(pesonalCode);
+        } catch (ProtocolException ex) {
+            logger.error(ex.getMessage());
+        } catch (IOException ex) {
+            logger.error(ex.getMessage());
+        }
+        String result;
+        result = switch (responseCode) {
+            case HttpStatus.SC_NOT_FOUND -> "RED";
+            case HttpStatus.SC_MOVED_TEMPORARILY -> "YELLOW";
+            case HttpStatus.SC_OK -> "GREEN";
+            default -> "BLACK";
+        };
+        appendToPane("status: " + result);
+    }//GEN-LAST:event_statusMenuItemActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu RidesMenu;
     private javax.swing.JMenuItem aboutMenuItem;
+    private javax.swing.JMenu accountJMenu;
     private javax.swing.JMenu advancedMenu;
     private javax.swing.JCheckBoxMenuItem anonymModeCheckBoxMenuItem;
     private javax.swing.JLabel averagePointsLabel;
@@ -800,12 +865,14 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JMenuItem showNOSDelayMenuItem;
     private javax.swing.JCheckBoxMenuItem silentModeCheckBoxMenuItem;
     private javax.swing.JButton startButton;
+    private javax.swing.JMenuItem statusMenuItem;
     private javax.swing.JCheckBoxMenuItem stayInTopCheckBoxMenuItem;
     private javax.swing.JMenu topListStrategyMenu;
     private javax.swing.JComboBox<String> topicComboBox;
     private javax.swing.JLabel totalGamesLabel;
     private javax.swing.JLabel totalGamesValueLabel;
     private javax.swing.JComboBox<String> userComboBox;
+    private javax.swing.JMenuItem uuidMenuItem;
     private javax.swing.JLabel winLabel;
     private javax.swing.JLabel winValueLabel;
     // End of variables declaration//GEN-END:variables
