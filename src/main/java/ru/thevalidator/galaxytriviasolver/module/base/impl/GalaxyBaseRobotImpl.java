@@ -5,12 +5,15 @@ package ru.thevalidator.galaxytriviasolver.module.base.impl;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.charset.Charset;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -19,6 +22,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -48,8 +52,8 @@ import ru.thevalidator.galaxytriviasolver.module.trivia.GameResult;
 import ru.thevalidator.galaxytriviasolver.module.trivia.State;
 import ru.thevalidator.galaxytriviasolver.module.trivia.Unlim;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.Solver;
-import ru.thevalidator.galaxytriviasolver.module.trivia.solver.entity.Answer;
-import ru.thevalidator.galaxytriviasolver.module.trivia.solver.entity.Question;
+import ru.thevalidator.galaxytriviasolver.module.trivia.solver.entity.trivia.Answer;
+import ru.thevalidator.galaxytriviasolver.module.trivia.solver.entity.trivia.Question;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.impl.SolverImpl;
 import ru.thevalidator.galaxytriviasolver.web.Locale;
 import static ru.thevalidator.galaxytriviasolver.web.Locator.*;
@@ -189,13 +193,22 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             logger.error(e.getMessage());
         }
     }
-
+    
     public void saveDataToFile(String pathname, Exception exception) {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        exception.printStackTrace(pw);
-        try ( FileOutputStream fos = new FileOutputStream(pathname);  DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos))) {
+        try (StringWriter sw = new StringWriter(); 
+                PrintWriter pw = new PrintWriter(sw); 
+                FileOutputStream fos = new FileOutputStream(pathname);  
+                DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos))) {
+            exception.printStackTrace(pw);
             outStream.writeUTF(sw.toString());
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+    
+    public void savePageSourceToFile(String pathname) {
+        try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(pathname + "_src", Charset.forName("UTF-8")))){
+            bufferedWriter.write(driver.getPageSource());
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
@@ -234,7 +247,8 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
 
     @Override
     public void login() throws LoginErrorException {
-        for (int i = 1; i < 6; i++) {
+        int maxAttempts = 15;
+        for (int i = 1; i <= maxAttempts; i++) {
             try {
                 openURL();
                 driver.findElement(By.xpath(getBaseHaveAccountBtn())).click();
@@ -248,13 +262,13 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             } catch (Exception e) {
                 String fileName = getFileNameTimeStamp() + "_login";
                 takeScreenshot(fileName + ".png");
-                saveDataToFile(fileName + ".log", e);
-                if (i == 5) {
-                    informObservers("LOGIN ERROR: couldn't log in 5 times in a row, task stopped");
+                saveDataToFile(fileName, e);
+                if (i == maxAttempts) {
+                    informObservers("LOGIN ERROR: couldn't log in " + maxAttempts + " times in a row, task stopped");
                     throw new LoginErrorException(e.getMessage());
                 } else {
-                    logger.error(e.getMessage());   //need to be deleted
-                    int timeToWait = (2 * i) + ((i - 1) * 5);
+                    logger.error(e.getMessage());   //need to be deleted?
+                    int timeToWait = (2 * i) + ((i - 1) * 10);
                     informObservers("LOGIN ERROR: try " + i + " was unsuccessfull, next try in " + timeToWait);
                     driver.quit();
                     try {
@@ -271,8 +285,13 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     public void openMail() {
         closePopup(2_500);
         wait(15_000).until(elementToBeClickable(By.xpath(getBaseMenuMailBtn(state.getLocale())))).click();
+        closePopup(2_500);
         wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
-        wait(15_000).until(visibilityOfElementLocated(By.xpath(getNotificationsBtn()))).click();
+        try {
+            wait(15_000).until(visibilityOfElementLocated(By.xpath(getNotificationsBtn()))).click();
+            TimeUnit.SECONDS.sleep(3);
+        } catch (Exception e) {
+        }
     }
 
     @Override
@@ -577,6 +596,11 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         if (driver != null) {
             driver.quit();
         }
+    }
+
+    @Override
+    public void refreshPage() {
+        driver.navigate().refresh();
     }
 
     @Override
