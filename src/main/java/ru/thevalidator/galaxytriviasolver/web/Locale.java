@@ -69,7 +69,7 @@ public enum Locale {
     }
 
     public static Locale getDefaultLocale() {
-        return EN;
+        return RU;
     }
 
     public static String getLocaleURL(Locale locale) {

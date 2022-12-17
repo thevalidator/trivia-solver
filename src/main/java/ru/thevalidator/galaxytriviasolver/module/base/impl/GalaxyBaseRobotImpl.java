@@ -54,7 +54,6 @@ import ru.thevalidator.galaxytriviasolver.module.trivia.Unlim;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.Solver;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.entity.trivia.Answer;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.entity.trivia.Question;
-import ru.thevalidator.galaxytriviasolver.module.trivia.solver.impl.SolverImpl;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.impl.SolverRestImpl;
 import ru.thevalidator.galaxytriviasolver.remote.Connector;
 import ru.thevalidator.galaxytriviasolver.web.Locale;

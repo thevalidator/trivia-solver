@@ -40,6 +40,7 @@
             <Menu class="javax.swing.JMenu" name="serverMenu">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Server"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <SubComponents>
                 <MenuItem class="javax.swing.JCheckBoxMenuItem" name="ruServerCheckBoxMenuItem">
@@ -121,14 +122,6 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="anonymModeCheckBoxMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="silentModeCheckBoxMenuItem">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Silent mode"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="silentModeCheckBoxMenuItemActionPerformed"/>
-              </Events>
-            </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="passiveModeCheckBoxMenuItem">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
@@ -150,44 +143,6 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="headlessModeCheckBoxMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
-            <Menu class="javax.swing.JMenu" name="advancedMenu">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Advanced"/>
-              </Properties>
-              <SubComponents>
-                <Menu class="javax.swing.JMenu" name="RidesMenu">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Rides"/>
-                  </Properties>
-                  <SubComponents>
-                    <MenuItem class="javax.swing.JCheckBoxMenuItem" name="playRidesCheckBoxMenuItem">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="PlayRides"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="playRidesCheckBoxMenuItemActionPerformed"/>
-                      </Events>
-                    </MenuItem>
-                    <MenuItem class="javax.swing.JMenuItem" name="setNOSDelayMenuItem">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Set NOS delay"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="setNOSDelayMenuItemActionPerformed"/>
-                      </Events>
-                    </MenuItem>
-                    <MenuItem class="javax.swing.JMenuItem" name="showNOSDelayMenuItem">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Show NOS delay"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="showNOSDelayMenuItemActionPerformed"/>
-                      </Events>
-                    </MenuItem>
-                  </SubComponents>
-                </Menu>
-              </SubComponents>
-            </Menu>
           </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="helpMenu">

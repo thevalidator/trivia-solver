@@ -124,14 +124,8 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         stayInTopCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         getOnTopCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         anonymModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        silentModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         passiveModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         headlessModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        advancedMenu = new javax.swing.JMenu();
-        RidesMenu = new javax.swing.JMenu();
-        playRidesCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        setNOSDelayMenuItem = new javax.swing.JMenuItem();
-        showNOSDelayMenuItem = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
 
@@ -458,6 +452,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         optionsMenu.setText("Options");
 
         serverMenu.setText("Server");
+        serverMenu.setEnabled(false);
 
         ruServerCheckBoxMenuItem.setText("RU");
         ruServerCheckBoxMenuItem.addActionListener(getserverActionListener());
@@ -511,14 +506,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         });
         optionsMenu.add(anonymModeCheckBoxMenuItem);
 
-        silentModeCheckBoxMenuItem.setText("Silent mode");
-        silentModeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                silentModeCheckBoxMenuItemActionPerformed(evt);
-            }
-        });
-        optionsMenu.add(silentModeCheckBoxMenuItem);
-
         passiveModeCheckBoxMenuItem.setSelected(true);
         passiveModeCheckBoxMenuItem.setText("Passive mode");
         state.setIsPassive(true);
@@ -538,38 +525,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
             }
         });
         optionsMenu.add(headlessModeCheckBoxMenuItem);
-
-        advancedMenu.setText("Advanced");
-
-        RidesMenu.setText("Rides");
-
-        playRidesCheckBoxMenuItem.setText("PlayRides");
-        playRidesCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                playRidesCheckBoxMenuItemActionPerformed(evt);
-            }
-        });
-        RidesMenu.add(playRidesCheckBoxMenuItem);
-
-        setNOSDelayMenuItem.setText("Set NOS delay");
-        setNOSDelayMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                setNOSDelayMenuItemActionPerformed(evt);
-            }
-        });
-        RidesMenu.add(setNOSDelayMenuItem);
-
-        showNOSDelayMenuItem.setText("Show NOS delay");
-        showNOSDelayMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                showNOSDelayMenuItemActionPerformed(evt);
-            }
-        });
-        RidesMenu.add(showNOSDelayMenuItem);
-
-        advancedMenu.add(RidesMenu);
-
-        optionsMenu.add(advancedMenu);
 
         jMenuBar1.add(optionsMenu);
 
@@ -735,35 +690,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         }
     }//GEN-LAST:event_stayInTopCheckBoxMenuItemActionPerformed
 
-    private void playRidesCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playRidesCheckBoxMenuItemActionPerformed
-        if (playRidesCheckBoxMenuItem.isSelected()) {
-            appendToPane("PLAY RIDES MODE ON");
-            state.setShouldPlayRides(true);
-        } else {
-            appendToPane("PLAY RIDES MODE OFF");
-            state.setShouldPlayRides(false);
-        }
-    }//GEN-LAST:event_playRidesCheckBoxMenuItemActionPerformed
-
-    private void setNOSDelayMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setNOSDelayMenuItemActionPerformed
-        String m = JOptionPane.showInputDialog("Type new NOS delay value (3100-7600)");
-        try {
-            int newNOSValue = Integer.parseInt(m);
-            if (newNOSValue > 3_100 && newNOSValue < 7_600) {
-                this.state.setNosDelayTime(newNOSValue);
-                this.appendToPane("New NOS delay: " + m + " ms");
-            } else {
-                throw new IllegalArgumentException();
-            }
-        } catch (Exception e) {
-            this.appendToPane("incorrect NOS delay value");
-        }        
-    }//GEN-LAST:event_setNOSDelayMenuItemActionPerformed
-
-    private void showNOSDelayMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showNOSDelayMenuItemActionPerformed
-        this.appendToPane("NOS delay: " + state.getNosDelayTime() + " ms");
-    }//GEN-LAST:event_showNOSDelayMenuItemActionPerformed
-
     private void passiveModeCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passiveModeCheckBoxMenuItemActionPerformed
         if (passiveModeCheckBoxMenuItem.isSelected()) {
             appendToPane("PASSIVE MODE ON");
@@ -784,11 +710,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
             appendToPane("STOPPED");
         }
     }//GEN-LAST:event_hardStopButtonActionPerformed
-
-    private void silentModeCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_silentModeCheckBoxMenuItemActionPerformed
-        // TODO add your handling code here:
-        throw new UnsupportedOperationException("silent mode is not implemented");
-    }//GEN-LAST:event_silentModeCheckBoxMenuItemActionPerformed
 
     private void uuidMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uuidMenuItemActionPerformed
         Component component = new JLabel();
@@ -826,10 +747,8 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     }//GEN-LAST:event_statusMenuItemActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenu RidesMenu;
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JMenu accountJMenu;
-    private javax.swing.JMenu advancedMenu;
     private javax.swing.JCheckBoxMenuItem anonymModeCheckBoxMenuItem;
     private javax.swing.JLabel averagePointsLabel;
     private javax.swing.JLabel averagePointsValueLabel;
@@ -856,14 +775,10 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JLabel lostValueLabel;
     private javax.swing.JMenu optionsMenu;
     private javax.swing.JCheckBoxMenuItem passiveModeCheckBoxMenuItem;
-    private javax.swing.JCheckBoxMenuItem playRidesCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem ptServerCheckBoxMenuItem;
     private javax.swing.JPanel rightUpperContainer;
     private javax.swing.JCheckBoxMenuItem ruServerCheckBoxMenuItem;
     private javax.swing.JMenu serverMenu;
-    private javax.swing.JMenuItem setNOSDelayMenuItem;
-    private javax.swing.JMenuItem showNOSDelayMenuItem;
-    private javax.swing.JCheckBoxMenuItem silentModeCheckBoxMenuItem;
     private javax.swing.JButton startButton;
     private javax.swing.JMenuItem statusMenuItem;
     private javax.swing.JCheckBoxMenuItem stayInTopCheckBoxMenuItem;
