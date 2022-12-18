@@ -83,3 +83,4 @@ gradle-app.setting
 *.exe
 SolverImpl.java
 tmp/
+nbproject/project.properties
