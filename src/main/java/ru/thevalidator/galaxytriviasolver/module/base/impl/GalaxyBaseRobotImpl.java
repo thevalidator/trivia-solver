@@ -281,7 +281,6 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                 }
             }
         }
-
     }
 
     @Override
@@ -445,9 +444,9 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                             : TriviaUserStatsData.START_TIME_IN_SECONDS - currentTimeInSeconds;
                     int hoursLeft = Math.round(timeLeftInSeconds / 3_600F);
 
-                    if (state.isPassive() && state.shouldGetOnTop() && pointsDiff < 8_000) {
+                    if (state.isPassive() && state.shouldGetOnTop() && hoursLeft > 10 && pointsDiff < 20_000) {
                         break;
-                    } else if (state.isPassive() && state.shouldStayInTop() && hoursLeft > 10 && pointsDiff < 45_000) {
+                    } else if (state.isPassive() && state.shouldStayInTop() && hoursLeft > 6 && pointsDiff < 40_000) {
                         break;
                     }
 
@@ -455,11 +454,12 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                     if (pointsDiff > 0) {
 
                         informObservers("Diff: " + pointsDiff + " hours left: " + hoursLeft + " coins: " + userStats.getUserCoins());
+                        Unlim unlimType = state.shouldStayInTop() ? (pointsDiff > 16_000 ? Unlim.MAX : Unlim.MID) : Unlim.MAX;
                         if (pointsDiff <= TriviaUserStatsData.AVERAGE_POINTS_PER_HOUR * hoursLeft
-                                && userStats.isUnlimAvailable(Unlim.MAX, (int) Math.ceil(hoursLeft / 4))) {
+                                && userStats.isUnlimAvailable(unlimType, (int) Math.ceil(hoursLeft / unlimType.getHours()))) {
 
                             informObservers("BUYING UNLIM TO REACH THE TARGET!");
-                            buyUnlimOption(state.shouldStayInTop() ? Unlim.MID : Unlim.MAX);
+                            buyUnlimOption(unlimType);
                             try {
                                 startTriviaGame();
                                 continue;
@@ -478,7 +478,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                         }
                     } else {
                         if (pointsDiff > -5_000) {
-                            buyUnlimOption(Unlim.MAX);
+                            buyUnlimOption(state.shouldGetOnTop() ? Unlim.MAX : Unlim.MID);
                             try {
                                 startTriviaGame();
                                 continue;
