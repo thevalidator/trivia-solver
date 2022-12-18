@@ -55,7 +55,7 @@ import ru.thevalidator.galaxytriviasolver.module.trivia.solver.Solver;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.entity.trivia.Answer;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.entity.trivia.Question;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.impl.SolverImpl;
-import ru.thevalidator.galaxytriviasolver.module.trivia.solver.impl.SolverRestImpl;
+//import ru.thevalidator.galaxytriviasolver.module.trivia.solver.impl.SolverRestImpl;
 import ru.thevalidator.galaxytriviasolver.remote.Connector;
 import ru.thevalidator.galaxytriviasolver.web.Locale;
 import static ru.thevalidator.galaxytriviasolver.web.Locator.*;
@@ -129,8 +129,8 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     public GalaxyBaseRobotImpl(State state) {
         this.state = state;
         this.userStats = new TriviaUserStatsData();
-        this.solver = new SolverRestImpl(new Connector(Identifier.generateKey()));
-        //this.solver = new SolverImpl();
+        //this.solver = new SolverRestImpl(new Connector(Identifier.generateKey()));
+        this.solver = new SolverImpl();
     }
 
 //    private WebDriver createWebDriver() {

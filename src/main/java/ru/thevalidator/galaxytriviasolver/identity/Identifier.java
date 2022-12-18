@@ -26,26 +26,31 @@ public class Identifier {
     public static String generateKey() {
         String uuid = null;
         Process proc;
-        try {
-            proc = Runtime.getRuntime().exec("wmic path win32_computersystemproduct get uuid");
-            try ( BufferedReader br = new BufferedReader(new InputStreamReader(proc.getInputStream()))) {
-                String line = null;
-                while ((line = br.readLine()) != null) {
-                    line = line.trim();
-                    if (line.matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")) {
-                        uuid = line;
+        if (System.getProperty("os.name").contains("Windows")) {
+            try {
+                proc = Runtime.getRuntime().exec("wmic path win32_computersystemproduct get uuid");
+                try ( BufferedReader br = new BufferedReader(new InputStreamReader(proc.getInputStream()))) {
+                    String line = null;
+                    while ((line = br.readLine()) != null) {
+                        line = line.trim();
+                        if (line.matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")) {
+                            uuid = line;
+                        }
                     }
                 }
+                proc.waitFor();
+                proc.destroy();
+            } catch (IOException | InterruptedException ex) {
             }
-            proc.waitFor();
-            proc.destroy();            
-        } catch (IOException | InterruptedException ex) {
-        }
-        if (uuid != null) {
-            return encrypt(uuid, "gloryhole");
+            if (uuid != null) {
+                return encrypt(uuid, "gloryhole");
+            } else {
+                throw new UnsupportedOperationException("uuid is null");
+            }
         } else {
-            throw new UnsupportedOperationException("uuid is null");
+            return "test=tablet";
         }
+
     }
 
     private static void prepareSecreteKey(String myKey) {
