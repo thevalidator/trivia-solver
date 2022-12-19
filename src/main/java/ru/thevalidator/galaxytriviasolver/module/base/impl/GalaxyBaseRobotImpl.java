@@ -46,7 +46,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.thevalidator.galaxytriviasolver.notification.Informer;
 import ru.thevalidator.galaxytriviasolver.exception.CanNotPlayException;
 import ru.thevalidator.galaxytriviasolver.exception.LoginErrorException;
-import ru.thevalidator.galaxytriviasolver.identity.Identifier;
 import ru.thevalidator.galaxytriviasolver.module.base.GalaxyBaseRobot;
 import ru.thevalidator.galaxytriviasolver.module.trivia.GameResult;
 import ru.thevalidator.galaxytriviasolver.module.trivia.State;
@@ -55,8 +54,6 @@ import ru.thevalidator.galaxytriviasolver.module.trivia.solver.Solver;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.entity.trivia.Answer;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.entity.trivia.Question;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.impl.SolverImpl;
-//import ru.thevalidator.galaxytriviasolver.module.trivia.solver.impl.SolverRestImpl;
-import ru.thevalidator.galaxytriviasolver.remote.Connector;
 import ru.thevalidator.galaxytriviasolver.web.Locale;
 import static ru.thevalidator.galaxytriviasolver.web.Locator.*;
 

@@ -34,25 +34,26 @@ public class Task implements Runnable {
     public boolean isActive() {
         return isActive;
     }
-
-    public void setIsActive(boolean isActive) {
-        this.isActive = isActive;
+    
+    public void stop() {
+        isActive = false;
     }
 
-    public void stop() {
+    public void hardStop() {
+        isActive = false;
         robot.terminate();
         ((GalaxyBaseRobotImpl) robot).unregisterObserver(window);
-        window.setStartButtonStatus(-1);
-        window.appendToPane("STOPPED");
+        window.setComponentsStatus(-1);
     }
 
     @Override
     public void run() {
-        window.setStartButtonStatus(1);
-        window.appendToPane("STARTED");
-        //GalaxyBaseRobot robot = new GalaxyBaseRobotImpl(state);
-        ((GalaxyBaseRobotImpl) robot).registerObserver(window);
+        isActive = true;
         int sleepTimeInSeconds = TIME_TO_SLEEP_IN_SECONDS;
+        ((GalaxyBaseRobotImpl) robot).registerObserver(window);
+        window.setComponentsStatus(1);
+        window.appendToPane("STARTED");
+        
         while (isActive) {
             try {
 
@@ -103,8 +104,7 @@ public class Task implements Runnable {
                     }
                 } else {
                     ((GalaxyBaseRobotImpl) robot).unregisterObserver(window);
-                    window.setStartButtonStatus(-1);
-                    window.appendToPane("STOPPED");
+                    window.setComponentsStatus(-1);
                 }
             }
         }

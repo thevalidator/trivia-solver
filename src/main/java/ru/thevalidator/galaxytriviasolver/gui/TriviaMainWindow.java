@@ -53,7 +53,7 @@ import ru.thevalidator.galaxytriviasolver.web.Locale;
  */
 public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
-    private static int MAX_LINES = 300;
+    private static int MAX_LINES = 600;
     private static final Logger logger = LogManager.getLogger(TriviaMainWindow.class);
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm.ss");
     private UserStorage userStorage;
@@ -663,17 +663,26 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         }
     }//GEN-LAST:event_startButtonActionPerformed
 
-    public void setStartButtonStatus(int status) {
+    public void setComponentsStatus(int status) {
         switch (status) {
             case 1:
+                userComboBox.setEnabled(false);
+                topicComboBox.setEnabled(false);
                 startButton.setEnabled(true);
                 startButton.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Yellow"));
                 startButton.setText("STOP");
+                
+                hardStopButton.setEnabled(true);
                 break;
             case -1:
+                hardStopButton.setEnabled(false);
+                
+                userComboBox.setEnabled(true);
+                topicComboBox.setEnabled(true);
                 startButton.setEnabled(true);
                 startButton.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
                 startButton.setText("START");
+                appendToPane("STOPPED");
                 break;
             default:
                 startButton.setEnabled(false);
@@ -684,7 +693,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         if (worker != null && !worker.isCancelled()) {
-            task.stop();
+            task.hardStop();
             worker.cancel(true);
         }
     }//GEN-LAST:event_formWindowClosing
@@ -774,14 +783,8 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
     private void hardStopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hardStopButtonActionPerformed
         if (worker != null & !worker.isCancelled()) {
-            task.setIsActive(false);
-            task.stop();
+            task.hardStop();
             worker.cancel(true);
-            hardStopButton.setEnabled(false);
-            userComboBox.setEnabled(true);
-            topicComboBox.setEnabled(true);
-            setStartButtonStatus(-1);
-            appendToPane("STOPPED");
         }
     }//GEN-LAST:event_hardStopButtonActionPerformed
 
@@ -806,7 +809,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     }//GEN-LAST:event_uuidMenuItemActionPerformed
 
     private void statusMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_statusMenuItemActionPerformed
-        
         int responseCode = 0;
         try {
             responseCode = Connector.getResponseCode(pesonalCode);
@@ -944,8 +946,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         List<User> users = null;
         try {
             ObjectMapper mapper = new ObjectMapper();
-            users
-                    = Arrays.asList(mapper.readValue(Paths.get(UserStorage.STORAGE_DATE_FILE_NAME).toFile(), User[].class
+            users = Arrays.asList(mapper.readValue(Paths.get(UserStorage.STORAGE_DATE_FILE_NAME).toFile(), User[].class
                     ));
         } catch (IOException e) {
             appendToPane("can't read user's data");
@@ -965,9 +966,8 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     }
 
     private void startTask() {
-        userComboBox.setEnabled(false);
-        topicComboBox.setEnabled(false);
-        setStartButtonStatus(0);
+        
+        setComponentsStatus(0);
         
         User user = userStorage.getUser(userComboBox.getSelectedIndex());
         int topicIndex = topicComboBox.getSelectedIndex();
@@ -977,7 +977,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         if (task == null) {
             task = new Task(state, this);
         }
-        task.setIsActive(true);
 
         worker = new SwingWorker<Void, Void>() {
             @Override
@@ -988,12 +987,12 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
             }
         };
         worker.execute();
-        hardStopButton.setEnabled(true);
+        
     }
 
     private void stopTask() {
-        setStartButtonStatus(0);
-        task.setIsActive(false);
+        setComponentsStatus(0);
+        task.stop();
     }
 
     //  LOG CONSOLE //
