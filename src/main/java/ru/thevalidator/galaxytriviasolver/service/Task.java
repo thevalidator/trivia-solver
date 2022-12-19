@@ -22,11 +22,13 @@ public class Task implements Runnable {
     private boolean isActive;
     private final State state;
     private final TriviaMainWindow window;
+    private final GalaxyBaseRobot robot;
 
     public Task(State state, TriviaMainWindow window) {
         this.state = state;
         this.window = window;
         this.isActive = false;
+        this.robot = new GalaxyBaseRobotImpl(state);
     }
 
     public boolean isActive() {
@@ -37,11 +39,18 @@ public class Task implements Runnable {
         this.isActive = isActive;
     }
 
+    public void stop() {
+        robot.terminate();
+        ((GalaxyBaseRobotImpl) robot).unregisterObserver(window);
+        window.setStartButtonStatus(-1);
+        window.appendToPane("STOPPED");
+    }
+
     @Override
     public void run() {
         window.setStartButtonStatus(1);
         window.appendToPane("STARTED");
-        GalaxyBaseRobot robot = new GalaxyBaseRobotImpl(state);
+        //GalaxyBaseRobot robot = new GalaxyBaseRobotImpl(state);
         ((GalaxyBaseRobotImpl) robot).registerObserver(window);
         int sleepTimeInSeconds = TIME_TO_SLEEP_IN_SECONDS;
         while (isActive) {
@@ -50,15 +59,15 @@ public class Task implements Runnable {
                 robot.login();
 
                 robot.openMail();
-                
+
                 robot.openGames();
                 robot.selectTriviaGame();
                 if (robot.startTriviaGame()) {
                     robot.playTriviaGame();
                 }
-                
+
                 sleepTimeInSeconds = robot.getSleepTime();
-                
+
                 if (state.shouldPlayRides()) {
                     robot.switchToDefaultContent();
                     robot.openGames();
