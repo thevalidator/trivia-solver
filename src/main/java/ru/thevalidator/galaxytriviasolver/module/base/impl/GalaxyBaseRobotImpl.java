@@ -167,8 +167,8 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         //
         //options.setExperimentalOption("mobileEmulation", Map.of("deviceName", "Nexus 5"));
         //Mozilla/5.0 (Linux; Android 12; sdk_gphone64_x86_64 Build/SE1A.211012.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/91.0.4472.114 Mobile Safari/537.36
-        //String userAgent = "user-agent=Mozilla/5.0 (Linux; Android 12; sdk_gphone64_x86_64 Build/SE1A.211012.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/91.0.4472.114 Mobile Safari/537.36";
-        //options.addArguments(userAgent);
+//        String userAgent = "user-agent=Mozilla/5.0 (Linux; Android 12; sdk_gphone64_x86_64 Build/SE1A.211012.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/91.0.4472.114 Mobile Safari/537.36";
+//        options.addArguments(userAgent);
         //options.setUseRunningAndroidApp(true);
         if (state.isHeadless()) {
             options.setHeadless(true);
@@ -176,7 +176,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         WebDriver webDriver = new ChromeDriver(options);
         webDriver.manage().window().setSize(new Dimension(1600, 845));
         webDriver.manage().window().setPosition((new Point(-5, 0)));
-        webDriver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
+        webDriver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(40));
 
         return webDriver;
     }
@@ -281,6 +281,20 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     }
 
     @Override
+    public void logoff() {
+        //try {
+            driver.switchTo().defaultContent();
+            closePopup(2_500);
+            wait(15_000).until(elementToBeClickable(By.xpath(getBaseMenuExitBtn(state.getLocale())))).click();
+//        } catch (Exception e) {
+//            String filename = "exit";
+//            takeScreenshot(filename + ".png");
+//            saveDataToFile(filename, e);
+//            savePageSourceToFile(filename);
+//        }
+    }
+
+    @Override
     public void openMail() {
         closePopup(2_500);
         wait(15_000).until(elementToBeClickable(By.xpath(getBaseMenuMailBtn(state.getLocale())))).click();
@@ -307,6 +321,8 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         wait(15_000).until(visibilityOfElementLocated(By.xpath(getGamesTriviaBtn(state.getLocale())))).click();
         informObservers("opening Trivia");
         updateTriviaUsersData();
+        informObservers("TOPLIST: 1st: " + userStats.getFirstPlacePoints() + " 10th: " + userStats.tenthPlacePoints);
+        informObservers("balance: " + userStats.userCoins + " daily points: " + userStats.userDailyPoints);
     }
 
     @Override
@@ -337,16 +353,14 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         } catch (Exception e) {
         }
 
-        driver.switchTo().defaultContent();
-        driver.findElement(By.xpath(getBaseBackBtn())).click();
-
         userStats.setFirstPlacePoints(Integer.parseInt(first));
         userStats.setTenthPlacePoints(Integer.parseInt(tenth));
         userStats.setUserCoins(Double.parseDouble(userBalance));
         userStats.setUserDailyPoints(Integer.parseInt(dailyPoints));
+        
+        driver.switchTo().defaultContent();
+        driver.findElement(By.xpath(getBaseBackBtn())).click();
 
-        informObservers("TOPLIST: 1st: " + first + " 10th: " + tenth);
-        informObservers("balance: " + userBalance + " daily points: " + dailyPoints);
     }
 
     @Override
@@ -427,10 +441,6 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                     //check if on default frame
                     updateTriviaUsersData();
 
-                    informObservers("1st: " + userStats.getFirstPlacePoints()
-                            + " 10th: " + userStats.getTenthPlacePoints()
-                            + " YOU: " + userStats.getUserDailyPoints());
-
                     int pointsDiff = state.shouldGetOnTop()
                             ? userStats.getFirstPlacePoints() - userStats.getUserDailyPoints()
                             : userStats.getTenthPlacePoints() - userStats.getUserDailyPoints();
@@ -440,7 +450,16 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                             ? TriviaUserStatsData.ONE_DAY_TIME_IN_SECONDS - currentTimeInSeconds + TriviaUserStatsData.START_TIME_IN_SECONDS
                             : TriviaUserStatsData.START_TIME_IN_SECONDS - currentTimeInSeconds;
                     int hoursLeft = Math.round(timeLeftInSeconds / 3_600F);
+                    
+                    informObservers("1st: " + userStats.getFirstPlacePoints()
+                            + " 10th: " + userStats.getTenthPlacePoints()
+                            + " YOU: " + userStats.getUserDailyPoints());
+                    
+                    informObservers("Diff: " + pointsDiff 
+                            + " hours left: " + hoursLeft 
+                            + " coins: " + userStats.getUserCoins());
 
+                    driver.switchTo().frame(driver.findElement(By.xpath(getTriviaGameMainFrame())));
                     if (state.isPassive() && state.shouldGetOnTop() && hoursLeft > 10 && pointsDiff < 20_000) {
                         break;
                     } else if (state.isPassive() && state.shouldStayInTop() && hoursLeft > 6 && pointsDiff < 40_000) {
@@ -448,9 +467,8 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                     }
 
                     driver.switchTo().defaultContent();
-                    if (pointsDiff > 0) {
-
-                        informObservers("Diff: " + pointsDiff + " hours left: " + hoursLeft + " coins: " + userStats.getUserCoins());
+                    if (pointsDiff > -5_000) {
+                        
                         Unlim unlimType = state.shouldStayInTop() ? (pointsDiff > 16_000 ? Unlim.MAX : Unlim.MID) : Unlim.MAX;
                         if (pointsDiff <= TriviaUserStatsData.AVERAGE_POINTS_PER_HOUR * hoursLeft
                                 && userStats.isUnlimAvailable(unlimType, (int) Math.ceil(hoursLeft / unlimType.getHours()))) {
@@ -474,20 +492,25 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                             break;
                         }
                     } else {
-                        if (pointsDiff > -5_000) {
-                            buyUnlimOption(state.shouldGetOnTop() ? Unlim.MAX : Unlim.MID);
-                            try {
-                                startTriviaGame();
-                                continue;
-                            } catch (CanNotPlayException ex) {
-                                takeScreenshot(getFileNameTimeStamp() + "_continueAfterUnlim2.png");
-                                logger.error(ex.getMessage());
-                            }
-                        }
                         informObservers("Top list target is OK!");
                         wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
                         break;
                     }
+//                    else {
+//                        if (pointsDiff > -5_000) {
+//                            buyUnlimOption(state.shouldGetOnTop() ? Unlim.MAX : Unlim.MID);
+//                            try {
+//                                startTriviaGame();
+//                                continue;
+//                            } catch (CanNotPlayException ex) {
+//                                takeScreenshot(getFileNameTimeStamp() + "_continueAfterUnlim2.png");
+//                                logger.error(ex.getMessage());
+//                            }
+//                        }
+//                        informObservers("Top list target is OK!");
+//                        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
+//                        break;
+//                    }
                 } else {
                     informObservers("not enough energy");
                     break;
