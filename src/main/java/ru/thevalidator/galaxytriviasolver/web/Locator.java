@@ -46,6 +46,7 @@ public final class Locator {
     
     public static final String getTriviaGameProcessFrame() {return "//div[@class='auth-user']//iframe[contains(@src, 'quiz_current_game')]";}
     public static final String getTriviaGameResultsFrame() {return "//div[@class='auth-user']//iframe[contains(@src, 'quiz_results')]";}
+    public static final String getTriviaGameMainFrame() {return "//div[@class='auth-user']//iframe[contains(@src, 'quiz_index')]";}
     
     public static final String getRidesGameAttemptsCounter() {return "//div[@id='js-race-attempts-count']";}
     public static final String getRidesStartRaceBtn() {return "//a[@id='js-button-start-race']";}
@@ -133,6 +134,17 @@ public final class Locator {
             case EN -> "Mail";
             case ES -> " Correo";
             default -> "Correio";
+        };
+        return "//nav//span[text()='" + text + "']/..";
+    }
+    
+    public static final String getBaseMenuExitBtn(Locale locale) {
+        String text;
+        text = switch (locale) {
+            case RU -> "Выход";
+            case EN -> "Exit";
+            case ES -> "Salida";
+            default -> "Sair";
         };
         return "//nav//span[text()='" + text + "']/..";
     }
