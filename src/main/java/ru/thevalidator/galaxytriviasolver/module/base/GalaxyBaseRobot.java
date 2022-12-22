@@ -16,6 +16,7 @@ public interface GalaxyBaseRobot extends TriviaRobot, RidesRobot {
     void login() throws LoginErrorException;
     void openMail();
     void openGames();
+    void logoff();
     void terminate();
     void refreshPage();
     void switchToDefaultContent();
