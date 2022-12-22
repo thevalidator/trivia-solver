@@ -77,6 +77,8 @@ public class Task implements Runnable {
                         robot.playRidesGame();
                     }
                 }
+                
+                robot.logoff();
 
 //                while (isActive) {
 //                    TimeUnit.SECONDS.sleep(10);
