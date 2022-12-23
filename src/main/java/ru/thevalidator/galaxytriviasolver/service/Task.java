@@ -58,15 +58,6 @@ public class Task implements Runnable {
                 }
                 
                 sleepTimeInSeconds = robot.getSleepTime();
-                
-                if (state.shouldPlayRides()) {
-                    robot.switchToDefaultContent();
-                    robot.openGames();
-                    robot.selectRidesGame();
-                    if (robot.startRidesGame()) {
-                        robot.playRidesGame();
-                    }
-                }
 
 //                while (isActive) {
 //                    TimeUnit.SECONDS.sleep(10);

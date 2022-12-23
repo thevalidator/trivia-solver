@@ -584,7 +584,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 + "then start the app, choose account with\n"
                 + "topic and click start button.\n"
                 + "\n\n"
-                + "v1.0.0.0-c004 (pre-release)\n"
+                + "v1.0.0.0-c005pub (pre-release)\n"
                 + "[thevalidator]\n"
                 + "2022, November");
         jTextArea.setColumns(20);

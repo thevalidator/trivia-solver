@@ -46,14 +46,8 @@ public final class Locator {
     
     public static final String getTriviaGameProcessFrame() {return "//div[@class='auth-user']//iframe[contains(@src, 'quiz_current_game')]";}
     public static final String getTriviaGameResultsFrame() {return "//div[@class='auth-user']//iframe[contains(@src, 'quiz_results')]";}
+    public static final String getTriviaGameMainFrame() {return "//div[@class='auth-user']//iframe[contains(@src, 'quiz_index')]";}
     
-    public static final String getRidesGameAttemptsCounter() {return "//div[@id='js-race-attempts-count']";}
-    public static final String getRidesStartRaceBtn() {return "//a[@id='js-button-start-race']";}
-    public static final String getRidesWaitOverlay() {return "//div[@id='waitOverlay']";}
-    public static final String getRidesNitroBtn() {return "//div[@id='nitroButton']";}
-    public static final String getRidesPopupCloseBtn() {return "//div[@id='js-msg-box-query']//button[contains(@class, 'overlay-close-button')]";}
-    public static final String getRidesResultsDiv() {return "//div[@style='display: block;' and contains(@class, 'overlay_cars_race')]";}
-    public static final String getRidesRaceAgainBtn() {return "//div[@style='display: block;']/span/div/div/a[1]";}
     
     public static final String getTriviaBuyUnlimBtn(Unlim option) {
         if (option.getId() < 0 || option.getId() > 3) {
@@ -114,17 +108,6 @@ public final class Locator {
         };
         return "//div[@class='s__card__title']//div[text()='" + text + "']/../../../..";
     }
-
-    public static final String getGamesRidesBtn(Locale locale) {
-        String text;
-        text = switch (locale) {
-            case RU -> "Тачки";
-            case EN -> "Rides";
-            case ES -> "Carros";
-            default -> "Carros";
-        };
-        return "//div[@class='s__card__title']//div[text()='" + text + "']/../../../..";
-    }
     
     public static final String getBaseMenuMailBtn(Locale locale) {
         String text;
@@ -138,21 +121,3 @@ public final class Locator {
     }
 
 }
-
-/*
-    public final String getFooterAcceptButton() {return "//button[@data-mdc-dialog-action='accept']";}
-    public final String getFooterCancelButton() {return "//div[@role='alertdialog']//button[@data-mdc-dialog-action='cancel']";};
-*/
-
-/*
-//dialog part
-<div class="dialog mdc-dialog mdc-dialog--open" data-component-name="dialog" data-component-id="1669672095153" role="alertdialog">
-//close btn
-<button type="button" class="mdc-icon-button dialog__close-button" data-events="1">
-*/
-
-/*
-//auth user
-<div class="auth-user" style="">
-<div class="app-content mdc-drawer-app-content">
-*/

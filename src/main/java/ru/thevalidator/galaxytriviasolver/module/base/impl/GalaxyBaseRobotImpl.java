@@ -129,49 +129,11 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         this.state = state;
         this.userStats = new TriviaUserStatsData();
         this.solver = new SolverRestImpl(new Connector(Identifier.generateKey()));
-        //this.solver = new SolverImpl();
     }
-
-//    private WebDriver createWebDriver() {
-//        WebDriver driver = new FirefoxDriver();
-//        driver.manage().window().setSize(new Dimension(1600, 845));
-//        driver.manage().window().setPosition((new Point(-5, 0)));
-//        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
-//        
-//        return driver;
-//    }
 
     private WebDriver createWebDriver() {
         WebDriverManager.chromedriver().setup();
-
-        //System.setProperty("webdriver.chrome.driver","C://softwares//drivers//chromedriver.exe");
-        //ChromeOptions options = new ChromeOptions();
-        //options.setBinary("/path/to/other/chrome/binary");
-        //mobile emulation 1
-//        Map<String, String> mobileEmulation = new HashMap<>();
-//        mobileEmulation.put("deviceName", "Nexus 5");
-//        ChromeOptions options = new ChromeOptions();
-//        options.setExperimentalOption("mobileEmulation", mobileEmulation);
-        //mobile emulation 2
-//        Map<String, Object> deviceMetrics = new HashMap<>();
-//        deviceMetrics.put("width", 360);
-//        deviceMetrics.put("height", 640);
-//        deviceMetrics.put("pixelRatio", 3.0);
-//        Map<String, Object> mobileEmulation = new HashMap<>();
-//        mobileEmulation.put("deviceMetrics", deviceMetrics);
-//        mobileEmulation.put("userAgent", "Mozilla/5.0 (Linux; Android 4.2.1; en-us; Nexus 5 Build/JOP40D) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19");
-//        ChromeOptions chromeOptions = new ChromeOptions();
-//        chromeOptions.setExperimentalOption("mobileEmulation", mobileEmulation);
-//        WebDriver driver = new ChromeDriver(chromeOptions);
         ChromeOptions options = new ChromeOptions();
-
-        //BrowserMobProxy proxy;
-        //
-        //options.setExperimentalOption("mobileEmulation", Map.of("deviceName", "Nexus 5"));
-        //Mozilla/5.0 (Linux; Android 12; sdk_gphone64_x86_64 Build/SE1A.211012.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/91.0.4472.114 Mobile Safari/537.36
-        //String userAgent = "user-agent=Mozilla/5.0 (Linux; Android 12; sdk_gphone64_x86_64 Build/SE1A.211012.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/91.0.4472.114 Mobile Safari/537.36";
-        //options.addArguments(userAgent);
-        //options.setUseRunningAndroidApp(true);
         if (state.isHeadless()) {
             options.setHeadless(true);
         }
@@ -312,14 +274,6 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         updateTriviaUsersData();
     }
 
-    @Override
-    public void selectRidesGame() {
-        closePopup(2_500);
-        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
-        wait(15_000).until(visibilityOfElementLocated(By.xpath(getGamesRidesBtn(state.getLocale())))).click();
-        informObservers("opening Rides");
-    }
-
     private void updateTriviaUsersData() {
         closePopup(2_500);
         String userBalance = wait(10_000).until(visibilityOfElementLocated(By.xpath(getBaseUserBalance()))).getText();
@@ -354,9 +308,6 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
 
     @Override
     public boolean startTriviaGame() throws CanNotPlayException {
-//        if () {
-//            for soft stop
-//        }
         closePopup(1_500);
         wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
         String attempts = wait(10_000).until(visibilityOfElementLocated(By.xpath(getTriviaEnergyCount()))).getText();
@@ -405,11 +356,9 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     @Override
     public void playTriviaGame() {
         while (true) {
-            /*boolean isStarted = */
             wait(70_000).until(visibilityOfElementLocated(By.xpath(getTriviaGameProcessFrame()))).isDisplayed();
             informObservers("game started");
             answerQuestions();
-            /*boolean isFinished = */
             wait(30_000).until(visibilityOfElementLocated(By.xpath(getTriviaGameResultsFrame()))).isDisplayed();
             informObservers("game finished");
 
@@ -427,12 +376,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                     closePopup(1_500);
                     driver.switchTo().frame(driver.findElement(By.xpath(getTriviaGameResultsFrame())));
                     driver.findElement(By.xpath(getTriviaReturnToMainPageBtn())).click();
-                    //check if on default frame
                     updateTriviaUsersData();
-
-                    informObservers("1st: " + userStats.getFirstPlacePoints()
-                            + " 10th: " + userStats.getTenthPlacePoints()
-                            + " YOU: " + userStats.getUserDailyPoints());
 
                     int pointsDiff = state.shouldGetOnTop()
                             ? userStats.getFirstPlacePoints() - userStats.getUserDailyPoints()
@@ -443,22 +387,31 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                             ? TriviaUserStatsData.ONE_DAY_TIME_IN_SECONDS - currentTimeInSeconds + TriviaUserStatsData.START_TIME_IN_SECONDS
                             : TriviaUserStatsData.START_TIME_IN_SECONDS - currentTimeInSeconds;
                     int hoursLeft = Math.round(timeLeftInSeconds / 3_600F);
+                    
+                    informObservers("1st: " + userStats.getFirstPlacePoints()
+                            + " 10th: " + userStats.getTenthPlacePoints()
+                            + " YOU: " + userStats.getUserDailyPoints());
+                    
+                    informObservers("Diff: " + pointsDiff 
+                            + " hours left: " + hoursLeft 
+                            + " coins: " + userStats.getUserCoins());
 
-                    if (state.isPassive() && state.shouldGetOnTop() && pointsDiff < 8_000) {
+                    driver.switchTo().frame(driver.findElement(By.xpath(getTriviaGameMainFrame())));
+                    if (state.isPassive() && state.shouldGetOnTop() && hoursLeft > 10 && pointsDiff < 20_000) {
                         break;
-                    } else if (state.isPassive() && state.shouldStayInTop() && hoursLeft > 10 && pointsDiff < 45_000) {
+                    } else if (state.isPassive() && state.shouldStayInTop() && hoursLeft > 6 && pointsDiff < 40_000) {
                         break;
                     }
 
                     driver.switchTo().defaultContent();
-                    if (pointsDiff > 0) {
-
-                        informObservers("Diff: " + pointsDiff + " hours left: " + hoursLeft + " coins: " + userStats.getUserCoins());
+                    if (pointsDiff > -5_000) {
+                        
+                        Unlim unlimType = state.shouldStayInTop() ? (pointsDiff > 16_000 ? Unlim.MAX : Unlim.MID) : Unlim.MAX;
                         if (pointsDiff <= TriviaUserStatsData.AVERAGE_POINTS_PER_HOUR * hoursLeft
-                                && userStats.isUnlimAvailable(Unlim.MAX, (int) Math.ceil(hoursLeft / 4))) {
+                                && userStats.isUnlimAvailable(unlimType, (int) Math.ceil(hoursLeft / unlimType.getHours()))) {
 
                             informObservers("BUYING UNLIM TO REACH THE TARGET!");
-                            buyUnlimOption(state.shouldStayInTop() ? Unlim.MID : Unlim.MAX);
+                            buyUnlimOption(unlimType);
                             try {
                                 startTriviaGame();
                                 continue;
@@ -476,20 +429,11 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                             break;
                         }
                     } else {
-                        if (pointsDiff > -5_000) {
-                            buyUnlimOption(Unlim.MAX);
-                            try {
-                                startTriviaGame();
-                                continue;
-                            } catch (CanNotPlayException ex) {
-                                takeScreenshot(getFileNameTimeStamp() + "_continueAfterUnlim2.png");
-                                logger.error(ex.getMessage());
-                            }
-                        }
                         informObservers("Top list target is OK!");
                         wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
                         break;
                     }
+                    
                 } else {
                     informObservers("not enough energy");
                     break;
@@ -501,9 +445,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             } else {
                 informObservers("games left: " + attempts);
             }
-//            if () {
-//                stop(); for soft stop
-//            }
+            
             startAgainTriviaGame();
         }
 
@@ -539,13 +481,13 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             Answer answer = new Answer(text, rel, index);
             answers[index++] = answer;
         }
-        Question question = new Question("q", answers);
+        String text = "";
+        Question question = new Question(text, answers);
         Answer correctAnswer = solver.getCorrectAnswer(question);
         elements.get(correctAnswer.getIndex()).click();
     }
 
     private GameResult getTriviaRoundResult() {
-        //closePopup(2_000);
         String result = driver.findElement(By.xpath(getTriviaResultHeader())).getText().trim();
         if (result.contains(Locale.getWinText(state.getLocale()))) {
             return GameResult.WIN;
@@ -605,79 +547,5 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     public void refreshPage() {
         driver.navigate().refresh();
     }
-
-    @Override
-    public boolean startRidesGame() {
-        closePopup(1_500);
-        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
-        String attempts = wait(10_000).until(visibilityOfElementLocated(By.xpath(getRidesGameAttemptsCounter()))).getText().trim();
-        informObservers("Race attempts: " + attempts);
-        if (attempts.equals("0")) {
-            return false;
-        }
-        driver.findElement(By.xpath(getRidesStartRaceBtn())).click();
-
-        return true;
-    }
-
-    @Override
-    public void playRidesGame() {
-        int wins = 0;
-        while (true) {
-            wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
-            informObservers("Race: searching for the opponent");
-            wait(25_000).until(visibilityOfElementLocated(By.xpath(getRidesWaitOverlay())));
-            wait(25_000).until(invisibilityOfElementLocated(By.xpath(getRidesWaitOverlay())));
-            informObservers("Race started");
-            try {
-                long start = System.currentTimeMillis();
-
-                while ((System.currentTimeMillis() - start) < state.getNosDelayTime()) {
-                    java.lang.Thread.onSpinWait();
-                }
-                try {
-                    wait(500).until(elementToBeClickable(By.xpath(getRidesNitroBtn()))).click();
-                } catch (Exception e) {
-
-                }
-                wait(15_000).until(
-                        visibilityOfElementLocated(
-                                By.xpath(getRidesPopupCloseBtn())
-                        )
-                ).click();
-                while (true) {
-                    wait(3_000).until(
-                            visibilityOfElementLocated(
-                                    By.xpath(getRidesPopupCloseBtn())
-                            )
-                    ).click();
-                }
-            } catch (Exception e) {
-            }
-
-            WebElement resultDiv = wait(3_000).until(visibilityOfElementLocated(By.xpath(getRidesResultsDiv())));
-            if (resultDiv.getAttribute("id").contains("lose")) {
-                informObservers("Race finished - LOST");
-            } else {
-                informObservers("Race finished - WIN");
-                wins++;
-            }
-
-            driver.switchTo().defaultContent();
-            closePopup(1_500);
-            wait(5_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
-
-            //race again button
-            WebElement raceAgainBtn = driver.findElement(By.xpath(getRidesRaceAgainBtn()));
-
-            if (raceAgainBtn.getAttribute("action") != null) {
-                raceAgainBtn.click();
-            } else {
-                informObservers("Race: no attempts left, won " + wins + " races.");
-                break;
-            }
-        }
-
-    }
-
+    
 }

@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.thevalidator</groupId>
     <artifactId>galaxy-trivia-solver</artifactId>
-    <version>1.0.0.0-c004</version>
+    <version>1.0.0.0-c005pub</version>
     <packaging>jar</packaging>
     <url>https://github.com/thevalidator/trivia-solver</url>
     
