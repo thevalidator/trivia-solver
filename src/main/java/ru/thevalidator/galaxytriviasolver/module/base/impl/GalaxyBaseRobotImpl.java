@@ -282,16 +282,9 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
 
     @Override
     public void logoff() {
-        //try {
-            driver.switchTo().defaultContent();
-            closePopup(2_500);
-            wait(15_000).until(elementToBeClickable(By.xpath(getBaseMenuExitBtn(state.getLocale())))).click();
-//        } catch (Exception e) {
-//            String filename = "exit";
-//            takeScreenshot(filename + ".png");
-//            saveDataToFile(filename, e);
-//            savePageSourceToFile(filename);
-//        }
+        driver.switchTo().defaultContent();
+        closePopup(2_500);
+        wait(15_000).until(elementToBeClickable(By.xpath(getBaseMenuExitBtn(state.getLocale())))).click();
     }
 
     @Override
@@ -305,6 +298,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             TimeUnit.SECONDS.sleep(3);
         } catch (Exception e) {
             driver.switchTo().defaultContent();
+            //TODO: check if no notifiaction folder works without errors
         }
     }
 
