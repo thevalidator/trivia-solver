@@ -496,21 +496,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                         wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
                         break;
                     }
-//                    else {
-//                        if (pointsDiff > -5_000) {
-//                            buyUnlimOption(state.shouldGetOnTop() ? Unlim.MAX : Unlim.MID);
-//                            try {
-//                                startTriviaGame();
-//                                continue;
-//                            } catch (CanNotPlayException ex) {
-//                                takeScreenshot(getFileNameTimeStamp() + "_continueAfterUnlim2.png");
-//                                logger.error(ex.getMessage());
-//                            }
-//                        }
-//                        informObservers("Top list target is OK!");
-//                        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
-//                        break;
-//                    }
+                    
                 } else {
                     informObservers("not enough energy");
                     break;

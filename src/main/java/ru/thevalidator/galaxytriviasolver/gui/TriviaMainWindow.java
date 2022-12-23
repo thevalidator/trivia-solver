@@ -629,7 +629,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 + "then start the app, choose account with\n"
                 + "topic and click start button.\n"
                 + "\n\n"
-                + "v1.0.0.0-c005 (pre-release)\n"
+                + "v1.0.0.0-c006 (pre-release)\n"
                 + "[thevalidator]\n"
                 + "2022, November");
         jTextArea.setColumns(20);
@@ -1054,7 +1054,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     public void onGameResultUpdateRecieve(GameResult result, int points) {
         switch (result) {
             case WIN -> {
-                appendToPane("WIN");
+                appendToPane("WIN (+" + points + ")");
                 state.incrementWin();
                 state.addPoints(points);
             }

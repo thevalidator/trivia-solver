@@ -15,13 +15,13 @@ public class State {
     private int topicIndex;
     private Locale locale;
     private User user;
-    private boolean isHeadless;
+    private volatile boolean isHeadless;
     private boolean isAnonymous;
-    private boolean shouldStayInTop;
-    private boolean shouldGetOnTop;
-    private boolean shouldPlayRides;
-    private boolean isPassive;
-    private int nosDelayTime;
+    private volatile boolean shouldStayInTop;
+    private volatile boolean shouldGetOnTop;
+    private volatile boolean shouldPlayRides;
+    private volatile boolean isPassive;
+    private volatile int nosDelayTime;
 
     public State() {
         statistic = new Statistic();
