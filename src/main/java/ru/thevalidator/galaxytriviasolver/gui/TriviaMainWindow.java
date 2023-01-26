@@ -60,7 +60,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private static int MAX_LINES = 1_000;
     private static final Logger logger = LogManager.getLogger(TriviaMainWindow.class);
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm.ss");
-    public static final String WEBDRIVER_PATH = getWebDriverPath();
+    //public static final String WEBDRIVER_PATH = getWebDriverPath();
 
     private static String getWebDriverPath() {
         try ( BufferedReader br
@@ -93,6 +93,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/clover.png")));
         addTrayIcon();
         optionsMenu.setToolTipText("Not available in demo mode");
+        System.setProperty("webdriver.chrome.driver", getWebDriverPath());
     }
 
     /**
@@ -603,7 +604,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 + "then start the app, choose account with\n"
                 + "topic and click start button.\n"
                 + "\n\n"
-                + "v1.0.0.0-c005pub (pre-release)\n"
+                + "v1.0.0.0-c006pub (pre-release)\n"
                 + "[thevalidator]\n"
                 + "2022, November");
         jTextArea.setColumns(20);
