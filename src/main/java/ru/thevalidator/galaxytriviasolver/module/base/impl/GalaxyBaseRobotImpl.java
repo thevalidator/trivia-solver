@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -44,7 +45,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.thevalidator.galaxytriviasolver.notification.Informer;
 import ru.thevalidator.galaxytriviasolver.exception.CanNotPlayException;
 import ru.thevalidator.galaxytriviasolver.exception.LoginErrorException;
-import ru.thevalidator.galaxytriviasolver.gui.TriviaMainWindow;
 import ru.thevalidator.galaxytriviasolver.identity.Identifier;
 import ru.thevalidator.galaxytriviasolver.module.base.GalaxyBaseRobot;
 import ru.thevalidator.galaxytriviasolver.module.trivia.GameResult;
@@ -131,22 +131,19 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     }
 
     private WebDriver createWebDriver() {
-         WebDriver webDriver = null;
+        WebDriver webDriver = null;
         try {
-            System.setProperty("webdriver.chrome.driver", TriviaMainWindow.WEBDRIVER_PATH);
-            //WebDriverManager.chromedriver().setup();
             ChromeOptions options = new ChromeOptions();
             if (state.isHeadless()) {
-                options.setHeadless(true);
+                options.addArguments("--headless=new");
             }
             webDriver = new ChromeDriver(options);
             webDriver.manage().window().setSize(new Dimension(1600, 845));
             webDriver.manage().window().setPosition((new Point(-5, 0)));
-            webDriver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
+            webDriver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(60));
 
-            
         } catch (Exception e) {
-            //e.printStackTrace();
+            logger.error(Arrays.toString(e.getStackTrace()));
             informObservers("ERROR: Can't create webdriver");
             //throw new CanNotCreateWebdriverException("Can't create webdriver");
         }
@@ -167,10 +164,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     }
 
     public void saveDataToFile(String pathname, Exception exception) {
-        try (StringWriter sw = new StringWriter(); 
-                PrintWriter pw = new PrintWriter(sw); 
-                FileOutputStream fos = new FileOutputStream(pathname);  
-                DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos))) {
+        try ( StringWriter sw = new StringWriter();  PrintWriter pw = new PrintWriter(sw);  FileOutputStream fos = new FileOutputStream(pathname);  DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos))) {
             exception.printStackTrace(pw);
             outStream.writeUTF(sw.toString());
         } catch (IOException e) {
@@ -179,7 +173,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     }
 
     public void savePageSourceToFile(String pathname) {
-        try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(pathname + "_src", Charset.forName("UTF-8")))){
+        try ( BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(pathname + "_src", Charset.forName("UTF-8")))) {
             bufferedWriter.write(driver.getPageSource());
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -208,8 +202,6 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     private void openURL() {
         driver = createWebDriver();
         driver.get(Locale.getLocaleURL(state.getLocale()));
-        wait(60_000).until(visibilityOfElementLocated(By.xpath(getBaseCookiesCloseBtn()))).click();
-        driver.findElement(By.xpath(getBaseHaveAccountBtn())).isDisplayed();
     }
 
     @Override
@@ -223,7 +215,8 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         for (int i = 1; i <= maxAttempts; i++) {
             try {
                 openURL();
-                driver.findElement(By.xpath(getBaseHaveAccountBtn())).click();
+                wait(60_000).until(visibilityOfElementLocated(By.xpath(getBaseCookiesCloseBtn()))).click();
+                wait(60_000).until(elementToBeClickable(By.xpath(getBaseHaveAccountBtn()))).click();
                 driver.findElement(By.xpath(getBaseRecoveryCodeField())).sendKeys(state.getUser().getCode());
                 driver.findElement(By.xpath(getBaseFooterAcceptBtn())).click();
                 TimeUnit.SECONDS.sleep(2);
@@ -241,8 +234,8 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                 } else {
                     logger.error(e.getMessage());   //need to be deleted?
                     int timeToWait = (2 * i) + ((i - 1) * 10);
-                    informObservers("LOGIN ERROR: try " + i + " was unsuccessfull, next try in " + timeToWait 
-                        + "\nreason: " + e.getMessage());
+                    informObservers("LOGIN ERROR: try " + i + " was unsuccessfull, next try in " + timeToWait
+                            + "\nreason: " + e.getMessage());
                     driver.quit();
                     try {
                         TimeUnit.MINUTES.sleep(timeToWait);
