@@ -3,7 +3,6 @@
  */
 package ru.thevalidator.galaxytriviasolver.module.base.impl;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
@@ -36,7 +35,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import static org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClickable;
 import static org.openqa.selenium.support.ui.ExpectedConditions.frameToBeAvailableAndSwitchToIt;
-import static org.openqa.selenium.support.ui.ExpectedConditions.invisibilityOfElementLocated;
 import static org.openqa.selenium.support.ui.ExpectedConditions.not;
 import static org.openqa.selenium.support.ui.ExpectedConditions.presenceOfElementLocated;
 import static org.openqa.selenium.support.ui.ExpectedConditions.textToBe;
@@ -46,6 +44,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.thevalidator.galaxytriviasolver.notification.Informer;
 import ru.thevalidator.galaxytriviasolver.exception.CanNotPlayException;
 import ru.thevalidator.galaxytriviasolver.exception.LoginErrorException;
+import ru.thevalidator.galaxytriviasolver.gui.TriviaMainWindow;
 import ru.thevalidator.galaxytriviasolver.identity.Identifier;
 import ru.thevalidator.galaxytriviasolver.module.base.GalaxyBaseRobot;
 import ru.thevalidator.galaxytriviasolver.module.trivia.GameResult;
@@ -132,16 +131,25 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     }
 
     private WebDriver createWebDriver() {
-        WebDriverManager.chromedriver().setup();
-        ChromeOptions options = new ChromeOptions();
-        if (state.isHeadless()) {
-            options.setHeadless(true);
-        }
-        WebDriver webDriver = new ChromeDriver(options);
-        webDriver.manage().window().setSize(new Dimension(1600, 845));
-        webDriver.manage().window().setPosition((new Point(-5, 0)));
-        webDriver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
+         WebDriver webDriver = null;
+        try {
+            System.setProperty("webdriver.chrome.driver", TriviaMainWindow.WEBDRIVER_PATH);
+            //WebDriverManager.chromedriver().setup();
+            ChromeOptions options = new ChromeOptions();
+            if (state.isHeadless()) {
+                options.setHeadless(true);
+            }
+            webDriver = new ChromeDriver(options);
+            webDriver.manage().window().setSize(new Dimension(1600, 845));
+            webDriver.manage().window().setPosition((new Point(-5, 0)));
+            webDriver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
 
+            
+        } catch (Exception e) {
+            //e.printStackTrace();
+            informObservers("ERROR: Can't create webdriver");
+            //throw new CanNotCreateWebdriverException("Can't create webdriver");
+        }
         return webDriver;
     }
 
@@ -157,7 +165,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             logger.error(e.getMessage());
         }
     }
-    
+
     public void saveDataToFile(String pathname, Exception exception) {
         try (StringWriter sw = new StringWriter(); 
                 PrintWriter pw = new PrintWriter(sw); 
@@ -169,7 +177,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             logger.error(e.getMessage());
         }
     }
-    
+
     public void savePageSourceToFile(String pathname) {
         try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(pathname + "_src", Charset.forName("UTF-8")))){
             bufferedWriter.write(driver.getPageSource());
@@ -200,7 +208,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     private void openURL() {
         driver = createWebDriver();
         driver.get(Locale.getLocaleURL(state.getLocale()));
-        wait(20_000).until(visibilityOfElementLocated(By.xpath(getBaseCookiesCloseBtn()))).click();
+        wait(60_000).until(visibilityOfElementLocated(By.xpath(getBaseCookiesCloseBtn()))).click();
         driver.findElement(By.xpath(getBaseHaveAccountBtn())).isDisplayed();
     }
 
@@ -219,7 +227,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                 driver.findElement(By.xpath(getBaseRecoveryCodeField())).sendKeys(state.getUser().getCode());
                 driver.findElement(By.xpath(getBaseFooterAcceptBtn())).click();
                 TimeUnit.SECONDS.sleep(2);
-                if (wait(30_000).until(presenceOfElementLocated(By.xpath(getBaseAuthUserContent()))).isDisplayed()) {
+                if (wait(60_000).until(presenceOfElementLocated(By.xpath(getBaseAuthUserContent()))).isDisplayed()) {
                     informObservers("logged in successfully");
                     break;
                 }
@@ -233,7 +241,8 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                 } else {
                     logger.error(e.getMessage());   //need to be deleted?
                     int timeToWait = (2 * i) + ((i - 1) * 10);
-                    informObservers("LOGIN ERROR: try " + i + " was unsuccessfull, next try in " + timeToWait);
+                    informObservers("LOGIN ERROR: try " + i + " was unsuccessfull, next try in " + timeToWait 
+                        + "\nreason: " + e.getMessage());
                     driver.quit();
                     try {
                         TimeUnit.MINUTES.sleep(timeToWait);
@@ -387,13 +396,13 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                             ? TriviaUserStatsData.ONE_DAY_TIME_IN_SECONDS - currentTimeInSeconds + TriviaUserStatsData.START_TIME_IN_SECONDS
                             : TriviaUserStatsData.START_TIME_IN_SECONDS - currentTimeInSeconds;
                     int hoursLeft = Math.round(timeLeftInSeconds / 3_600F);
-                    
+
                     informObservers("1st: " + userStats.getFirstPlacePoints()
                             + " 10th: " + userStats.getTenthPlacePoints()
                             + " YOU: " + userStats.getUserDailyPoints());
-                    
-                    informObservers("Diff: " + pointsDiff 
-                            + " hours left: " + hoursLeft 
+
+                    informObservers("Diff: " + pointsDiff
+                            + " hours left: " + hoursLeft
                             + " coins: " + userStats.getUserCoins());
 
                     driver.switchTo().frame(driver.findElement(By.xpath(getTriviaGameMainFrame())));
@@ -405,7 +414,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
 
                     driver.switchTo().defaultContent();
                     if (pointsDiff > -5_000) {
-                        
+
                         Unlim unlimType = state.shouldStayInTop() ? (pointsDiff > 16_000 ? Unlim.MAX : Unlim.MID) : Unlim.MAX;
                         if (pointsDiff <= TriviaUserStatsData.AVERAGE_POINTS_PER_HOUR * hoursLeft
                                 && userStats.isUnlimAvailable(unlimType, (int) Math.ceil(hoursLeft / unlimType.getHours()))) {
@@ -433,7 +442,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                         wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
                         break;
                     }
-                    
+
                 } else {
                     informObservers("not enough energy");
                     break;
@@ -445,7 +454,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             } else {
                 informObservers("games left: " + attempts);
             }
-            
+
             startAgainTriviaGame();
         }
 
@@ -547,5 +556,5 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     public void refreshPage() {
         driver.navigate().refresh();
     }
-    
+
 }
