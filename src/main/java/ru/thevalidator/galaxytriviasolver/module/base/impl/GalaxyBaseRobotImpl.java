@@ -45,7 +45,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.thevalidator.galaxytriviasolver.notification.Informer;
 import ru.thevalidator.galaxytriviasolver.exception.CanNotPlayException;
 import ru.thevalidator.galaxytriviasolver.exception.LoginErrorException;
-import ru.thevalidator.galaxytriviasolver.identity.Identifier;
+import ru.thevalidator.galaxytriviasolver.gui.TriviaMainWindow;
+import static ru.thevalidator.galaxytriviasolver.gui.TriviaMainWindow.driver;
 import ru.thevalidator.galaxytriviasolver.module.base.GalaxyBaseRobot;
 import ru.thevalidator.galaxytriviasolver.module.trivia.GameResult;
 import ru.thevalidator.galaxytriviasolver.module.trivia.State;
@@ -55,6 +56,7 @@ import ru.thevalidator.galaxytriviasolver.module.trivia.solver.entity.trivia.Ans
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.entity.trivia.Question;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.impl.SolverRestImpl;
 import ru.thevalidator.galaxytriviasolver.remote.Connector;
+import ru.thevalidator.galaxytriviasolver.service.Task;
 import ru.thevalidator.galaxytriviasolver.web.Locale;
 import static ru.thevalidator.galaxytriviasolver.web.Locator.*;
 
@@ -120,14 +122,14 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     private static final Random random = new Random();
 
     private final State state;
-    private WebDriver driver;
+    //private WebDriver driver;
     private TriviaUserStatsData userStats;
     private final Solver solver;
 
     public GalaxyBaseRobotImpl(State state) {
         this.state = state;
         this.userStats = new TriviaUserStatsData();
-        this.solver = new SolverRestImpl(new Connector(Identifier.generateKey()));
+        this.solver = new SolverRestImpl(new Connector(TriviaMainWindow.PERSONAL_CODE));
     }
 
     private WebDriver createWebDriver() {
@@ -305,7 +307,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         userStats.setUserDailyPoints(Integer.parseInt(dailyPoints));
 
         informObservers("TOPLIST: 1st: " + first + " 10th: " + tenth);
-        informObservers("balance: " + userBalance + " daily points: " + dailyPoints);
+        informObservers("balance: " + userBalance + " my daily points: " + dailyPoints);
     }
 
     @Override
@@ -372,6 +374,10 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
 
             gameResultNotifyObservers(result, Integer.parseInt(points));
 
+            if (!Task.isActive) {
+                break;
+            }
+            
             if (attempts.equals("0")) {
                 if (state.shouldGetOnTop() || state.shouldStayInTop()) {
                     driver.switchTo().defaultContent();
@@ -541,7 +547,15 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     @Override
     public void terminate() {
         if (driver != null) {
-            driver.quit();
+            try {
+                synchronized (this) {
+                    driver.quit();
+                }
+                
+            } catch (Exception e) {
+                informObservers("error closing the driver");
+            }
+            
         }
     }
 
