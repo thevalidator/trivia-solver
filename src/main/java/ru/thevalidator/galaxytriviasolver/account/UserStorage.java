@@ -4,6 +4,8 @@
 
 package ru.thevalidator.galaxytriviasolver.account;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -12,7 +14,7 @@ import java.util.List;
 public class UserStorage {
     
     public static final String STORAGE_DATE_FILE_NAME = "users.json";
-    private static final int MAX_ACCOUNTS = 20;
+    public static final int MAX_ACCOUNTS = 20;
     private User[] users;
 
     public UserStorage(List<User> users) {
@@ -32,6 +34,10 @@ public class UserStorage {
     
     public User getUser(int index) {
         return users[index];
+    }
+
+    public ArrayList<User> getUsers() {
+        return new ArrayList<>(Arrays.asList(users));
     }
 
 }
