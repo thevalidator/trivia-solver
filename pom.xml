@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.thevalidator</groupId>
     <artifactId>galaxy-trivia-solver</artifactId>
-    <version>1.0.0.0-c006pub</version>
+    <version>1.0.0.0-c007pub</version>
     <packaging>jar</packaging>
     <url>https://github.com/thevalidator/trivia-solver</url>
     
@@ -112,7 +112,7 @@
             <artifactId>log4j-slf4j-impl</artifactId>
             <version>${log4j.version}</version>
         </dependency>
-<!--        <dependency>
+        <!--        <dependency>
             <groupId>net.lightbody.bmp</groupId>
             <artifactId>browsermob-core</artifactId>
             <version>2.1.5</version>
@@ -148,12 +148,19 @@
             <version>4.8.0</version>
             <type>jar</type>
         </dependency>
+        <dependency>
+            <groupId>com.yworks</groupId>
+            <artifactId>annotation</artifactId>
+            <version>4.0.0</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
     
     <build>
         <finalName>TriviaSolver</finalName>
         <plugins>
-            <!--            <plugin>
+            
+            <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>3.1.0</version>
                 <executions>
@@ -168,28 +175,64 @@
                                 <property name="runtime_classpath" refid="maven.runtime.classpath"/>
                                 <taskdef name="yguard" classname="com.yworks.yguard.YGuardTask" classpath="${runtime_classpath}"/>
                                 <yguard>
-                                     see the yGuard task documentation for information about the <yguard> element
+                                    <!--see the yGuard task documentation for information about the <yguard> element-->
                                     <inoutpair in="${project.build.directory}/${project.build.finalName}.jar" out="${project.build.directory}/${project.build.finalName}_obfuscated.jar" />
 
+<!--                                    <externalclasses>
+                                        <pathelement location="C:/Users/User/.m2/repository/com/fasterxml/jackson.core/jackson-core.jar."/>
+                                        <pathelement location="C:/Users/User/.m2/repository/com/fasterxml/jackson.core/jackson-databind.jar"/>
+                                        <pathelement location="C:/Users/User/.m2/repository/com/formdev/flatlaf.jar"/>
+                                        <pathelement location="C:/Users/User/.m2/repository/org/seleniumhq/selenium/selenium-java.jar"/>
+                                        <pathelement location="C:/Users/User/.m2/repository/org/seleniumhq/selenium/selenium-api.jar"/>
+                                        <pathelement location="C:/Users/User/.m2/repository/org/seleniumhq/selenium/selenium-chrome-driver.jar"/>
+                                        <pathelement location="C:/Users/User/.m2/repository/io/github/bonigarcia/webdrivermanager.jar"/>
+                                        <pathelement location="C:/Users/User/.m2/repository/org/netbeans/external/AbsoluteLayout.jar"/>
+                                        <pathelement location="C:/Users/User/.m2/repository/org/slf4j/slf4j-api.jar"/>
+                                        <pathelement location="C:/Users/User/.m2/repository/org/slf4j/slf4j-simple.jar"/>
+                                        <pathelement location="C:/Users/User/.m2/repository/org/apache/logging/log4j/log4j-api.jar"/>
+                                        <pathelement location="C:/Users/User/.m2/repository/org/apache/logging/log4j/log4j-core.jar"/>
+                                        <pathelement location="C:/Users/User/.m2/repository/org/apache/logging/log4j/log4j-slf4j-impl.jar"/>
+                                        <pathelement location="C:/Users/User/.m2/repository/com.yworks.yguard.jar"/>
+                                        <pathelement location="C:/Users/User/.m2/repository/javax/persistence/javax/persistence-api.jar"/>
+                                        <pathelement location="C:/Users/User/.m2/repository/jakarta/persistence/jakarta/persistence-api.jar"/>
+                                    </externalclasses>-->
                                     
-                                    <shrink logfile="${project.build.directory}/yshrink.log.xml">
+                                    
+                                    <!--                                    <shrink logfile="${project.build.directory}/yshrink.log.xml">
                                         <keep>
-                                            0<0!-0- main method -0->
+                                             //main method 
                                             <method name="void main(java.lang.String[])" class="${mainclass}" />
                                         </keep>
                                         
-                                    </shrink>
+                                    </shrink>-->
 
-                                    <rename mainclass="${mainclass}" logfile="${project.build.directory}/yguard.log.xml">
+                                    <rename mainclass="ru.thevalidator.galaxytriviasolver.GalaxyTriviaSolver" logfile="${project.build.directory}/yguard.log.xml">
                                         <property name="error-checking" value="pedantic"/>
+                                        <keep>
+                                            <class>
+                                                <patternset>
+                                                    <include name="org.**.*"/>
+                                                    <include name="javax.**.*"/>
+                                                    <include name="com.**.*"/>
+                                                    <include name="jakarta.**.*"/>
+                                                    <include name="io.**.*"/>
+                                                </patternset>
+                                            </class>
+                                        </keep>
+                                        <!--                                        <class>
+                                            <patternset>
+                                                <include name="ru.thevalidator.galaxytriviasolver.Connector"/>
+                                                <exclude name="ru.thevalidator.galaxytriviasolver.*"/>
+                                            </patternset>
+                                        </class>-->
                                     </rename>
+                                    
                                 </yguard>
                             </target>
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>-->
-            
+            </plugin>
             
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -218,67 +261,26 @@
                 </executions>
             </plugin>
             
-            <!--            <plugin>
-                <groupId>com.github.wvengen</groupId>
-                <artifactId>proguard-maven-plugin</artifactId>
-                <version>2.6.0</version>
+            
+            <plugin>
+                <artifactId>maven-jarsigner-plugin</artifactId>
+                <version>3.0.0</version>
                 <executions>
                     <execution>
-                        <phase>package</phase>
+                        <id>sign</id>
                         <goals>
-                            <goal>proguard</goal>
+                            <goal>sign</goal>
                         </goals>
-                        <configuration>
-                            <injar>${project.build.finalName}-jar-with-dependencies.jar</injar>  make sure to obfuscate the jar with dependencies 
-                            <proGuardVersion>5.2</proGuardVersion>
-                            <options>
-                                <option>-allowaccessmodification</option>
-                                <option>-dontoptimize</option>
-                                <option>-dontpreverify</option>
-                                <option>-dontshrink</option>
-                                <option>-dontnote</option>
-                                <option>-dontwarn</option>  added option to ignore com.sun missing classes 
-                                <option>-dontobfuscate</option>
-                                <option>-keepattributes Signature</option>
-                                <option>-keepattributes *Annotation*</option>
-                                <option>-keep class sun.misc.Unsafe { *; }</option>
-                                <option>-keep class ru.thevalidator.galaxytriviasolver.GalaxyTriviaSolver { *; }</option>
-                                <option>-keep class java.lang.String { *; }</option>
-                                                                <option>
-                                    -keepclassmembers,allowoptimization enum * {
-                                    public static **[] values();
-                                    public static ** valueOf(java.lang.String);
-                                    }
-                                </option>
-                                <option>-keepclassmembernames class * {
-                                    java.lang.Class class$(java.lang.String);
-                                    java.lang.Class class$(java.lang.String, boolean);
-                                    }
-                                </option>
-                                <option>-keep class java.lang.** { *; }</option>
-                            </options>
-                            <libs>
-                                <lib>${java.home}/lib/jrt-fs.jar</lib>
-                                <lib>C:\x-fies\coding\java\libs\jcommander-1.82.jar</lib>
-                            </libs>
-                            <dependencies>
-                                <dependency>
-                                    <groupId>net.sf.proguard</groupId>
-                                    <artifactId>proguard-base</artifactId>
-                                    <version>6.2.2</version>
-                                    <scope>runtime</scope>
-                                </dependency>
-                                <dependency>
-                                    <groupId>com.beust</groupId>
-                                    <artifactId>jcommander</artifactId>
-                                    <version>1.82</version>
-                                </dependency>
-                            </dependencies>
-                        </configuration>
                     </execution>
                 </executions>
-            </plugin>-->
-            
+                <configuration>
+                    <keystore>C:\Users\User\keystore.jks</keystore>
+                    <!--<alias>trivia.solver</alias>-->
+                    <alias>thevalidatorcert</alias>
+                    <storepass>trvaslvr</storepass>
+                    <!--<keypass>${key.password}</keypass>-->
+                </configuration>
+            </plugin>
             
             <plugin>
                 <groupId>com.akathist.maven.plugins.launch4j</groupId>
@@ -317,7 +319,7 @@
                                 <fileVersion>1.0.0.0</fileVersion>
                                 <txtFileVersion>${project.version}</txtFileVersion>
                                 <fileDescription>Trivia solver app</fileDescription>
-                                <copyright>Thevalidator 2022</copyright>
+                                <copyright>thevalidator 2023</copyright>
                                 <productVersion>1.0.0.0</productVersion>
                                 <txtProductVersion>${project.version}</txtProductVersion>
                                 <productName>Trivia solver</productName>
@@ -346,7 +348,7 @@
                             <name>Trivia solver</name>
                             <!--<url>http://www.website.ru</url>-->
                             <keystore>C:\Users\User\keystore.jks</keystore>
-                            <alias>trivia.solver</alias>
+                            <alias>thevalidatorcert</alias>
                             <storepass>trvaslvr</storepass>
                         </configuration>
                     </execution>
