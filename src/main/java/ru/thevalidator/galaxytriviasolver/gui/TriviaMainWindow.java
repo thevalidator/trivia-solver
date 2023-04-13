@@ -6,7 +6,6 @@ package ru.thevalidator.galaxytriviasolver.gui;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.yworks.util.annotation.Obfuscation;
 import java.awt.AWTException;
 import java.awt.Component;
 import java.awt.GridLayout;
@@ -60,7 +59,6 @@ import ru.thevalidator.galaxytriviasolver.web.Locale;
  *
  * @author thevalidator <the.validator@yandex.ru>
  */
-@Obfuscation(exclude = true, applyToMembers = true)
 public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
     public static volatile WebDriver driver;

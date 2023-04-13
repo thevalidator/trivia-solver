@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.thevalidator</groupId>
     <artifactId>galaxy-trivia-solver</artifactId>
-    <version>1.0.0.0-c007pub</version>
+    <version>1.0.0.0-d001pub</version>
     <packaging>jar</packaging>
     <url>https://github.com/thevalidator/trivia-solver</url>
     
@@ -18,7 +18,6 @@
         <developer>
             <id>thevalidator</id>
             <name>illusion</name>
-            <!--<email>email@email.com</email>-->
         </developer>
     </developers>
     
@@ -27,7 +26,8 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <exec.mainClass>ru.thevalidator.galaxytriviasolver.GalaxyTriviaSolver</exec.mainClass>
-        <selenium.version>4.7.2</selenium.version>
+        <selenium.version>4.8.3</selenium.version>
+        <webdriver.version>5.3.1</webdriver.version>
         <log4j.version>2.19.0</log4j.version>
         <jackson.version>2.14.1</jackson.version>
         <junit.version>5.9.1</junit.version>
@@ -65,38 +65,38 @@
         <dependency>
             <groupId>com.formdev</groupId>
             <artifactId>flatlaf</artifactId>
-            <version>2.6</version>
+            <version>3.1</version>
             <type>jar</type>
         </dependency>
+        
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
-            <version>4.8.0</version>
+            <version>${selenium.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.github.bonigarcia</groupId>
-            <artifactId>webdrivermanager</artifactId>
-            <version>5.3.2</version>
-            <type>jar</type>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-manager</artifactId>
+            <version>4.8.3</version>
         </dependency>
+        
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>5.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.11.0</version>
+        </dependency>
+
+
         <dependency>
             <groupId>org.netbeans.external</groupId>
             <artifactId>AbsoluteLayout</artifactId>
             <version>RELEASE150</version>
         </dependency>
-        
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>2.0.6</version>
-        </dependency>
- 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>2.0.6</version>
-        </dependency>
-        
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
@@ -112,46 +112,11 @@
             <artifactId>log4j-slf4j-impl</artifactId>
             <version>${log4j.version}</version>
         </dependency>
-        <!--        <dependency>
-            <groupId>net.lightbody.bmp</groupId>
-            <artifactId>browsermob-core</artifactId>
-            <version>2.1.5</version>
-            <scope>test</scope>
-        </dependency>-->
-        <dependency>
-            <groupId>com.yworks</groupId>
-            <artifactId>yguard</artifactId>
-            <version>4.0.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.persistence</groupId>
-            <artifactId>javax.persistence-api</artifactId>
-            <version>2.2</version>
-            <type>jar</type>
-        </dependency>
+        
         <dependency>
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>
             <version>3.1.0</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-api</artifactId>
-            <version>4.8.0</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-chrome-driver</artifactId>
-            <version>4.8.0</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>com.yworks</groupId>
-            <artifactId>annotation</artifactId>
-            <version>4.0.0</version>
             <type>jar</type>
         </dependency>
     </dependencies>
@@ -159,81 +124,6 @@
     <build>
         <finalName>TriviaSolver</finalName>
         <plugins>
-            
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <id>obfuscate</id>
-                        <configuration>
-                            <target>
-                                <property name="runtime_classpath" refid="maven.runtime.classpath"/>
-                                <taskdef name="yguard" classname="com.yworks.yguard.YGuardTask" classpath="${runtime_classpath}"/>
-                                <yguard>
-                                    <!--see the yGuard task documentation for information about the <yguard> element-->
-                                    <inoutpair in="${project.build.directory}/${project.build.finalName}.jar" out="${project.build.directory}/${project.build.finalName}_obfuscated.jar" />
-
-<!--                                    <externalclasses>
-                                        <pathelement location="C:/Users/User/.m2/repository/com/fasterxml/jackson.core/jackson-core.jar."/>
-                                        <pathelement location="C:/Users/User/.m2/repository/com/fasterxml/jackson.core/jackson-databind.jar"/>
-                                        <pathelement location="C:/Users/User/.m2/repository/com/formdev/flatlaf.jar"/>
-                                        <pathelement location="C:/Users/User/.m2/repository/org/seleniumhq/selenium/selenium-java.jar"/>
-                                        <pathelement location="C:/Users/User/.m2/repository/org/seleniumhq/selenium/selenium-api.jar"/>
-                                        <pathelement location="C:/Users/User/.m2/repository/org/seleniumhq/selenium/selenium-chrome-driver.jar"/>
-                                        <pathelement location="C:/Users/User/.m2/repository/io/github/bonigarcia/webdrivermanager.jar"/>
-                                        <pathelement location="C:/Users/User/.m2/repository/org/netbeans/external/AbsoluteLayout.jar"/>
-                                        <pathelement location="C:/Users/User/.m2/repository/org/slf4j/slf4j-api.jar"/>
-                                        <pathelement location="C:/Users/User/.m2/repository/org/slf4j/slf4j-simple.jar"/>
-                                        <pathelement location="C:/Users/User/.m2/repository/org/apache/logging/log4j/log4j-api.jar"/>
-                                        <pathelement location="C:/Users/User/.m2/repository/org/apache/logging/log4j/log4j-core.jar"/>
-                                        <pathelement location="C:/Users/User/.m2/repository/org/apache/logging/log4j/log4j-slf4j-impl.jar"/>
-                                        <pathelement location="C:/Users/User/.m2/repository/com.yworks.yguard.jar"/>
-                                        <pathelement location="C:/Users/User/.m2/repository/javax/persistence/javax/persistence-api.jar"/>
-                                        <pathelement location="C:/Users/User/.m2/repository/jakarta/persistence/jakarta/persistence-api.jar"/>
-                                    </externalclasses>-->
-                                    
-                                    
-                                    <!--                                    <shrink logfile="${project.build.directory}/yshrink.log.xml">
-                                        <keep>
-                                             //main method 
-                                            <method name="void main(java.lang.String[])" class="${mainclass}" />
-                                        </keep>
-                                        
-                                    </shrink>-->
-
-                                    <rename mainclass="ru.thevalidator.galaxytriviasolver.GalaxyTriviaSolver" logfile="${project.build.directory}/yguard.log.xml">
-                                        <property name="error-checking" value="pedantic"/>
-                                        <keep>
-                                            <class>
-                                                <patternset>
-                                                    <include name="org.**.*"/>
-                                                    <include name="javax.**.*"/>
-                                                    <include name="com.**.*"/>
-                                                    <include name="jakarta.**.*"/>
-                                                    <include name="io.**.*"/>
-                                                </patternset>
-                                            </class>
-                                        </keep>
-                                        <!--                                        <class>
-                                            <patternset>
-                                                <include name="ru.thevalidator.galaxytriviasolver.Connector"/>
-                                                <exclude name="ru.thevalidator.galaxytriviasolver.*"/>
-                                            </patternset>
-                                        </class>-->
-                                    </rename>
-                                    
-                                </yguard>
-                            </target>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.4.2</version>
@@ -245,9 +135,6 @@
                         <manifest>
                             <mainClass>ru.thevalidator.galaxytriviasolver.GalaxyTriviaSolver</mainClass>
                         </manifest>
-                        <manifestEntries>
-                            <Multi-Release>true</Multi-Release>
-                        </manifestEntries>
                     </archive>
                 </configuration>
                 <executions>
@@ -259,33 +146,12 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            
-            
-            <plugin>
-                <artifactId>maven-jarsigner-plugin</artifactId>
-                <version>3.0.0</version>
-                <executions>
-                    <execution>
-                        <id>sign</id>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <keystore>C:\Users\User\keystore.jks</keystore>
-                    <!--<alias>trivia.solver</alias>-->
-                    <alias>thevalidatorcert</alias>
-                    <storepass>trvaslvr</storepass>
-                    <!--<keypass>${key.password}</keypass>-->
-                </configuration>
-            </plugin>
+            </plugin>            
             
             <plugin>
                 <groupId>com.akathist.maven.plugins.launch4j</groupId>
                 <artifactId>launch4j-maven-plugin</artifactId>
-                <version>2.3.0</version>
+                <version>2.1.2</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -308,18 +174,18 @@
                             <jre>
                                 <!--<path>${java.home}</path>-->
                                 <path>jre</path>
-                                <!--<bundledJre64Bit>true</bundledJre64Bit> deprecated-->
-                                <!--<bundledJreAsFallback>false</bundledJreAsFallback> deprecated-->
+                                <bundledJre64Bit>true</bundledJre64Bit>
+                                <bundledJreAsFallback>false</bundledJreAsFallback>
                                 <minVersion></minVersion>
                                 <maxVersion></maxVersion>
-                                <requiresJdk>jdkOnly</requiresJdk>
-                                <requires64Bit>true</requires64Bit>
+                                <jdkPreference>jdkOnly</jdkPreference>
+                                <runtimeBits>64/32</runtimeBits>
                             </jre>
                             <versionInfo>
                                 <fileVersion>1.0.0.0</fileVersion>
                                 <txtFileVersion>${project.version}</txtFileVersion>
                                 <fileDescription>Trivia solver app</fileDescription>
-                                <copyright>thevalidator 2023</copyright>
+                                <copyright>Thevalidator 2022</copyright>
                                 <productVersion>1.0.0.0</productVersion>
                                 <txtProductVersion>${project.version}</txtProductVersion>
                                 <productName>Trivia solver</productName>
@@ -348,39 +214,11 @@
                             <name>Trivia solver</name>
                             <!--<url>http://www.website.ru</url>-->
                             <keystore>C:\Users\User\keystore.jks</keystore>
-                            <alias>thevalidatorcert</alias>
+                            <alias>trivia.solver</alias>
                             <storepass>trvaslvr</storepass>
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
-                <configuration>
-                    <testFailureIgnore>false</testFailureIgnore>
-                    <argLine>
-                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
-                    </argLine>
-                    <systemProperties>
-                        <property>
-                            <name>junit.jupiter.extensions.autodetection.enabled</name>
-                            <value>true</value>
-                        </property>
-                    </systemProperties>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.junit.platform</groupId>
-                        <artifactId>junit-platform-surefire-provider</artifactId>
-                        <version>1.3.2</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.aspectj</groupId>
-                        <artifactId>aspectjweaver</artifactId>
-                        <version>${aspectj.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
     </build>
