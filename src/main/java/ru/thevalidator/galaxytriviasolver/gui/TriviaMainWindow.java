@@ -18,12 +18,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.ProtocolException;
-import java.nio.file.FileSystems;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -67,19 +63,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private static final Logger logger = LogManager.getLogger(TriviaMainWindow.class);
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm.ss");
 
-    private static String getWebDriverPath() {
-        try ( BufferedReader br
-                = new BufferedReader(new InputStreamReader(new FileInputStream("driver.cfg"), "UTF-8"))) {
-            String line;
-            if ((line = br.readLine()) != null && line.length() > 0) {
-                return FileSystems.getDefault().getPath("driver", line.trim()).toString();
-            }
-        } catch (IOException ex) {
-            logger.error(Arrays.toString(ex.getStackTrace()));
-        }
-        throw new IllegalArgumentException("wrong data in file driver.cfg");
-    }
-
     private UserStorage userStorage;
     private List<JCheckBoxMenuItem> servers;
     private State state;
@@ -97,7 +80,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         addTrayIcon();
         //optionsMenu.setToolTipText("Not available in demo mode");
         headlessModeCheckBoxMenuItem.setToolTipText("Not available in pub version");
-        System.setProperty("webdriver.chrome.driver", getWebDriverPath());
         statusMenuItemActionPerformed(null);
     }
 
@@ -557,7 +539,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         headlessModeCheckBoxMenuItem.setSelected(true);
         state.setIsHeadless(true);
         headlessModeCheckBoxMenuItem.setText("Headless mode");
-        headlessModeCheckBoxMenuItem.setEnabled(false);
         headlessModeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 headlessModeCheckBoxMenuItemActionPerformed(evt);
