@@ -34,6 +34,7 @@ It's a kind of quiz. You choose the topic and then answer on 5 questions. Each q
 
 - PC
 - Java 17
+- Google Chrome browser (ver.112+)
 
 ## Compile
 
