@@ -607,7 +607,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 + "v1.0.0.0-release\n"
                 + "[thevalidator]\n"
                 + "2023, April");
-        jTextArea.setColumns(20);
+        jTextArea.setColumns(30);
         jTextArea.setLineWrap(true);
         jTextArea.setRows(12);
         jTextArea.setEditable(false);
