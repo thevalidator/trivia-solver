@@ -54,6 +54,7 @@ It's a kind of quiz. You choose the topic and then answer on 5 questions. Each q
 
 ## App usage
 - Be sure that you've already played at least once the Trivia game in Galaxy
+- For Windows users: the app icon will be in the tray.
 
 + **Quick start**
 	1) Check your status (*Menu -> Status*)
