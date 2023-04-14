@@ -76,7 +76,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         this.servers = new ArrayList<>();
         initComponents();
         initLocale(Locale.getDefaultLocale());
-        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/clover.png")));
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/trivia.png")));
         addTrayIcon();
         //optionsMenu.setToolTipText("Not available in demo mode");
         headlessModeCheckBoxMenuItem.setToolTipText("Not available in pub version");
