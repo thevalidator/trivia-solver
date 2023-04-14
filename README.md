@@ -61,8 +61,8 @@ It's a kind of quiz. You choose the topic and then answer on 5 questions. Each q
 	4) Choose topic (*Main window -> topic*)
 	5) Press `START` button
 	6) To stop the app you have two options:
-	+ Hard stop - the app immediately stops its work. 
-	+ Soft stop - the app finishes Trivia game round and then stops. (work not good at the moment).
+		+ Hard stop - the app immediately stops its work. 
+		+ Soft stop - the app finishes Trivia game round and then stops. (work not good at the moment).
 ------------
 
 + **Features**
