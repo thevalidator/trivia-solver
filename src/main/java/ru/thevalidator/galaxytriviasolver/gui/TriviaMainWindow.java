@@ -604,9 +604,9 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 + "then choose server and topic you want to play\n"
                 + "and click start button.\n"
                 + "\n\n"
-                + "v1.0.0.0-c007pub (pre-release)\n"
+                + "v1.0.0.0-release\n"
                 + "[thevalidator]\n"
-                + "2022, November");
+                + "2023, April");
         jTextArea.setColumns(20);
         jTextArea.setLineWrap(true);
         jTextArea.setRows(12);
