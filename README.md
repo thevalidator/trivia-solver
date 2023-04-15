@@ -2,7 +2,6 @@
 ######  Trivia game solver for Galaxy
 
 
-
 # Contents
 
 <!-- START_TOC -->
@@ -11,17 +10,16 @@
     * [About](#about)
     * [Trivia game](#trivia-game)
     * [Requirements](#requirements)
-    * [Compile](#compile)
-    * [Run](#run)
+* [Compile and Run](#compile-and-run)
 * [App usage](#app-usage)
 * [Troubleshooting](#troubleshooting)
 * [Known bugs](#known-bugs)
+* [Video demonstration](#video-demonstration)
 * [License](#license)
 
 <!-- END_TOC -->
 
 # General Information
-
 
 ## About
 
@@ -29,29 +27,26 @@ This application can play the Trivia game on the [Galaxy](https://in-galaxy.com/
 
 ## Trivia game
 
-It's a kind of quiz. You choose the topic and then answer on 5 questions. Each question has four answers, your target is to choose the correct one. I found the [video of gameplay](https://www.youtube.com/watch?v=aHErRDo3Htc "video")  somewhere on youtube.
+It's a kind of quiz. You choose the topic and then answer on 5 questions. Each question has four answers, your target is to choose the correct one. I found the [video of gameplay](https://www.youtube.com/watch?v=aHErRDo3Htc "video of gameplay")  somewhere on youtube.
 
 ## Requirements
 
 - PC
-- Java 17
+- Java 17+ (JRE 17+)
 - Google Chrome browser (ver.112+)
 
-## Compile
+## Compile and Run
 
 1. Download the project
-2. Run:
+2. Compile using command:
 	+ for Linux: `./mvnw clean install`
 	+ for Windows: `mvnw.cmd clean install`
 3. The compiled artifact `TriviaSolver-jar-with-dependencies.jar` is created inside the folder `target`
+4. Create a new folder for the app
+5. Put there `TriviaSolver-jar-with-dependencies.jar`, `users.json` and `user.key` files
+6. Run the app with command: `java -jar TriviaSolver-jar-with-dependencies.jar`
 
-
-## Run
-- Create a new folder for the app
-- Put there `TriviaSolver-jar-with-dependencies.jar`, `users.json` and `user.key` files
-- Run: `java -jar TriviaSolver-jar-with-dependencies.jar`
-
-
+You may also download the archive with compiled app from the [release's page](https://github.com/thevalidator/trivia-solver/releases "release's page"). 
 
 ## App usage
 - Be sure that you've already played at least once the Trivia game in Galaxy
@@ -70,7 +65,7 @@ It's a kind of quiz. You choose the topic and then answer on 5 questions. Each q
 
 + **Features**
 	+ Headless mode (*Options -> Headless mode*)
-		+ *If the headless mode is off the browser window will be opened during the program work*
+		+ *If the headless mode is off the browser window will be opened during the programm work*
 	+ Anonymous mode (*Options -> Anonymous mode*)
 		+ *Option to hide the nickname in the Trivia game*
 	+ Passive mode (*Options -> Passive mode*)
@@ -92,8 +87,14 @@ It's a kind of quiz. You choose the topic and then answer on 5 questions. Each q
 
 ## Known bugs
 
-- when headless mode is off it doesn't work if menu sidebar is hidden (this happans on small screen resolutions)
+- when headless mode is off it doesn't work if menu sidebar is hidden (this happens on small screen resolutions)
 - soft stop button doesn't work correct in some cases
+
+
+## Video demonstration
+
+https://user-images.githubusercontent.com/53190369/232238176-b0d68ae6-627e-48db-b5df-290b6b5b6423.mp4
+
 
 ## License
 - GNU General Public License v3.0

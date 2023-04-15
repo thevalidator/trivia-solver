@@ -67,6 +67,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         private int userDailyPoints;
         private double userCoins;
         private int tenthPlacePoints;
+        private int secondPlacePoints;
         private int firstPlacePoints;
         private static final int START_TIME_IN_SECONDS = 28_800;
         private static final int ONE_DAY_TIME_IN_SECONDS = 86_400;
@@ -76,6 +77,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             this.userCoins = 0;
             this.userDailyPoints = 0;
             this.tenthPlacePoints = 0;
+            this.secondPlacePoints = 0;
             this.firstPlacePoints = 0;
         }
 
@@ -113,6 +115,14 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
 
         public void setFirstPlacePoints(int firstPlacePoints) {
             this.firstPlacePoints = firstPlacePoints;
+        }
+
+        public int getSecondPlacePoints() {
+            return secondPlacePoints;
+        }
+
+        public void setSecondPlacePoints(int secondPlacePoints) {
+            this.secondPlacePoints = secondPlacePoints;
         }
 
     }
@@ -166,7 +176,10 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     }
 
     public void saveDataToFile(String pathname, Exception exception) {
-        try ( StringWriter sw = new StringWriter();  PrintWriter pw = new PrintWriter(sw);  FileOutputStream fos = new FileOutputStream(pathname);  DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos))) {
+        try ( StringWriter sw = new StringWriter();  
+                PrintWriter pw = new PrintWriter(sw);  
+                FileOutputStream fos = new FileOutputStream(pathname);  
+                DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos))) {
             exception.printStackTrace(pw);
             outStream.writeUTF(sw.toString());
         } catch (IOException e) {
@@ -289,8 +302,13 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
         String tenth = "0";
         String first = tenth;
+        String second = tenth;
         try {
             first = wait(10_000).until(visibilityOfElementLocated(By.xpath(getTriviaPositionDailyResult(1)))).getText();
+        } catch (Exception e) {
+        }
+        try {
+            second = wait(10_000).until(visibilityOfElementLocated(By.xpath(getTriviaPositionDailyResult(2)))).getText();
         } catch (Exception e) {
         }
         try {
@@ -302,6 +320,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         driver.findElement(By.xpath(getBaseBackBtn())).click();
 
         userStats.setFirstPlacePoints(Integer.parseInt(first));
+        userStats.setSecondPlacePoints(Integer.parseInt(second));
         userStats.setTenthPlacePoints(Integer.parseInt(tenth));
         userStats.setUserCoins(Double.parseDouble(userBalance));
         userStats.setUserDailyPoints(Integer.parseInt(dailyPoints));
@@ -412,6 +431,14 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                     }
 
                     driver.switchTo().defaultContent();
+                    
+                    if (state.shouldGetOnTop() && pointsDiff == 0) {
+                        int pointsAhead = userStats.getUserDailyPoints() - userStats.getSecondPlacePoints();
+                        if (pointsAhead > 10_000) {
+                            break;
+                        }
+                    }
+                    
                     if (pointsDiff > -5_000) {
 
                         Unlim unlimType = state.shouldStayInTop() ? (pointsDiff > 16_000 ? Unlim.MAX : Unlim.MID) : Unlim.MAX;
