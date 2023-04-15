@@ -11,8 +11,7 @@
     * [About](#about)
     * [Trivia game](#trivia-game)
     * [Requirements](#requirements)
-    * [Compile](#compile)
-    * [Run](#run)
+* [Compile and Run](#compile-and-run)
 * [App usage](#app-usage)
 * [Troubleshooting](#troubleshooting)
 * [Known bugs](#known-bugs)
@@ -34,24 +33,21 @@ It's a kind of quiz. You choose the topic and then answer on 5 questions. Each q
 ## Requirements
 
 - PC
-- Java 17
+- Java 17+ (JRE 17+)
 - Google Chrome browser (ver.112+)
 
-## Compile
+## Compile and Run
 
 1. Download the project
-2. Run:
+2. Compile using command:
 	+ for Linux: `./mvnw clean install`
 	+ for Windows: `mvnw.cmd clean install`
 3. The compiled artifact `TriviaSolver-jar-with-dependencies.jar` is created inside the folder `target`
+4. Create a new folder for the app
+5. Put there `TriviaSolver-jar-with-dependencies.jar`, `users.json` and `user.key` files
+6. Run the app with command: `java -jar TriviaSolver-jar-with-dependencies.jar`
 
-
-## Run
-- Create a new folder for the app
-- Put there `TriviaSolver-jar-with-dependencies.jar`, `users.json` and `user.key` files
-- Run: `java -jar TriviaSolver-jar-with-dependencies.jar`
-
-
+You may also download the archive with compiled app from the [release's page](https://github.com/thevalidator/trivia-solver/releases). 
 
 ## App usage
 - Be sure that you've already played at least once the Trivia game in Galaxy
