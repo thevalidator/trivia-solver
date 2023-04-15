@@ -31,7 +31,8 @@
         <log4j.version>2.19.0</log4j.version>
         <jackson.version>2.14.1</jackson.version>
         <junit.version>5.9.1</junit.version>
-        <aspectj.version>1.8.10</aspectj.version>
+        <flatlaf.version>2.6</flatlaf.version>
+        <absoluteLayout.version>RELEASE150</absoluteLayout.version>
     </properties>
     
     <dependencyManagement>
@@ -65,7 +66,7 @@
         <dependency>
             <groupId>com.formdev</groupId>
             <artifactId>flatlaf</artifactId>
-            <version>2.6</version>
+            <version>${flatlaf.version}</version>
             <type>jar</type>
         </dependency>
         
@@ -95,7 +96,7 @@
         <dependency>
             <groupId>org.netbeans.external</groupId>
             <artifactId>AbsoluteLayout</artifactId>
-            <version>RELEASE150</version>
+            <version>${absoluteLayout.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -146,7 +147,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>       
+            </plugin>                           
         </plugins>
     </build>
     
