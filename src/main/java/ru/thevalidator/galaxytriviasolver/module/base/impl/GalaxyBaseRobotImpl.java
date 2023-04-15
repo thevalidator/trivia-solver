@@ -474,13 +474,13 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                 }
             } catch (InterruptedException e) {
             }
-            clickCorrectAnswer();
+            List<WebElement> elements = driver.findElements(By.xpath(getTriviaQuestionAnswer()));
+            clickCorrectAnswer(questionText, elements);
             wait(33_000).until(not(textToBe(By.xpath(getTriviaQuestionHeader()), questionText)));
         }
     }
 
-    private void clickCorrectAnswer() {
-        List<WebElement> elements = driver.findElements(By.xpath(getTriviaQuestionAnswer()));
+    private void clickCorrectAnswer(String questionText, List<WebElement> elements) {
         Answer[] answers = new Answer[elements.size()];
         int index = 0;
         for (WebElement e : elements) {
@@ -489,8 +489,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             Answer answer = new Answer(text, rel, index);
             answers[index++] = answer;
         }
-        String text = "";
-        Question question = new Question(text, answers);
+        Question question = new Question(questionText, answers);
         Answer correctAnswer = solver.getCorrectAnswer(question);
         elements.get(correctAnswer.getIndex()).click();
     }
