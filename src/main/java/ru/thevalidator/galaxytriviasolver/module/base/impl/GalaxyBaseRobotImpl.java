@@ -293,8 +293,6 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         wait(15_000).until(visibilityOfElementLocated(By.xpath(getGamesTriviaBtn(state.getLocale())))).click();
         informObservers("opening Trivia");
         updateTriviaUsersData();
-        informObservers("TOPLIST: 1st: " + userStats.getFirstPlacePoints() + " 10th: " + userStats.tenthPlacePoints);
-        informObservers("balance: " + userStats.userCoins + " daily points: " + userStats.userDailyPoints);
     }
 
     @Override
