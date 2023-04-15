@@ -15,6 +15,7 @@
     * [Run](#run)
 * [App usage](#app-usage)
 * [Troubleshooting](#troubleshooting)
+* [Known bugs](#known-bugs)
 * [License](#license)
 
 <!-- END_TOC -->
@@ -57,7 +58,7 @@ It's a kind of quiz. You choose the topic and then answer on 5 questions. Each q
 - For Windows users: the app icon will be in the tray.
 
 + **Quick start**
-	1) Check your status (*Menu -> Status*)
+	1) Check if the status is "GREEN" (*Menu -> Status*)
 	2) Add your account (*Account -> Add account*)
 	3) Choose server (*Options -> Server*)
 	4) Choose topic (*Main window -> topic*)
@@ -88,6 +89,11 @@ It's a kind of quiz. You choose the topic and then answer on 5 questions. Each q
 	- The external server didn't find user key in the database. Contact me.
 - **status "YELLOW"** 
 	- Demo period is expired, the app will continue to work, but will choose random answers in the Trivia game.
+
+## Known bugs
+
+- when headless mode is off it doesn't work if menu sidebar is hidden (this happans on small screen resolutions)
+- soft stop button doesn't work correct in some cases
 
 ## License
 - GNU General Public License v3.0
