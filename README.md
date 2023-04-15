@@ -2,7 +2,6 @@
 ######  Trivia game solver for Galaxy
 
 
-
 # Contents
 
 <!-- START_TOC -->
@@ -15,12 +14,12 @@
 * [App usage](#app-usage)
 * [Troubleshooting](#troubleshooting)
 * [Known bugs](#known-bugs)
+* [Video demonstration](#video-demonstration)
 * [License](#license)
 
 <!-- END_TOC -->
 
 # General Information
-
 
 ## About
 
@@ -90,6 +89,12 @@ You may also download the archive with compiled app from the [release's page](ht
 
 - when headless mode is off it doesn't work if menu sidebar is hidden (this happens on small screen resolutions)
 - soft stop button doesn't work correct in some cases
+
+
+## Video demonstration
+
+https://user-images.githubusercontent.com/53190369/232238176-b0d68ae6-627e-48db-b5df-290b6b5b6423.mp4
+
 
 ## License
 - GNU General Public License v3.0
