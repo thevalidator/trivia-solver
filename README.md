@@ -28,7 +28,7 @@ This application can play the Trivia game on the [Galaxy](https://in-galaxy.com/
 
 ## Trivia game
 
-It's a kind of quiz. You choose the topic and then answer on 5 questions. Each question has four answers, your target is to choose the correct one. I found the [video of gameplay](https://www.youtube.com/watch?v=aHErRDo3Htc "video")  somewhere on youtube.
+It's a kind of quiz. You choose the topic and then answer on 5 questions. Each question has four answers, your target is to choose the correct one. I found the [video of gameplay](https://www.youtube.com/watch?v=aHErRDo3Htc "video of gameplay")  somewhere on youtube.
 
 ## Requirements
 
@@ -47,7 +47,7 @@ It's a kind of quiz. You choose the topic and then answer on 5 questions. Each q
 5. Put there `TriviaSolver-jar-with-dependencies.jar`, `users.json` and `user.key` files
 6. Run the app with command: `java -jar TriviaSolver-jar-with-dependencies.jar`
 
-You may also download the archive with compiled app from the [release's page](https://github.com/thevalidator/trivia-solver/releases). 
+You may also download the archive with compiled app from the [release's page](https://github.com/thevalidator/trivia-solver/releases "release's page"). 
 
 ## App usage
 - Be sure that you've already played at least once the Trivia game in Galaxy
