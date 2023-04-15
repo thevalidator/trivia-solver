@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -64,6 +65,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         private int userDailyPoints;
         private double userCoins;
         private int tenthPlacePoints;
+        private int secondPlacePoints;
         private int firstPlacePoints;
         private static final int START_TIME_IN_SECONDS = 28_800;
         private static final int ONE_DAY_TIME_IN_SECONDS = 86_400;
@@ -73,6 +75,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             this.userCoins = 0;
             this.userDailyPoints = 0;
             this.tenthPlacePoints = 0;
+            this.secondPlacePoints = 0;
             this.firstPlacePoints = 0;
         }
 
@@ -112,6 +115,14 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             this.firstPlacePoints = firstPlacePoints;
         }
 
+        public int getSecondPlacePoints() {
+            return secondPlacePoints;
+        }
+
+        public void setSecondPlacePoints(int secondPlacePoints) {
+            this.secondPlacePoints = secondPlacePoints;
+        }
+
     }
 
     private static final Logger logger = LogManager.getLogger(GalaxyBaseRobotImpl.class);
@@ -126,58 +137,26 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     public GalaxyBaseRobotImpl(State state) {
         this.state = state;
         this.userStats = new TriviaUserStatsData();
-        //this.solver = new SolverRestImpl(new Connector(Identifier.generateKey()));
         this.solver = new SolverImpl();
     }
-
-//    private WebDriver createWebDriver() {
-//        WebDriver driver = new FirefoxDriver();
-//        driver.manage().window().setSize(new Dimension(1600, 845));
-//        driver.manage().window().setPosition((new Point(-5, 0)));
-//        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
-//        
-//        return driver;
-//    }
-
+    
     private WebDriver createWebDriver() {
-        WebDriverManager.chromedriver().setup();
+        WebDriver webDriver = null;
+        try {
+            ChromeOptions options = new ChromeOptions();
+            if (state.isHeadless()) {
+                options.addArguments("--headless=new");
+            }
+            webDriver = new ChromeDriver(options);
+            webDriver.manage().window().setSize(new Dimension(1600, 845));
+            webDriver.manage().window().setPosition((new Point(-5, 0)));
+            webDriver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(60));
 
-        //System.setProperty("webdriver.chrome.driver","C://softwares//drivers//chromedriver.exe");
-        //ChromeOptions options = new ChromeOptions();
-        //options.setBinary("/path/to/other/chrome/binary");
-        //mobile emulation 1
-//        Map<String, String> mobileEmulation = new HashMap<>();
-//        mobileEmulation.put("deviceName", "Nexus 5");
-//        ChromeOptions options = new ChromeOptions();
-//        options.setExperimentalOption("mobileEmulation", mobileEmulation);
-        //mobile emulation 2
-//        Map<String, Object> deviceMetrics = new HashMap<>();
-//        deviceMetrics.put("width", 360);
-//        deviceMetrics.put("height", 640);
-//        deviceMetrics.put("pixelRatio", 3.0);
-//        Map<String, Object> mobileEmulation = new HashMap<>();
-//        mobileEmulation.put("deviceMetrics", deviceMetrics);
-//        mobileEmulation.put("userAgent", "Mozilla/5.0 (Linux; Android 4.2.1; en-us; Nexus 5 Build/JOP40D) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19");
-//        ChromeOptions chromeOptions = new ChromeOptions();
-//        chromeOptions.setExperimentalOption("mobileEmulation", mobileEmulation);
-//        WebDriver driver = new ChromeDriver(chromeOptions);
-        ChromeOptions options = new ChromeOptions();
-
-        //BrowserMobProxy proxy;
-        //
-        //options.setExperimentalOption("mobileEmulation", Map.of("deviceName", "Nexus 5"));
-        //Mozilla/5.0 (Linux; Android 12; sdk_gphone64_x86_64 Build/SE1A.211012.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/91.0.4472.114 Mobile Safari/537.36
-//        String userAgent = "user-agent=Mozilla/5.0 (Linux; Android 12; sdk_gphone64_x86_64 Build/SE1A.211012.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/91.0.4472.114 Mobile Safari/537.36";
-//        options.addArguments(userAgent);
-        //options.setUseRunningAndroidApp(true);
-        if (state.isHeadless()) {
-            options.setHeadless(true);
+        } catch (Exception e) {
+            logger.error(Arrays.toString(e.getStackTrace()));
+            informObservers("ERROR: Can't create webdriver");
+            //throw new CanNotCreateWebdriverException("Can't create webdriver");
         }
-        WebDriver webDriver = new ChromeDriver(options);
-        webDriver.manage().window().setSize(new Dimension(1600, 845));
-        webDriver.manage().window().setPosition((new Point(-5, 0)));
-        webDriver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(40));
-
         return webDriver;
     }
 
@@ -338,8 +317,13 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
         String tenth = "0";
         String first = tenth;
+        String second = tenth;
         try {
             first = wait(10_000).until(visibilityOfElementLocated(By.xpath(getTriviaPositionDailyResult(1)))).getText();
+        } catch (Exception e) {
+        }
+        try {
+            second = wait(10_000).until(visibilityOfElementLocated(By.xpath(getTriviaPositionDailyResult(2)))).getText();
         } catch (Exception e) {
         }
         try {
@@ -347,14 +331,18 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         } catch (Exception e) {
         }
 
+        driver.switchTo().defaultContent();
+        driver.findElement(By.xpath(getBaseBackBtn())).click();
+
         userStats.setFirstPlacePoints(Integer.parseInt(first));
+        userStats.setSecondPlacePoints(Integer.parseInt(second));
         userStats.setTenthPlacePoints(Integer.parseInt(tenth));
         userStats.setUserCoins(Double.parseDouble(userBalance));
         userStats.setUserDailyPoints(Integer.parseInt(dailyPoints));
         
-        driver.switchTo().defaultContent();
-        driver.findElement(By.xpath(getBaseBackBtn())).click();
-
+        informObservers("TOPLIST: 1st: " + first + " 10th: " + tenth);
+        informObservers("balance: " + userBalance + " my daily points: " + dailyPoints);
+        
     }
 
     @Override
@@ -461,6 +449,14 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                     }
 
                     driver.switchTo().defaultContent();
+                    
+                    if (state.shouldGetOnTop() && pointsDiff == 0) {
+                        int pointsAhead = userStats.getUserDailyPoints() - userStats.getSecondPlacePoints();
+                        if (pointsAhead > 10_000) {
+                            break;
+                        }
+                    }
+                    
                     if (pointsDiff > -5_000) {
                         
                         Unlim unlimType = state.shouldStayInTop() ? (pointsDiff > 16_000 ? Unlim.MAX : Unlim.MID) : Unlim.MAX;
