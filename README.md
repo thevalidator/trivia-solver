@@ -66,7 +66,7 @@ You may also download the archive with compiled app from the [release's page](ht
 
 + **Features**
 	+ Headless mode (*Options -> Headless mode*)
-		+ *If the headless mode is off the browser window will be opened during the program work*
+		+ *If the headless mode is off the browser window will be opened during the programm work*
 	+ Anonymous mode (*Options -> Anonymous mode*)
 		+ *Option to hide the nickname in the Trivia game*
 	+ Passive mode (*Options -> Passive mode*)
@@ -88,7 +88,7 @@ You may also download the archive with compiled app from the [release's page](ht
 
 ## Known bugs
 
-- when headless mode is off it doesn't work if menu sidebar is hidden (this happans on small screen resolutions)
+- when headless mode is off it doesn't work if menu sidebar is hidden (this happens on small screen resolutions)
 - soft stop button doesn't work correct in some cases
 
 ## License
