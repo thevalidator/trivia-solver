@@ -3,7 +3,6 @@
  */
 package ru.thevalidator.galaxytriviasolver.module.base.impl;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
