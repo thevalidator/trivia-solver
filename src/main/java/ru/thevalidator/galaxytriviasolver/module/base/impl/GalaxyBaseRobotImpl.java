@@ -132,7 +132,6 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     private static final Random random = new Random();
 
     private final State state;
-    //private WebDriver driver;
     private TriviaUserStatsData userStats;
     private final Solver solver;
 
@@ -146,9 +145,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         WebDriver webDriver = null;
         try {
             ChromeOptions options = new ChromeOptions();
-            if (state.isHeadless()) {
-                options.addArguments("--headless=new");
-            }
+            options.addArguments("--headless=new");
             webDriver = new ChromeDriver(options);
             webDriver.manage().window().setSize(new Dimension(1600, 845));
             webDriver.manage().window().setPosition((new Point(-5, 0)));
@@ -157,6 +154,9 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         } catch (Exception e) {
             logger.error(Arrays.toString(e.getStackTrace()));
             informObservers("ERROR: Can't create webdriver");
+            if (webDriver != null) {
+                webDriver.close();
+            }
             //throw new CanNotCreateWebdriverException("Can't create webdriver");
         }
         return webDriver;
@@ -441,7 +441,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                     
                     if (pointsDiff > -5_000) {
 
-                        Unlim unlimType = state.shouldStayInTop() ? (pointsDiff > 16_000 ? Unlim.MAX : Unlim.MID) : Unlim.MAX;
+                        Unlim unlimType = Unlim.MAX;
                         if (pointsDiff <= TriviaUserStatsData.AVERAGE_POINTS_PER_HOUR * hoursLeft
                                 && userStats.isUnlimAvailable(unlimType, (int) Math.ceil(hoursLeft / unlimType.getHours()))) {
 
