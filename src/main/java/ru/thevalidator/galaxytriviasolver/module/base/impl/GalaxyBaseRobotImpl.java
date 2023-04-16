@@ -132,7 +132,6 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     private static final Random random = new Random();
 
     private final State state;
-    //private WebDriver driver;
     private TriviaUserStatsData userStats;
     private final Solver solver;
 
@@ -146,9 +145,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         WebDriver webDriver = null;
         try {
             ChromeOptions options = new ChromeOptions();
-            if (state.isHeadless()) {
-                options.addArguments("--headless=new");
-            }
+            options.addArguments("--headless=new");
             webDriver = new ChromeDriver(options);
             webDriver.manage().window().setSize(new Dimension(1600, 845));
             webDriver.manage().window().setPosition((new Point(-5, 0)));

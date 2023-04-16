@@ -92,7 +92,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jMenuItem2 = new javax.swing.JMenuItem();
         bottomContainer = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         logTextArea = new javax.swing.JTextArea();
@@ -129,16 +128,11 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         enServerCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         esServerCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         ptServerCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        topListStrategyMenu = new javax.swing.JMenu();
-        stayInTopCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        getOnTopCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         anonymModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         passiveModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         headlessModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
-
-        jMenuItem2.setText("jMenuItem2");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Trivia solver");
@@ -485,36 +479,20 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         servers.add(enServerCheckBoxMenuItem);
 
         esServerCheckBoxMenuItem.setText("ES");
+        esServerCheckBoxMenuItem.setToolTipText("Not available in demo mode");
+        esServerCheckBoxMenuItem.setEnabled(false);
         esServerCheckBoxMenuItem.addActionListener(getserverActionListener());
         serverMenu.add(esServerCheckBoxMenuItem);
         servers.add(esServerCheckBoxMenuItem);
 
         ptServerCheckBoxMenuItem.setText("PT");
+        ptServerCheckBoxMenuItem.setToolTipText("Not available in demo mode");
+        ptServerCheckBoxMenuItem.setEnabled(false);
         ptServerCheckBoxMenuItem.addActionListener(getserverActionListener());
         serverMenu.add(ptServerCheckBoxMenuItem);
         servers.add(ptServerCheckBoxMenuItem);
 
         optionsMenu.add(serverMenu);
-
-        topListStrategyMenu.setText("TOP list strategy");
-
-        stayInTopCheckBoxMenuItem.setText("Stay In TOP");
-        stayInTopCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                stayInTopCheckBoxMenuItemActionPerformed(evt);
-            }
-        });
-        topListStrategyMenu.add(stayInTopCheckBoxMenuItem);
-
-        getOnTopCheckBoxMenuItem.setText("Get on TOP");
-        getOnTopCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                getOnTopCheckBoxMenuItemActionPerformed(evt);
-            }
-        });
-        topListStrategyMenu.add(getOnTopCheckBoxMenuItem);
-
-        optionsMenu.add(topListStrategyMenu);
 
         anonymModeCheckBoxMenuItem.setSelected(true);
         state.setIsAnonymous(true);
@@ -539,6 +517,8 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         headlessModeCheckBoxMenuItem.setSelected(true);
         state.setIsHeadless(true);
         headlessModeCheckBoxMenuItem.setText("Headless mode");
+        headlessModeCheckBoxMenuItem.setToolTipText("Not available in demo mode");
+        headlessModeCheckBoxMenuItem.setEnabled(false);
         headlessModeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 headlessModeCheckBoxMenuItemActionPerformed(evt);
@@ -604,7 +584,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 + "then choose server and topic you want to play\n"
                 + "and click start button.\n"
                 + "\n\n"
-                + "v1.0.0.0-release\n"
+                + "v1.0.0.0-demo\n"
                 + "[thevalidator]\n"
                 + "2023, April");
         jTextArea.setColumns(30);
@@ -686,18 +666,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         }
     }//GEN-LAST:event_headlessModeCheckBoxMenuItemActionPerformed
 
-    private void getOnTopCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getOnTopCheckBoxMenuItemActionPerformed
-        if (getOnTopCheckBoxMenuItem.isSelected()) {
-            stayInTopCheckBoxMenuItem.setSelected(false);
-            appendToPane("GET ON TOP MODE ON");
-            state.setShouldGetOnTop(true);
-            state.setShouldStayInTop(false);
-        } else {
-            appendToPane("GET ON TOP MODE OFF");
-            state.setShouldGetOnTop(false);
-        }
-    }//GEN-LAST:event_getOnTopCheckBoxMenuItemActionPerformed
-
     private void anonymModeCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_anonymModeCheckBoxMenuItemActionPerformed
         if (anonymModeCheckBoxMenuItem.isSelected()) {
             appendToPane("ANONYMOUS MODE ON");
@@ -707,18 +675,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
             state.setIsAnonymous(false);
         }
     }//GEN-LAST:event_anonymModeCheckBoxMenuItemActionPerformed
-
-    private void stayInTopCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stayInTopCheckBoxMenuItemActionPerformed
-        if (stayInTopCheckBoxMenuItem.isSelected()) {
-            getOnTopCheckBoxMenuItem.setSelected(false);
-            appendToPane("STAY IN TOP MODE ON");
-            state.setShouldStayInTop(true);
-            state.setShouldGetOnTop(false);
-        } else {
-            appendToPane("STAY IN TOP MODE OFF");
-            state.setShouldStayInTop(false);
-        }
-    }//GEN-LAST:event_stayInTopCheckBoxMenuItemActionPerformed
 
     private void passiveModeCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passiveModeCheckBoxMenuItemActionPerformed
         if (passiveModeCheckBoxMenuItem.isSelected()) {
@@ -826,7 +782,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JLabel drawValueLabel;
     private javax.swing.JCheckBoxMenuItem enServerCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem esServerCheckBoxMenuItem;
-    private javax.swing.JCheckBoxMenuItem getOnTopCheckBoxMenuItem;
     private javax.swing.JButton hardStopButton;
     private javax.swing.JCheckBoxMenuItem headlessModeCheckBoxMenuItem;
     private javax.swing.JMenu helpMenu;
@@ -834,7 +789,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JPanel leftUpperContainer;
@@ -850,8 +804,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JMenu serverMenu;
     private javax.swing.JButton startButton;
     private javax.swing.JMenuItem statusMenuItem;
-    private javax.swing.JCheckBoxMenuItem stayInTopCheckBoxMenuItem;
-    private javax.swing.JMenu topListStrategyMenu;
     private javax.swing.JComboBox<String> topicComboBox;
     private javax.swing.JLabel totalGamesLabel;
     private javax.swing.JLabel totalGamesValueLabel;
