@@ -260,20 +260,6 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     }
 
     @Override
-    public void openMail() {
-        closePopup(2_500);
-        wait(15_000).until(elementToBeClickable(By.xpath(getBaseMenuMailBtn(state.getLocale())))).click();
-        closePopup(2_500);
-        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
-        try {
-            wait(15_000).until(visibilityOfElementLocated(By.xpath(getNotificationsBtn()))).click();
-            TimeUnit.SECONDS.sleep(3);
-        } catch (Exception e) {
-            driver.switchTo().defaultContent();
-        }
-    }
-
-    @Override
     public void openGames() {
         closePopup(2_500);
         wait(15_000).until(elementToBeClickable(By.xpath(getBaseMenuGamesBtn(state.getLocale())))).click();

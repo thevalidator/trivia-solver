@@ -60,7 +60,6 @@ public class Task implements Runnable {
         while (isActive) {
             try {
                 robot.login();
-                robot.openMail();
                 robot.openGames();
                 robot.selectTriviaGame();
                 if (robot.startTriviaGame()) {

@@ -13,7 +13,6 @@ import ru.thevalidator.galaxytriviasolver.module.trivia.TriviaRobot;
 public interface GalaxyBaseRobot extends TriviaRobot {
     
     void login() throws LoginErrorException;
-    void openMail();
     void openGames();
     void terminate();
     void refreshPage();
