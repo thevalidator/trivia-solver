@@ -92,7 +92,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jMenuItem2 = new javax.swing.JMenuItem();
         bottomContainer = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         logTextArea = new javax.swing.JTextArea();
@@ -117,6 +116,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         drawValueLabel = new javax.swing.JLabel();
         lostLabel = new javax.swing.JLabel();
         lostValueLabel = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         statusMenuItem = new javax.swing.JMenuItem();
@@ -138,8 +138,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
 
-        jMenuItem2.setText("jMenuItem2");
-
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Trivia solver");
         setBackground(new java.awt.Color(51, 51, 51));
@@ -156,22 +154,25 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 formWindowIconified(evt);
             }
         });
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        bottomContainer.setOpaque(false);
 
         jScrollPane1.setBackground(new java.awt.Color(51, 51, 51));
         jScrollPane1.setBorder(null);
         jScrollPane1.setForeground(new java.awt.Color(102, 102, 102));
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        jScrollPane1.setMinimumSize(new java.awt.Dimension(576, 205));
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(570, 200));
         jScrollPane1.setOpaque(false);
-        jScrollPane1.setPreferredSize(new java.awt.Dimension(576, 205));
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(570, 200));
 
         logTextArea.setEditable(false);
         logTextArea.setBackground(new java.awt.Color(51, 51, 51));
         logTextArea.setColumns(20);
         logTextArea.setLineWrap(true);
         logTextArea.setRows(5);
-        logTextArea.setBorder(null);
+        logTextArea.setBorder(javax.swing.BorderFactory.createEmptyBorder(6, 6, 6, 6));
         logTextArea.setMargin(new java.awt.Insets(6, 6, 6, 6));
         logTextArea.setMinimumSize(new java.awt.Dimension(232, 82));
         jScrollPane1.setViewportView(logTextArea);
@@ -190,8 +191,10 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
             .addGroup(bottomContainerLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(bottomContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(logHeaderLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(logHeaderLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
+                    .addGroup(bottomContainerLayout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 570, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         bottomContainerLayout.setVerticalGroup(
@@ -200,9 +203,13 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 .addContainerGap()
                 .addComponent(logHeaderLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12))
         );
+
+        getContentPane().add(bottomContainer, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 233, -1, -1));
+
+        leftUpperContainer.setOpaque(false);
 
         userComboBox.setBackground(new java.awt.Color(51, 51, 51));
         userComboBox.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -298,6 +305,10 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                     .addComponent(hardStopButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        getContentPane().add(leftUpperContainer, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 6, -1, 215));
+
+        rightUpperContainer.setOpaque(false);
 
         totalGamesLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         totalGamesLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -438,6 +449,15 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 .addContainerGap(57, Short.MAX_VALUE))
         );
 
+        getContentPane().add(rightUpperContainer, new org.netbeans.lib.awtextra.AbsoluteConstraints(399, 6, 195, -1));
+
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/background.jpg"))); // NOI18N
+        jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jLabel1.setInheritsPopupMenu(false);
+        jLabel1.setPreferredSize(new java.awt.Dimension(582, 459));
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 6, -1, -1));
+
         jMenu1.setText("Menu");
 
         statusMenuItem.setText("Status");
@@ -510,6 +530,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
         getOnTopCheckBoxMenuItem.setText("Get on TOP");
         getOnTopCheckBoxMenuItem.setToolTipText("Trying to get you on the top");
+        getOnTopCheckBoxMenuItem.setEnabled(false);
         getOnTopCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 getOnTopCheckBoxMenuItemActionPerformed(evt);
@@ -567,32 +588,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         jMenuBar1.add(helpMenu);
 
         setJMenuBar(jMenuBar1);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(leftUpperContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(rightUpperContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(bottomContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(leftUpperContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(rightUpperContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(bottomContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
 
         pack();
         setLocationRelativeTo(null);
@@ -836,11 +831,11 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JButton hardStopButton;
     private javax.swing.JCheckBoxMenuItem headlessModeCheckBoxMenuItem;
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JPanel leftUpperContainer;
