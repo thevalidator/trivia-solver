@@ -500,7 +500,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
         stayInTopCheckBoxMenuItem.setSelected(true);
         stayInTopCheckBoxMenuItem.setText("Stay In TOP");
-        stayInTopCheckBoxMenuItem.setToolTipText("Keeps you in the top list");
+        stayInTopCheckBoxMenuItem.setToolTipText("Keeps you in the list");
         stayInTopCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 stayInTopCheckBoxMenuItemActionPerformed(evt);
@@ -517,7 +517,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         });
         topListStrategyMenu.add(getOnTopCheckBoxMenuItem);
 
-        passiveModeCheckBoxMenuItem.setSelected(true);
         passiveModeCheckBoxMenuItem.setText("Passive mode");
         passiveModeCheckBoxMenuItem.setToolTipText("Trying to use less unlimit modes");
         state.setIsPassive(true);
