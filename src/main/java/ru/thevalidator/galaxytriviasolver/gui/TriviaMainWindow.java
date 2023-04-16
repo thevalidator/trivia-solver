@@ -132,8 +132,8 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         topListStrategyMenu = new javax.swing.JMenu();
         stayInTopCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         getOnTopCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        anonymModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         passiveModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        anonymModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         headlessModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
@@ -498,7 +498,9 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
         topListStrategyMenu.setText("TOP list strategy");
 
+        stayInTopCheckBoxMenuItem.setSelected(true);
         stayInTopCheckBoxMenuItem.setText("Stay In TOP");
+        stayInTopCheckBoxMenuItem.setToolTipText("Keeps you in the top list");
         stayInTopCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 stayInTopCheckBoxMenuItemActionPerformed(evt);
@@ -507,6 +509,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         topListStrategyMenu.add(stayInTopCheckBoxMenuItem);
 
         getOnTopCheckBoxMenuItem.setText("Get on TOP");
+        getOnTopCheckBoxMenuItem.setToolTipText("Trying to get you on the top");
         getOnTopCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 getOnTopCheckBoxMenuItemActionPerformed(evt);
@@ -514,11 +517,23 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         });
         topListStrategyMenu.add(getOnTopCheckBoxMenuItem);
 
+        passiveModeCheckBoxMenuItem.setSelected(true);
+        passiveModeCheckBoxMenuItem.setText("Passive mode");
+        passiveModeCheckBoxMenuItem.setToolTipText("Trying to use less unlimit modes");
+        state.setIsPassive(true);
+        passiveModeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                passiveModeCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        topListStrategyMenu.add(passiveModeCheckBoxMenuItem);
+
         optionsMenu.add(topListStrategyMenu);
 
         anonymModeCheckBoxMenuItem.setSelected(true);
         state.setIsAnonymous(true);
         anonymModeCheckBoxMenuItem.setText("Anonymous mode");
+        anonymModeCheckBoxMenuItem.setToolTipText("Hides your name in the game");
         anonymModeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 anonymModeCheckBoxMenuItemActionPerformed(evt);
@@ -526,19 +541,11 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         });
         optionsMenu.add(anonymModeCheckBoxMenuItem);
 
-        passiveModeCheckBoxMenuItem.setSelected(true);
-        passiveModeCheckBoxMenuItem.setText("Passive mode");
-        state.setIsPassive(true);
-        passiveModeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                passiveModeCheckBoxMenuItemActionPerformed(evt);
-            }
-        });
-        optionsMenu.add(passiveModeCheckBoxMenuItem);
-
         headlessModeCheckBoxMenuItem.setSelected(true);
         state.setIsHeadless(true);
         headlessModeCheckBoxMenuItem.setText("Headless mode");
+        headlessModeCheckBoxMenuItem.setToolTipText("Not available in this version");
+        headlessModeCheckBoxMenuItem.setEnabled(false);
         headlessModeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 headlessModeCheckBoxMenuItemActionPerformed(evt);
@@ -604,7 +611,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 + "then choose server and topic you want to play\n"
                 + "and click start button.\n"
                 + "\n\n"
-                + "v1.0.0.0-release\n"
+                + "v1.0.0.1 \"Galaxy Chat Soft\" edition\n"
                 + "[thevalidator]\n"
                 + "2023, April");
         jTextArea.setColumns(30);
@@ -647,23 +654,23 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
     public void setStartButtonStatus(int status) {
         switch (status) {
-            case 1:
+            case 1 -> {
                 hardStopButton.setEnabled(true);
                 startButton.setEnabled(true);
                 startButton.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Yellow"));
                 startButton.setText("STOP");
-                break;
-            case -1:
+            }
+            case -1 -> {
                 hardStopButton.setEnabled(false);
                 startButton.setEnabled(true);
                 startButton.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
                 startButton.setText("START");
-                break;
-            default:
+            }
+            default -> {
                 hardStopButton.setEnabled(true);
                 startButton.setEnabled(false);
                 startButton.setText("WAIT");
-                break;
+            }
         }
     }
 
@@ -772,13 +779,13 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         String result;
         result = switch (responseCode) {
             case HttpStatus.SC_NOT_FOUND ->
-                "RED";
+                "RED (the key is not registered)";
             case HttpStatus.SC_MOVED_TEMPORARILY ->
-                "YELLOW";
+                "YELLOW (the key is expired)";
             case HttpStatus.SC_OK ->
-                "GREEN";
+                "GREEN (all good)";
             default ->
-                "BLACK";
+                "BLACK (no connection with the server)";
         };
         appendToPane("status: " + result);
     }//GEN-LAST:event_statusMenuItemActionPerformed

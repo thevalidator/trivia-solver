@@ -111,7 +111,9 @@
               <SubComponents>
                 <MenuItem class="javax.swing.JCheckBoxMenuItem" name="stayInTopCheckBoxMenuItem">
                   <Properties>
+                    <Property name="selected" type="boolean" value="true"/>
                     <Property name="text" type="java.lang.String" value="Stay In TOP"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Keeps you in the top list"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="stayInTopCheckBoxMenuItemActionPerformed"/>
@@ -120,10 +122,24 @@
                 <MenuItem class="javax.swing.JCheckBoxMenuItem" name="getOnTopCheckBoxMenuItem">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Get on TOP"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Trying to get you on the top"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="getOnTopCheckBoxMenuItemActionPerformed"/>
                   </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="passiveModeCheckBoxMenuItem">
+                  <Properties>
+                    <Property name="selected" type="boolean" value="true"/>
+                    <Property name="text" type="java.lang.String" value="Passive mode"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Trying to use less unlimit modes"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="passiveModeCheckBoxMenuItemActionPerformed"/>
+                  </Events>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="state.setIsPassive(true);"/>
+                  </AuxValues>
                 </MenuItem>
               </SubComponents>
             </Menu>
@@ -131,27 +147,18 @@
               <Properties>
                 <Property name="selected" type="boolean" value="true" postCode="state.setIsAnonymous(true);"/>
                 <Property name="text" type="java.lang.String" value="Anonymous mode"/>
+                <Property name="toolTipText" type="java.lang.String" value="Hides your name in the game"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="anonymModeCheckBoxMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="passiveModeCheckBoxMenuItem">
-              <Properties>
-                <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" value="Passive mode"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="passiveModeCheckBoxMenuItemActionPerformed"/>
-              </Events>
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="state.setIsPassive(true);"/>
-              </AuxValues>
-            </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="headlessModeCheckBoxMenuItem">
               <Properties>
                 <Property name="selected" type="boolean" value="true" postCode="state.setIsHeadless(true);"/>
                 <Property name="text" type="java.lang.String" value="Headless mode"/>
+                <Property name="toolTipText" type="java.lang.String" value="Not available in this version"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="headlessModeCheckBoxMenuItemActionPerformed"/>
