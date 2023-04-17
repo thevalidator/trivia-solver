@@ -77,11 +77,8 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         initComponents();
         initLocale(Locale.getDefaultLocale());
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/trivia.png")));
-        //addTrayIcon();
         state.setIsPassive(false);
         state.setShouldStayInTop(true);
-        //optionsMenu.setToolTipText("Not available in demo mode");
-        //headlessModeCheckBoxMenuItem.setToolTipText("Not available in pub version");
         statusMenuItemActionPerformed(null);
     }
 
@@ -123,8 +120,8 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         unlimMinutesLabel = new javax.swing.JLabel();
         unlimMinutesComboBox = new javax.swing.JComboBox<>();
         unlimHoursComboBox = new javax.swing.JComboBox<>();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
+        autoStrategyRadioButton = new javax.swing.JRadioButton();
+        manualStrategyRadioButton = new javax.swing.JRadioButton();
         unlimStrategyRepeatCheckBox = new javax.swing.JCheckBox();
         backgroundLabel = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -422,27 +419,27 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         unlimHoursComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23" }));
         rightUpperContainer.add(unlimHoursComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(118, 144, 55, -1));
 
-        strategyModeButtonGroup.add(jRadioButton1);
-        jRadioButton1.setText("AUTO");
-        jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
+        strategyModeButtonGroup.add(autoStrategyRadioButton);
+        autoStrategyRadioButton.setText("AUTO");
+        autoStrategyRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton1ActionPerformed(evt);
+                autoStrategyRadioButtonActionPerformed(evt);
             }
         });
-        rightUpperContainer.add(jRadioButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(19, 145, -1, -1));
+        rightUpperContainer.add(autoStrategyRadioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(19, 145, -1, -1));
 
-        strategyModeButtonGroup.add(jRadioButton2);
-        jRadioButton2.setSelected(true);
-        jRadioButton2.setText("MAN");
-        jRadioButton2.setMaximumSize(new java.awt.Dimension(54, 21));
-        jRadioButton2.setMinimumSize(new java.awt.Dimension(54, 21));
-        jRadioButton2.setPreferredSize(new java.awt.Dimension(54, 21));
-        jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
+        strategyModeButtonGroup.add(manualStrategyRadioButton);
+        manualStrategyRadioButton.setSelected(true);
+        manualStrategyRadioButton.setText("MAN");
+        manualStrategyRadioButton.setMaximumSize(new java.awt.Dimension(54, 21));
+        manualStrategyRadioButton.setMinimumSize(new java.awt.Dimension(54, 21));
+        manualStrategyRadioButton.setPreferredSize(new java.awt.Dimension(54, 21));
+        manualStrategyRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton2ActionPerformed(evt);
+                manualStrategyRadioButtonActionPerformed(evt);
             }
         });
-        rightUpperContainer.add(jRadioButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(19, 173, -1, -1));
+        rightUpperContainer.add(manualStrategyRadioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(19, 173, -1, -1));
 
         unlimStrategyRepeatCheckBox.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         unlimStrategyRepeatCheckBox.setText("repeat");
@@ -651,12 +648,14 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     public void setStartButtonStatus(int status) {
         switch (status) {
             case 1 -> {
+                strategyBlockEnable(false);
                 hardStopButton.setEnabled(true);
                 startButton.setEnabled(true);
                 startButton.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Yellow"));
                 startButton.setText("STOP");
             }
             case -1 -> {
+                strategyBlockEnable(true);
                 hardStopButton.setEnabled(false);
                 startButton.setEnabled(true);
                 startButton.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
@@ -735,7 +734,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
     private void hardStopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hardStopButtonActionPerformed
         setStartButtonStatus(0);
-        if (worker != null & !worker.isCancelled()) {
+        if (worker != null && !worker.isCancelled()) {
             //hardStopButton.setEnabled(false);
 
             userComboBox.setEnabled(true);
@@ -816,7 +815,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         }
     }//GEN-LAST:event_addAccountMenuItemActionPerformed
 
-    private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
+    private void autoStrategyRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autoStrategyRadioButtonActionPerformed
         state.setShouldStayInTop(true);
         state.setShouldGetOnTop(false);
         
@@ -831,9 +830,9 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         unlimStrategyRepeatCheckBox.setEnabled(false);
         unlimStrategyRepeatCheckBox.setVisible(false);
         appendToPane("AUTO strategy enabled");
-    }//GEN-LAST:event_jRadioButton1ActionPerformed
+    }//GEN-LAST:event_autoStrategyRadioButtonActionPerformed
 
-    private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
+    private void manualStrategyRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_manualStrategyRadioButtonActionPerformed
         state.setShouldStayInTop(false);
         state.setShouldGetOnTop(false);
         
@@ -848,13 +847,14 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         unlimStrategyRepeatCheckBox.setEnabled(true);
         unlimStrategyRepeatCheckBox.setVisible(true);
         appendToPane("MANUAL strategy enabled");
-    }//GEN-LAST:event_jRadioButton2ActionPerformed
+    }//GEN-LAST:event_manualStrategyRadioButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JMenu accountJMenu;
     private javax.swing.JMenuItem addAccountMenuItem;
     private javax.swing.JCheckBoxMenuItem anonymModeCheckBoxMenuItem;
+    private javax.swing.JRadioButton autoStrategyRadioButton;
     private javax.swing.JLabel averagePointsLabel;
     private javax.swing.JLabel averagePointsValueLabel;
     private javax.swing.JLabel backgroundLabel;
@@ -872,8 +872,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JPanel leftUpperContainer;
@@ -881,6 +879,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JTextArea logTextArea;
     private javax.swing.JLabel lostLabel;
     private javax.swing.JLabel lostValueLabel;
+    private javax.swing.JRadioButton manualStrategyRadioButton;
     private javax.swing.JMenu optionsMenu;
     private javax.swing.JCheckBoxMenuItem passiveModeCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem ptServerCheckBoxMenuItem;
@@ -908,65 +907,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
     private JFrame getMainWindow() {
         return this;
-    }
-
-    private void addTrayIcon() {
-        if (SystemTray.isSupported()) {
-            final PopupMenu popup = new PopupMenu();
-            final TrayIcon trayIcon = new TrayIcon(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/tray.png")));
-            final SystemTray tray = SystemTray.getSystemTray();
-
-            MenuItem minimizeItem = new MenuItem("Minimize");
-            minimizeItem.addActionListener((ActionEvent e) -> {
-                getMainWindow().setState(ICONIFIED);
-            });
-            MenuItem exitItem = new MenuItem("Exit");
-            exitItem.addActionListener((ActionEvent e) -> {
-                tray.remove(trayIcon);
-                System.exit(0);
-            });
-
-            popup.add(minimizeItem);
-            popup.add(exitItem);
-
-            trayIcon.setPopupMenu(popup);
-            trayIcon.addMouseListener(new MouseListener() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    if (e.getButton() == MouseEvent.BUTTON1) {
-                        getMainWindow().setVisible(true);
-                        getMainWindow().toFront();
-                    } else if (e.getButton() == MouseEvent.BUTTON2) {
-                        getMainWindow().setVisible(false);
-                    }
-                }
-
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    //throw new UnsupportedOperationException("Not supported yet.");
-                }
-
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                    //throw new UnsupportedOperationException("Not supported yet.");
-                }
-
-                @Override
-                public void mouseEntered(MouseEvent e) {
-                    //throw new UnsupportedOperationException("Not supported yet.");
-                }
-
-                @Override
-                public void mouseExited(MouseEvent e) {
-                    //throw new UnsupportedOperationException("Not supported yet.");
-                }
-            });
-            try {
-                tray.add(trayIcon);
-            } catch (AWTException e) {
-                logger.error("Tray icon could not be added: {}", e.getMessage());
-            }
-        }
     }
 
     private List<User> readUserData() {
@@ -1105,6 +1045,14 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         lostValueLabel.setText(String.valueOf(state.getLostCount()));
         drawValueLabel.setText(String.valueOf(state.getDrawCount()));
         averagePointsValueLabel.setText(String.valueOf(state.getAveragePoints()));
+    }
+
+    private void strategyBlockEnable(boolean b) {
+        autoStrategyRadioButton.setEnabled(b);
+        manualStrategyRadioButton.setEnabled(b);
+        unlimHoursComboBox.setEnabled(b);
+        unlimMinutesComboBox.setEnabled(b);
+        unlimStrategyRepeatCheckBox.setEnabled(b);
     }
 
 }
