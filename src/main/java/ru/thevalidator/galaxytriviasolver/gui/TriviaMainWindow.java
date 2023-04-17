@@ -886,39 +886,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
             task = new Task(state, this);
         }
 
-        //System.out.println("strategy: " + state.getUnlimStrategyTime());
-        //System.out.println("price: " + UnlimUtil.getPrice(state.getUnlimStrategyTime()));
-
-        if (state.isManualStrategy()) {
-
-            int unlimTime = state.getUnlimStrategyTime();
-
-            if (unlimTime > 0) {
-                int maxUnlimCount = unlimTime / (4 * 60);
-                if (maxUnlimCount > 0) {
-                    state.setUnlimStrategyTime(unlimTime - (4 * 60));
-                    System.out.println("max: " + maxUnlimCount + " - " + state.getUnlimStrategyTime());
-                    return;
-                    // buy max unlim
-                }
-
-                int midUnlimCount = unlimTime / (2 * 60);
-                if (midUnlimCount > 0) {
-                    state.setUnlimStrategyTime(unlimTime - (2 * 60));
-                    System.out.println("mid: " + midUnlimCount + " - " + state.getUnlimStrategyTime());
-                    return;
-                    // buy mid unlim
-                }
-
-                int minUnlimCount = unlimTime / 30;
-                if (minUnlimCount > 0) {
-                    state.setUnlimStrategyTime(unlimTime - 30);
-                    System.out.println("min: " + minUnlimCount + " - " + state.getUnlimStrategyTime());
-                    // buy min unlim
-                }
-            }
-
-        }
         worker = new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() throws Exception {
