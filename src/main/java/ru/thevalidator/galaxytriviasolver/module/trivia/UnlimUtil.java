@@ -7,28 +7,28 @@ package ru.thevalidator.galaxytriviasolver.module.trivia;
  * @author thevalidator <the.validator@yandex.ru>
  */
 public class UnlimUtil {
+    
+    public static final int MAX_UNLIM_MINUTES = (int) (Unlim.MAX.getHours() * 60);
+    public static final int MID_UNLIM_MINUTES = (int) (Unlim.MID.getHours() * 60);
+    public static final int MIN_UNLIM_MINUTES = (int) (Unlim.MIN.getHours() * 60);
 
     public static double getPrice(int unlimTime) {
 
-        int maxUnlimMinutes = (int) (Unlim.MAX.getHours() * 60);
-        int midUnlimMinutes = (int) (Unlim.MID.getHours() * 60);
-        int minUnlimMinutes = (int) (Unlim.MIN.getHours() * 60);
-
         double price = 0.;
 
-        int maxUnlimCount = unlimTime / maxUnlimMinutes;
+        int maxUnlimCount = unlimTime / MAX_UNLIM_MINUTES;
         if (maxUnlimCount > 0) {
             price += Unlim.MAX.getPrice() * maxUnlimCount;
         }
 
-        unlimTime = unlimTime % maxUnlimMinutes;
-        int midUnlimCount = unlimTime / midUnlimMinutes;
+        unlimTime = unlimTime % MAX_UNLIM_MINUTES;
+        int midUnlimCount = unlimTime / MID_UNLIM_MINUTES;
         if (midUnlimCount > 0) {
             price += Unlim.MID.getPrice() * midUnlimCount;
         }
 
-        unlimTime = unlimTime % midUnlimMinutes;
-        int minUnlimCount = unlimTime / minUnlimMinutes;
+        unlimTime = unlimTime % MID_UNLIM_MINUTES;
+        int minUnlimCount = unlimTime / MIN_UNLIM_MINUTES;
         if (minUnlimCount > 0) {
             price += Unlim.MIN.getPrice() * minUnlimCount;
         }
@@ -36,5 +36,10 @@ public class UnlimUtil {
         return Math.ceil(price * 100) / 100;
 
     }
+    
+    public static boolean isUnlimAvailable(double userCoins, int unlimTime) {
+            double price = getPrice(unlimTime);
+            return userCoins >= price;
+        }
 
 }
