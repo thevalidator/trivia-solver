@@ -51,6 +51,10 @@ import ru.thevalidator.galaxytriviasolver.module.base.GalaxyBaseRobot;
 import ru.thevalidator.galaxytriviasolver.module.trivia.GameResult;
 import ru.thevalidator.galaxytriviasolver.module.trivia.State;
 import ru.thevalidator.galaxytriviasolver.module.trivia.Unlim;
+import ru.thevalidator.galaxytriviasolver.module.trivia.UnlimUtil;
+import static ru.thevalidator.galaxytriviasolver.module.trivia.UnlimUtil.MAX_UNLIM_MINUTES;
+import static ru.thevalidator.galaxytriviasolver.module.trivia.UnlimUtil.MID_UNLIM_MINUTES;
+import static ru.thevalidator.galaxytriviasolver.module.trivia.UnlimUtil.MIN_UNLIM_MINUTES;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.Solver;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.entity.trivia.Answer;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.entity.trivia.Question;
@@ -176,10 +180,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     }
 
     public void saveDataToFile(String pathname, Exception exception) {
-        try ( StringWriter sw = new StringWriter();  
-                PrintWriter pw = new PrintWriter(sw);  
-                FileOutputStream fos = new FileOutputStream(pathname);  
-                DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos))) {
+        try (StringWriter sw = new StringWriter(); PrintWriter pw = new PrintWriter(sw); FileOutputStream fos = new FileOutputStream(pathname); DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos))) {
             exception.printStackTrace(pw);
             outStream.writeUTF(sw.toString());
         } catch (IOException e) {
@@ -188,7 +189,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     }
 
     public void savePageSourceToFile(String pathname) {
-        try ( BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(pathname + "_src", Charset.forName("UTF-8")))) {
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(pathname + "_src", Charset.forName("UTF-8")))) {
             bufferedWriter.write(driver.getPageSource());
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -243,6 +244,9 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                 String fileName = getFileNameTimeStamp() + "_login";
                 takeScreenshot(fileName + ".png");
                 saveDataToFile(fileName, e);
+                if (driver != null) {
+                    driver.quit();
+                }
                 if (i == maxAttempts) {
                     informObservers("LOGIN ERROR: couldn't log in " + maxAttempts + " times in a row, task stopped");
                     throw new LoginErrorException(e.getMessage());
@@ -251,7 +255,6 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                     int timeToWait = (2 * i) + ((i - 1) * 10);
                     informObservers("LOGIN ERROR: try " + i + " was unsuccessfull, next try in " + timeToWait
                             + "\nreason: " + e.getMessage());
-                    driver.quit();
                     try {
                         TimeUnit.MINUTES.sleep(timeToWait);
                     } catch (InterruptedException ex) {
@@ -354,13 +357,40 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             topic.click();
             return true;
         } else {
+//            if (state.shouldGetOnTop() || state.shouldStayInTop()) {
+//                if (pointsDiff > -5_000) {
+//
+//                    Unlim unlimType = Unlim.MAX;
+//                    if (pointsDiff <= TriviaUserStatsData.AVERAGE_POINTS_PER_HOUR * hoursLeft
+//                            && userStats.isUnlimAvailable(unlimType, (int) Math.ceil(hoursLeft / unlimType.getHours()))) {
+//
+//                        informObservers("BUYING UNLIM TO REACH THE TARGET!");
+//                        buyUnlimOption(unlimType);
+//                        try {
+//                            startTriviaGame();
+//                            continue;
+//                        } catch (CanNotPlayException ex) {
+//                            takeScreenshot(getFileNameTimeStamp() + "_continueAfterUnlim.png");
+//                            logger.error(ex.getMessage());
+//                        }
+//                    } else {
+//                        String message = "Top list target is UNREACHABLE!" + pointsDiff
+//                                + " hour left: " + hoursLeft
+//                                + " coins: " + userStats.getUserCoins();
+//                        logger.error(message);
+//                        informObservers("Top list target is UNREACHABLE!");
+//                        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
+//                        break;
+//                    }
+//                }
+//            }
             informObservers("TRIVIA: no attempts available");
             return false;
         }
     }
 
     private WebElement getTopic(String topic, List<WebElement> topics) throws CanNotPlayException {
-        for (WebElement t : topics) {
+        for (WebElement t: topics) {
             if (t.getText().equalsIgnoreCase(topic)) {
                 return t;
             }
@@ -396,9 +426,73 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             if (!Task.isActive) {
                 break;
             }
-            
+
             if (attempts.equals("0")) {
-                if (state.shouldGetOnTop() || state.shouldStayInTop()) {
+                if (state.isManualStrategy() && state.getUnlimStrategyTime() > 0) {
+
+                    int unlimTime = state.getUnlimStrategyTime();
+
+                    if (!UnlimUtil.isUnlimAvailable(userStats.getUserCoins(), unlimTime)) {
+                        String message = String.format("Not enough coins for the selected strategy. Need: %.2f, you have: %.2f",
+                                UnlimUtil.getPrice(unlimTime), userStats.getUserCoins());
+                        informObservers(message);
+                        break;
+                    }
+                    
+                    driver.switchTo().defaultContent();
+                    closePopup(1_500);
+                    driver.switchTo().frame(driver.findElement(By.xpath(getTriviaGameResultsFrame())));
+                    driver.findElement(By.xpath(getTriviaReturnToMainPageBtn())).click();
+                    updateTriviaUsersData();
+                    informObservers("1st: " + userStats.getFirstPlacePoints()
+                            + " 10th: " + userStats.getTenthPlacePoints()
+                            + " YOU: " + userStats.getUserDailyPoints());
+                    driver.switchTo().frame(driver.findElement(By.xpath(getTriviaGameMainFrame())));
+                    driver.switchTo().defaultContent();
+
+                    int maxUnlimCount = unlimTime / MAX_UNLIM_MINUTES;
+                    if (maxUnlimCount > 0) {
+                        // buy max unlim
+                        buyUnlimOption(Unlim.MAX);
+                        state.setUnlimStrategyTime(unlimTime - MAX_UNLIM_MINUTES);
+                        try {
+                            startTriviaGame();
+                            continue;
+                        } catch (CanNotPlayException ex) {
+                            takeScreenshot(getFileNameTimeStamp() + "_continueAfterUnlimMax.png");
+                            logger.error(ex.getMessage());
+                        }
+                    }
+
+                    int midUnlimCount = unlimTime / MID_UNLIM_MINUTES;
+                    if (midUnlimCount > 0) {
+                        // buy mid unlim
+                        buyUnlimOption(Unlim.MID);
+                        state.setUnlimStrategyTime(unlimTime - MID_UNLIM_MINUTES);
+                        try {
+                            startTriviaGame();
+                            continue;
+                        } catch (CanNotPlayException ex) {
+                            takeScreenshot(getFileNameTimeStamp() + "_continueAfterUnlimMid.png");
+                            logger.error(ex.getMessage());
+                        }
+                    }
+
+                    int minUnlimCount = unlimTime / MIN_UNLIM_MINUTES;
+                    if (minUnlimCount > 0) {
+                        // buy min unlim
+                        buyUnlimOption(Unlim.MIN);
+                        state.setUnlimStrategyTime(unlimTime - MIN_UNLIM_MINUTES);
+                        try {
+                            startTriviaGame();
+                            continue;
+                        } catch (CanNotPlayException ex) {
+                            takeScreenshot(getFileNameTimeStamp() + "_continueAfterUnlimMin.png");
+                            logger.error(ex.getMessage());
+                        }
+                    }
+
+                } else if (state.shouldGetOnTop() || state.shouldStayInTop()) {
                     driver.switchTo().defaultContent();
                     closePopup(1_500);
                     driver.switchTo().frame(driver.findElement(By.xpath(getTriviaGameResultsFrame())));
@@ -431,15 +525,15 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                     }
 
                     driver.switchTo().defaultContent();
-                    
+
                     if (state.shouldGetOnTop() && pointsDiff == 0) {
                         int pointsAhead = userStats.getUserDailyPoints() - userStats.getSecondPlacePoints();
                         if (pointsAhead > 10_000) {
                             break;
                         }
                     }
-                    
-                    if (pointsDiff > -5_000) {
+
+                    if (pointsDiff > -4_000) {
 
                         Unlim unlimType = Unlim.MAX;
                         if (pointsDiff <= TriviaUserStatsData.AVERAGE_POINTS_PER_HOUR * hoursLeft
@@ -487,7 +581,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     }
 
     private void answerQuestions() {
-        String questionText = null;
+        String questionText;
         for (int i = 0; i < 5; i++) {
             driver.switchTo().defaultContent();
             closePopup(1_000);
@@ -510,7 +604,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     private void clickCorrectAnswer(String questionText, List<WebElement> elements) {
         Answer[] answers = new Answer[elements.size()];
         int index = 0;
-        for (WebElement e : elements) {
+        for (WebElement e: elements) {
             String text = e.getText();
             String rel = e.getAttribute("rel");
             Answer answer = new Answer(text, rel, index);
@@ -577,11 +671,11 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                 synchronized (this) {
                     driver.quit();
                 }
-                
+
             } catch (Exception e) {
                 informObservers("error closing the driver");
             }
-            
+
         }
     }
 
