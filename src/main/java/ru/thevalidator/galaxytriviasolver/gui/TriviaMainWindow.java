@@ -6,18 +6,11 @@ package ru.thevalidator.galaxytriviasolver.gui;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import java.awt.AWTException;
 import java.awt.Component;
 import java.awt.GridLayout;
-import java.awt.MenuItem;
-import java.awt.PopupMenu;
-import java.awt.SystemTray;
 import java.awt.Toolkit;
-import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.net.ProtocolException;
 import java.nio.file.Paths;
@@ -79,7 +72,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         initLocale(Locale.getDefaultLocale());
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/trivia.png")));
         state.setIsPassive(false);
-        state.setShouldStayInTop(true);
+        //state.setShouldStayInTop(true);
         statusMenuItemActionPerformed(null);
     }
 
@@ -152,9 +145,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
-            }
-            public void windowIconified(java.awt.event.WindowEvent evt) {
-                formWindowIconified(evt);
             }
         });
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -304,7 +294,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 .addGroup(leftUpperContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(startButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(hardStopButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
 
         getContentPane().add(leftUpperContainer, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 6, -1, 215));
@@ -466,7 +456,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         backgroundLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/background.jpg"))); // NOI18N
         backgroundLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         backgroundLabel.setInheritsPopupMenu(false);
-        backgroundLabel.setPreferredSize(new java.awt.Dimension(582, 459));
         getContentPane().add(backgroundLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 6, -1, -1));
 
         jMenu1.setText("Menu");
@@ -564,13 +553,13 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         jScrollPane.setBorder(BorderFactory.createEmptyBorder());
         JTextArea jTextArea = new JTextArea(
                 "\n"
-                + "Galaxy Trivia solver helps you to win \n"
-                + "Trivia game and get to the daily top 10 list.\n\n"
-                + "For use select person (add new if no persons)\n"
-                + "then choose server and topic you want to play\n"
-                + "and click start button.\n"
+                + "Galaxy Trivia solver helps you to win in the \n"
+                + "Trivia game and get into the daily top 10 list.\n\n"
+                + "For use select person (add new if no persons), \n"
+                + "choose server and topic you want to play \n"
+                + "then click start button.\n"
                 + "\n\n"
-                + "v1.0.0.1 \"Galaxy Chat Soft\" edition\n"
+                + "v1.0.1.0\n"
                 + "[thevalidator]\n"
                 + "2023, April");
         jTextArea.setColumns(30);
@@ -579,22 +568,13 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         jTextArea.setEditable(false);
         jScrollPane.setViewportView(jTextArea);
         JLabel header = new JLabel();
-        header.setText("Trivia solver");
+        header.setText("Trivia solver (\"Galaxy Chat Soft\" edition)");
         header.setFont(new java.awt.Font("Segoe UI", 1, 14));
         header.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         header.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jScrollPane.setColumnHeaderView(header);
         JOptionPane.showMessageDialog(this, jScrollPane, "About", JOptionPane.PLAIN_MESSAGE);
     }//GEN-LAST:event_aboutMenuItemActionPerformed
-
-    private void formWindowIconified(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowIconified
-        if (System.getProperty("os.name").contains("Windows")) {
-            this.setVisible(false);
-            this.setState(JFrame.NORMAL);
-        } else {
-            this.setState(JFrame.ICONIFIED);
-        }
-    }//GEN-LAST:event_formWindowIconified
 
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
         if (task == null || !task.isActive()) {
