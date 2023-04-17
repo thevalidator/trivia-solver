@@ -78,8 +78,10 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         initLocale(Locale.getDefaultLocale());
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/trivia.png")));
         addTrayIcon();
+        state.setIsPassive(false);
+        state.setShouldStayInTop(true);
         //optionsMenu.setToolTipText("Not available in demo mode");
-        headlessModeCheckBoxMenuItem.setToolTipText("Not available in pub version");
+        //headlessModeCheckBoxMenuItem.setToolTipText("Not available in pub version");
         statusMenuItemActionPerformed(null);
     }
 
@@ -92,6 +94,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        strategyModeButtonGroup = new javax.swing.ButtonGroup();
         bottomContainer = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         logTextArea = new javax.swing.JTextArea();
@@ -116,6 +119,12 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         drawValueLabel = new javax.swing.JLabel();
         lostLabel = new javax.swing.JLabel();
         lostValueLabel = new javax.swing.JLabel();
+        unlimHoursLabel = new javax.swing.JLabel();
+        unlimMinutesLabel = new javax.swing.JLabel();
+        unlimMinutesComboBox = new javax.swing.JComboBox<>();
+        unlimHoursComboBox = new javax.swing.JComboBox<>();
+        jRadioButton1 = new javax.swing.JRadioButton();
+        jRadioButton2 = new javax.swing.JRadioButton();
         jLabel1 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
@@ -309,6 +318,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         getContentPane().add(leftUpperContainer, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 6, -1, 215));
 
         rightUpperContainer.setOpaque(false);
+        rightUpperContainer.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         totalGamesLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         totalGamesLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -317,6 +327,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         totalGamesLabel.setMaximumSize(new java.awt.Dimension(80, 16));
         totalGamesLabel.setMinimumSize(new java.awt.Dimension(80, 16));
         totalGamesLabel.setPreferredSize(new java.awt.Dimension(80, 16));
+        rightUpperContainer.add(totalGamesLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 6, 100, -1));
 
         totalGamesValueLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         totalGamesValueLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -324,6 +335,8 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         totalGamesValueLabel.setMaximumSize(new java.awt.Dimension(70, 16));
         totalGamesValueLabel.setMinimumSize(new java.awt.Dimension(70, 16));
         totalGamesValueLabel.setPreferredSize(new java.awt.Dimension(70, 16));
+        rightUpperContainer.add(totalGamesValueLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(118, 6, -1, -1));
+        rightUpperContainer.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(14, 56, 169, 10));
 
         averagePointsLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         averagePointsLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -331,6 +344,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         averagePointsLabel.setMaximumSize(new java.awt.Dimension(80, 16));
         averagePointsLabel.setMinimumSize(new java.awt.Dimension(80, 16));
         averagePointsLabel.setPreferredSize(new java.awt.Dimension(80, 16));
+        rightUpperContainer.add(averagePointsLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 28, 100, -1));
 
         averagePointsValueLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         averagePointsValueLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -338,6 +352,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         averagePointsValueLabel.setMaximumSize(new java.awt.Dimension(70, 16));
         averagePointsValueLabel.setMinimumSize(new java.awt.Dimension(70, 16));
         averagePointsValueLabel.setPreferredSize(new java.awt.Dimension(70, 16));
+        rightUpperContainer.add(averagePointsValueLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(118, 28, -1, -1));
 
         winLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         winLabel.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
@@ -346,6 +361,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         winLabel.setMaximumSize(new java.awt.Dimension(80, 16));
         winLabel.setMinimumSize(new java.awt.Dimension(80, 16));
         winLabel.setPreferredSize(new java.awt.Dimension(80, 16));
+        rightUpperContainer.add(winLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 72, 100, -1));
 
         winValueLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         winValueLabel.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
@@ -354,6 +370,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         winValueLabel.setMaximumSize(new java.awt.Dimension(70, 16));
         winValueLabel.setMinimumSize(new java.awt.Dimension(70, 16));
         winValueLabel.setPreferredSize(new java.awt.Dimension(70, 16));
+        rightUpperContainer.add(winValueLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(118, 72, -1, -1));
 
         drawLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         drawLabel.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Yellow"));
@@ -362,6 +379,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         drawLabel.setMaximumSize(new java.awt.Dimension(80, 16));
         drawLabel.setMinimumSize(new java.awt.Dimension(80, 16));
         drawLabel.setPreferredSize(new java.awt.Dimension(80, 16));
+        rightUpperContainer.add(drawLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 94, 100, -1));
 
         drawValueLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         drawValueLabel.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Yellow"));
@@ -370,6 +388,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         drawValueLabel.setMaximumSize(new java.awt.Dimension(70, 16));
         drawValueLabel.setMinimumSize(new java.awt.Dimension(70, 16));
         drawValueLabel.setPreferredSize(new java.awt.Dimension(70, 16));
+        rightUpperContainer.add(drawValueLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(118, 94, -1, -1));
 
         lostLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         lostLabel.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
@@ -378,6 +397,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         lostLabel.setMaximumSize(new java.awt.Dimension(80, 16));
         lostLabel.setMinimumSize(new java.awt.Dimension(80, 16));
         lostLabel.setPreferredSize(new java.awt.Dimension(80, 16));
+        rightUpperContainer.add(lostLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 116, 100, -1));
 
         lostValueLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         lostValueLabel.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
@@ -386,68 +406,45 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         lostValueLabel.setMaximumSize(new java.awt.Dimension(70, 16));
         lostValueLabel.setMinimumSize(new java.awt.Dimension(70, 16));
         lostValueLabel.setPreferredSize(new java.awt.Dimension(70, 16));
+        rightUpperContainer.add(lostValueLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(119, 116, -1, -1));
 
-        javax.swing.GroupLayout rightUpperContainerLayout = new javax.swing.GroupLayout(rightUpperContainer);
-        rightUpperContainer.setLayout(rightUpperContainerLayout);
-        rightUpperContainerLayout.setHorizontalGroup(
-            rightUpperContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(rightUpperContainerLayout.createSequentialGroup()
-                .addGroup(rightUpperContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(rightUpperContainerLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(rightUpperContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(rightUpperContainerLayout.createSequentialGroup()
-                                .addComponent(totalGamesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(totalGamesValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(rightUpperContainerLayout.createSequentialGroup()
-                                .addComponent(averagePointsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(averagePointsValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(rightUpperContainerLayout.createSequentialGroup()
-                                .addComponent(winLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(winValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(rightUpperContainerLayout.createSequentialGroup()
-                                .addComponent(drawLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(drawValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(rightUpperContainerLayout.createSequentialGroup()
-                                .addComponent(lostLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(lostValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(rightUpperContainerLayout.createSequentialGroup()
-                        .addGap(14, 14, 14)
-                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        rightUpperContainerLayout.setVerticalGroup(
-            rightUpperContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(rightUpperContainerLayout.createSequentialGroup()
-                .addGap(32, 32, 32)
-                .addGroup(rightUpperContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(totalGamesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(totalGamesValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(rightUpperContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(averagePointsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(averagePointsValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(rightUpperContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(winLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(winValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(rightUpperContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(drawLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(drawValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(rightUpperContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lostLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lostValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(57, Short.MAX_VALUE))
-        );
+        unlimHoursLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        unlimHoursLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        unlimHoursLabel.setText("H:");
+        rightUpperContainer.add(unlimHoursLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(79, 144, 27, -1));
+
+        unlimMinutesLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        unlimMinutesLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        unlimMinutesLabel.setText("M:");
+        rightUpperContainer.add(unlimMinutesLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(79, 172, 27, -1));
+
+        unlimMinutesComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "0", "30" }));
+        rightUpperContainer.add(unlimMinutesComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(118, 172, 55, -1));
+
+        unlimHoursComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23" }));
+        rightUpperContainer.add(unlimHoursComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(118, 144, 55, -1));
+
+        strategyModeButtonGroup.add(jRadioButton1);
+        jRadioButton1.setText("AUTO");
+        jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton1ActionPerformed(evt);
+            }
+        });
+        rightUpperContainer.add(jRadioButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(19, 145, -1, -1));
+
+        strategyModeButtonGroup.add(jRadioButton2);
+        jRadioButton2.setSelected(true);
+        jRadioButton2.setText("MAN");
+        jRadioButton2.setMaximumSize(new java.awt.Dimension(54, 21));
+        jRadioButton2.setMinimumSize(new java.awt.Dimension(54, 21));
+        jRadioButton2.setPreferredSize(new java.awt.Dimension(54, 21));
+        jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton2ActionPerformed(evt);
+            }
+        });
+        rightUpperContainer.add(jRadioButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(19, 173, -1, -1));
 
         getContentPane().add(rightUpperContainer, new org.netbeans.lib.awtextra.AbsoluteConstraints(399, 6, 195, -1));
 
@@ -529,7 +526,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         topListStrategyMenu.add(stayInTopCheckBoxMenuItem);
 
         getOnTopCheckBoxMenuItem.setText("Get on TOP");
-        getOnTopCheckBoxMenuItem.setToolTipText("Trying to get you on the top");
+        getOnTopCheckBoxMenuItem.setToolTipText("Unavailable in this version");
         getOnTopCheckBoxMenuItem.setEnabled(false);
         getOnTopCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -814,6 +811,26 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         }
     }//GEN-LAST:event_addAccountMenuItemActionPerformed
 
+    private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
+        // TODO add your handling code here:
+        unlimHoursComboBox.setEnabled(false);
+        unlimHoursComboBox.setVisible(false);
+        unlimHoursLabel.setVisible(false);
+        unlimMinutesComboBox.setEnabled(false);
+        unlimMinutesComboBox.setVisible(false);
+        unlimMinutesLabel.setVisible(false);
+    }//GEN-LAST:event_jRadioButton1ActionPerformed
+
+    private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
+        // TODO add your handling code here:
+        unlimHoursComboBox.setEnabled(true);
+        unlimHoursComboBox.setVisible(true);
+        unlimHoursLabel.setVisible(true);
+        unlimMinutesComboBox.setEnabled(true);
+        unlimMinutesComboBox.setVisible(true);
+        unlimMinutesLabel.setVisible(true);
+    }//GEN-LAST:event_jRadioButton2ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JMenu accountJMenu;
@@ -836,6 +853,8 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JRadioButton jRadioButton1;
+    private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JPanel leftUpperContainer;
@@ -852,10 +871,15 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JButton startButton;
     private javax.swing.JMenuItem statusMenuItem;
     private javax.swing.JCheckBoxMenuItem stayInTopCheckBoxMenuItem;
+    private javax.swing.ButtonGroup strategyModeButtonGroup;
     private javax.swing.JMenu topListStrategyMenu;
     private javax.swing.JComboBox<String> topicComboBox;
     private javax.swing.JLabel totalGamesLabel;
     private javax.swing.JLabel totalGamesValueLabel;
+    private javax.swing.JComboBox<String> unlimHoursComboBox;
+    private javax.swing.JLabel unlimHoursLabel;
+    private javax.swing.JComboBox<String> unlimMinutesComboBox;
+    private javax.swing.JLabel unlimMinutesLabel;
     private javax.swing.JComboBox<String> userComboBox;
     private javax.swing.JMenuItem uuidMenuItem;
     private javax.swing.JLabel winLabel;
@@ -1043,7 +1067,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     public void onGameResultUpdateRecieve(GameResult result, int points) {
         switch (result) {
             case WIN -> {
-                appendToPane("WIN");
+                appendToPane("WIN (+" + points + ")");
                 state.incrementWin();
                 state.addPoints(points);
             }
