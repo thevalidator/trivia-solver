@@ -168,7 +168,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         bottomContainer.setOpaque(false);
 
         jScrollPane1.setBackground(new java.awt.Color(51, 51, 51));
-        jScrollPane1.setBorder(null);
         jScrollPane1.setForeground(new java.awt.Color(102, 102, 102));
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -181,7 +180,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         logTextArea.setColumns(20);
         logTextArea.setLineWrap(true);
         logTextArea.setRows(5);
-        logTextArea.setBorder(javax.swing.BorderFactory.createEmptyBorder(6, 6, 6, 6));
         logTextArea.setMargin(new java.awt.Insets(6, 6, 6, 6));
         logTextArea.setMinimumSize(new java.awt.Dimension(232, 82));
         jScrollPane1.setViewportView(logTextArea);
