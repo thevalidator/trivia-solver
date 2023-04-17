@@ -101,9 +101,21 @@
                 </MenuItem>
               </SubComponents>
             </Menu>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="anonymModeCheckBoxMenuItem">
+              <Properties>
+                <Property name="selected" type="boolean" value="true" postCode="state.setIsAnonymous(true);"/>
+                <Property name="text" type="java.lang.String" value="Anonymous mode"/>
+                <Property name="toolTipText" type="java.lang.String" value="Hides your name in the game"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="anonymModeCheckBoxMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
             <Menu class="javax.swing.JMenu" name="topListStrategyMenu">
               <Properties>
                 <Property name="text" type="java.lang.String" value="TOP list strategy"/>
+                <Property name="toolTipText" type="java.lang.String" value="unavailable in this version"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <SubComponents>
                 <MenuItem class="javax.swing.JCheckBoxMenuItem" name="stayInTopCheckBoxMenuItem">
@@ -140,16 +152,6 @@
                 </MenuItem>
               </SubComponents>
             </Menu>
-            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="anonymModeCheckBoxMenuItem">
-              <Properties>
-                <Property name="selected" type="boolean" value="true" postCode="state.setIsAnonymous(true);"/>
-                <Property name="text" type="java.lang.String" value="Anonymous mode"/>
-                <Property name="toolTipText" type="java.lang.String" value="Hides your name in the game"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="anonymModeCheckBoxMenuItemActionPerformed"/>
-              </Events>
-            </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="headlessModeCheckBoxMenuItem">
               <Properties>
                 <Property name="selected" type="boolean" value="true" postCode="state.setIsHeadless(true);"/>
@@ -196,9 +198,6 @@
     <Property name="resizable" type="boolean" value="false"/>
     <Property name="size" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
       <Dimension value="[600, 500]"/>
-    </Property>
-    <Property name="type" type="java.awt.Window$Type" editor="org.netbeans.modules.form.editors.EnumEditor">
-      <Value id="UTILITY"/>
     </Property>
   </Properties>
   <SyntheticProperties>
@@ -529,7 +528,7 @@
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="399" y="6" width="195" height="-1"/>
+          <AbsoluteConstraints x="399" y="6" width="195" height="230"/>
         </Constraint>
       </Constraints>
 
@@ -921,9 +920,23 @@
             </Constraint>
           </Constraints>
         </Component>
+        <Component class="javax.swing.JCheckBox" name="unlimStrategyRepeatCheckBox">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Segoe UI" size="13" style="0"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="repeat"/>
+            <Property name="horizontalAlignment" type="int" value="2"/>
+          </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="87" y="200" width="90" height="-1"/>
+            </Constraint>
+          </Constraints>
+        </Component>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JLabel" name="jLabel1">
+    <Component class="javax.swing.JLabel" name="backgroundLabel">
       <Properties>
         <Property name="horizontalAlignment" type="int" value="0"/>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">

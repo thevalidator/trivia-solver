@@ -77,7 +77,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         initComponents();
         initLocale(Locale.getDefaultLocale());
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/trivia.png")));
-        addTrayIcon();
+        //addTrayIcon();
         state.setIsPassive(false);
         state.setShouldStayInTop(true);
         //optionsMenu.setToolTipText("Not available in demo mode");
@@ -125,7 +125,8 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         unlimHoursComboBox = new javax.swing.JComboBox<>();
         jRadioButton1 = new javax.swing.JRadioButton();
         jRadioButton2 = new javax.swing.JRadioButton();
-        jLabel1 = new javax.swing.JLabel();
+        unlimStrategyRepeatCheckBox = new javax.swing.JCheckBox();
+        backgroundLabel = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         statusMenuItem = new javax.swing.JMenuItem();
@@ -138,11 +139,11 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         enServerCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         esServerCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         ptServerCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        anonymModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         topListStrategyMenu = new javax.swing.JMenu();
         stayInTopCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         getOnTopCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         passiveModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        anonymModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         headlessModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
@@ -154,7 +155,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         setMinimumSize(new java.awt.Dimension(600, 500));
         setResizable(false);
         setSize(new java.awt.Dimension(600, 500));
-        setType(java.awt.Window.Type.UTILITY);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -446,14 +446,19 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         });
         rightUpperContainer.add(jRadioButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(19, 173, -1, -1));
 
-        getContentPane().add(rightUpperContainer, new org.netbeans.lib.awtextra.AbsoluteConstraints(399, 6, 195, -1));
+        unlimStrategyRepeatCheckBox.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
+        unlimStrategyRepeatCheckBox.setText("repeat");
+        unlimStrategyRepeatCheckBox.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        rightUpperContainer.add(unlimStrategyRepeatCheckBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(87, 200, 90, -1));
 
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/background.jpg"))); // NOI18N
-        jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel1.setInheritsPopupMenu(false);
-        jLabel1.setPreferredSize(new java.awt.Dimension(582, 459));
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 6, -1, -1));
+        getContentPane().add(rightUpperContainer, new org.netbeans.lib.awtextra.AbsoluteConstraints(399, 6, 195, 230));
+
+        backgroundLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        backgroundLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/background.jpg"))); // NOI18N
+        backgroundLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        backgroundLabel.setInheritsPopupMenu(false);
+        backgroundLabel.setPreferredSize(new java.awt.Dimension(582, 459));
+        getContentPane().add(backgroundLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 6, -1, -1));
 
         jMenu1.setText("Menu");
 
@@ -513,7 +518,20 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
         optionsMenu.add(serverMenu);
 
+        anonymModeCheckBoxMenuItem.setSelected(true);
+        state.setIsAnonymous(true);
+        anonymModeCheckBoxMenuItem.setText("Anonymous mode");
+        anonymModeCheckBoxMenuItem.setToolTipText("Hides your name in the game");
+        anonymModeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                anonymModeCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        optionsMenu.add(anonymModeCheckBoxMenuItem);
+
         topListStrategyMenu.setText("TOP list strategy");
+        topListStrategyMenu.setToolTipText("unavailable in this version");
+        topListStrategyMenu.setEnabled(false);
 
         stayInTopCheckBoxMenuItem.setSelected(true);
         stayInTopCheckBoxMenuItem.setText("Stay In TOP");
@@ -546,17 +564,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         topListStrategyMenu.add(passiveModeCheckBoxMenuItem);
 
         optionsMenu.add(topListStrategyMenu);
-
-        anonymModeCheckBoxMenuItem.setSelected(true);
-        state.setIsAnonymous(true);
-        anonymModeCheckBoxMenuItem.setText("Anonymous mode");
-        anonymModeCheckBoxMenuItem.setToolTipText("Hides your name in the game");
-        anonymModeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                anonymModeCheckBoxMenuItemActionPerformed(evt);
-            }
-        });
-        optionsMenu.add(anonymModeCheckBoxMenuItem);
 
         headlessModeCheckBoxMenuItem.setSelected(true);
         state.setIsHeadless(true);
@@ -812,23 +819,37 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     }//GEN-LAST:event_addAccountMenuItemActionPerformed
 
     private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
-        // TODO add your handling code here:
+        state.setShouldStayInTop(true);
+        state.setShouldGetOnTop(false);
+        
         unlimHoursComboBox.setEnabled(false);
         unlimHoursComboBox.setVisible(false);
         unlimHoursLabel.setVisible(false);
+        
         unlimMinutesComboBox.setEnabled(false);
         unlimMinutesComboBox.setVisible(false);
         unlimMinutesLabel.setVisible(false);
+        
+        unlimStrategyRepeatCheckBox.setEnabled(false);
+        unlimStrategyRepeatCheckBox.setVisible(false);
+        appendToPane("AUTO strategy enabled");
     }//GEN-LAST:event_jRadioButton1ActionPerformed
 
     private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
-        // TODO add your handling code here:
+        state.setShouldStayInTop(false);
+        state.setShouldGetOnTop(false);
+        
         unlimHoursComboBox.setEnabled(true);
         unlimHoursComboBox.setVisible(true);
         unlimHoursLabel.setVisible(true);
+        
         unlimMinutesComboBox.setEnabled(true);
         unlimMinutesComboBox.setVisible(true);
         unlimMinutesLabel.setVisible(true);
+        
+        unlimStrategyRepeatCheckBox.setEnabled(true);
+        unlimStrategyRepeatCheckBox.setVisible(true);
+        appendToPane("MANUAL strategy enabled");
     }//GEN-LAST:event_jRadioButton2ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -838,6 +859,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JCheckBoxMenuItem anonymModeCheckBoxMenuItem;
     private javax.swing.JLabel averagePointsLabel;
     private javax.swing.JLabel averagePointsValueLabel;
+    private javax.swing.JLabel backgroundLabel;
     private javax.swing.JPanel bottomContainer;
     private javax.swing.JLabel currentLocaleLabel;
     private javax.swing.JLabel drawLabel;
@@ -848,7 +870,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JButton hardStopButton;
     private javax.swing.JCheckBoxMenuItem headlessModeCheckBoxMenuItem;
     private javax.swing.JMenu helpMenu;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JMenu jMenu1;
@@ -880,6 +901,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JLabel unlimHoursLabel;
     private javax.swing.JComboBox<String> unlimMinutesComboBox;
     private javax.swing.JLabel unlimMinutesLabel;
+    private javax.swing.JCheckBox unlimStrategyRepeatCheckBox;
     private javax.swing.JComboBox<String> userComboBox;
     private javax.swing.JMenuItem uuidMenuItem;
     private javax.swing.JLabel winLabel;
@@ -1045,7 +1067,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     }
 
     private void initLocale(Locale locale) {
-        for (JCheckBoxMenuItem s : servers) {
+        for (JCheckBoxMenuItem s: servers) {
             if (s.getText().equals(locale.name())) {
                 s.setSelected(true);
                 state.setLocale(locale);
