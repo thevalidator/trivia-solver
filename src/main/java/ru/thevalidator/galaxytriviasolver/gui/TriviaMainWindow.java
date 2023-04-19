@@ -275,7 +275,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(hardStopButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addComponent(topicComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(75, 75, 75))
+                .addGap(25, 25, 25))
         );
         leftUpperContainerLayout.setVerticalGroup(
             leftUpperContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -294,10 +294,10 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 .addGroup(leftUpperContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(startButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(hardStopButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(35, Short.MAX_VALUE))
         );
 
-        getContentPane().add(leftUpperContainer, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 6, -1, 215));
+        getContentPane().add(leftUpperContainer, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 6, 330, 230));
 
         rightUpperContainer.setOpaque(false);
         rightUpperContainer.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -309,7 +309,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         totalGamesLabel.setMaximumSize(new java.awt.Dimension(80, 16));
         totalGamesLabel.setMinimumSize(new java.awt.Dimension(80, 16));
         totalGamesLabel.setPreferredSize(new java.awt.Dimension(80, 16));
-        rightUpperContainer.add(totalGamesLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 6, 100, -1));
+        rightUpperContainer.add(totalGamesLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 20, 100, -1));
 
         totalGamesValueLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         totalGamesValueLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -317,8 +317,8 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         totalGamesValueLabel.setMaximumSize(new java.awt.Dimension(70, 16));
         totalGamesValueLabel.setMinimumSize(new java.awt.Dimension(70, 16));
         totalGamesValueLabel.setPreferredSize(new java.awt.Dimension(70, 16));
-        rightUpperContainer.add(totalGamesValueLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(118, 6, -1, -1));
-        rightUpperContainer.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(14, 56, 169, 10));
+        rightUpperContainer.add(totalGamesValueLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 20, 90, -1));
+        rightUpperContainer.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 60, 200, 10));
 
         averagePointsLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         averagePointsLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -326,7 +326,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         averagePointsLabel.setMaximumSize(new java.awt.Dimension(80, 16));
         averagePointsLabel.setMinimumSize(new java.awt.Dimension(80, 16));
         averagePointsLabel.setPreferredSize(new java.awt.Dimension(80, 16));
-        rightUpperContainer.add(averagePointsLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 28, 100, -1));
+        rightUpperContainer.add(averagePointsLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 40, 100, -1));
 
         averagePointsValueLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         averagePointsValueLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -334,7 +334,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         averagePointsValueLabel.setMaximumSize(new java.awt.Dimension(70, 16));
         averagePointsValueLabel.setMinimumSize(new java.awt.Dimension(70, 16));
         averagePointsValueLabel.setPreferredSize(new java.awt.Dimension(70, 16));
-        rightUpperContainer.add(averagePointsValueLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(118, 28, -1, -1));
+        rightUpperContainer.add(averagePointsValueLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 40, 90, -1));
 
         winLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         winLabel.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
@@ -343,7 +343,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         winLabel.setMaximumSize(new java.awt.Dimension(80, 16));
         winLabel.setMinimumSize(new java.awt.Dimension(80, 16));
         winLabel.setPreferredSize(new java.awt.Dimension(80, 16));
-        rightUpperContainer.add(winLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 72, 100, -1));
+        rightUpperContainer.add(winLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 70, 100, -1));
 
         winValueLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         winValueLabel.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
@@ -352,7 +352,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         winValueLabel.setMaximumSize(new java.awt.Dimension(70, 16));
         winValueLabel.setMinimumSize(new java.awt.Dimension(70, 16));
         winValueLabel.setPreferredSize(new java.awt.Dimension(70, 16));
-        rightUpperContainer.add(winValueLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(118, 72, -1, -1));
+        rightUpperContainer.add(winValueLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 70, 90, -1));
 
         drawLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         drawLabel.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Yellow"));
@@ -361,7 +361,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         drawLabel.setMaximumSize(new java.awt.Dimension(80, 16));
         drawLabel.setMinimumSize(new java.awt.Dimension(80, 16));
         drawLabel.setPreferredSize(new java.awt.Dimension(80, 16));
-        rightUpperContainer.add(drawLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 94, 100, -1));
+        rightUpperContainer.add(drawLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 90, 100, -1));
 
         drawValueLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         drawValueLabel.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Yellow"));
@@ -370,7 +370,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         drawValueLabel.setMaximumSize(new java.awt.Dimension(70, 16));
         drawValueLabel.setMinimumSize(new java.awt.Dimension(70, 16));
         drawValueLabel.setPreferredSize(new java.awt.Dimension(70, 16));
-        rightUpperContainer.add(drawValueLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(118, 94, -1, -1));
+        rightUpperContainer.add(drawValueLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 90, 90, -1));
 
         lostLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         lostLabel.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
@@ -379,7 +379,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         lostLabel.setMaximumSize(new java.awt.Dimension(80, 16));
         lostLabel.setMinimumSize(new java.awt.Dimension(80, 16));
         lostLabel.setPreferredSize(new java.awt.Dimension(80, 16));
-        rightUpperContainer.add(lostLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 116, 100, -1));
+        rightUpperContainer.add(lostLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 110, 100, -1));
 
         lostValueLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         lostValueLabel.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
@@ -388,17 +388,17 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         lostValueLabel.setMaximumSize(new java.awt.Dimension(70, 16));
         lostValueLabel.setMinimumSize(new java.awt.Dimension(70, 16));
         lostValueLabel.setPreferredSize(new java.awt.Dimension(70, 16));
-        rightUpperContainer.add(lostValueLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(119, 116, -1, -1));
+        rightUpperContainer.add(lostValueLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 110, 90, -1));
 
         unlimHoursLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         unlimHoursLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         unlimHoursLabel.setText("H:");
-        rightUpperContainer.add(unlimHoursLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(79, 144, 27, -1));
+        rightUpperContainer.add(unlimHoursLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 150, 27, -1));
 
         unlimMinutesLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         unlimMinutesLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         unlimMinutesLabel.setText("M:");
-        rightUpperContainer.add(unlimMinutesLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(79, 172, 27, -1));
+        rightUpperContainer.add(unlimMinutesLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 180, 27, -1));
 
         unlimMinutesComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "0", "30" }));
         unlimMinutesComboBox.addActionListener(new java.awt.event.ActionListener() {
@@ -406,7 +406,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 unlimComboBoxActionPerformed(evt);
             }
         });
-        rightUpperContainer.add(unlimMinutesComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(118, 172, 55, -1));
+        rightUpperContainer.add(unlimMinutesComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 180, 55, -1));
 
         unlimHoursComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23" }));
         unlimHoursComboBox.addActionListener(new java.awt.event.ActionListener() {
@@ -414,18 +414,20 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 unlimComboBoxActionPerformed(evt);
             }
         });
-        rightUpperContainer.add(unlimHoursComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(118, 144, 55, -1));
+        rightUpperContainer.add(unlimHoursComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 150, 55, -1));
 
         strategyModeButtonGroup.add(autoStrategyRadioButton);
+        autoStrategyRadioButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         autoStrategyRadioButton.setText("AUTO");
         autoStrategyRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 autoStrategyRadioButtonActionPerformed(evt);
             }
         });
-        rightUpperContainer.add(autoStrategyRadioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(19, 145, -1, -1));
+        rightUpperContainer.add(autoStrategyRadioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 150, -1, -1));
 
         strategyModeButtonGroup.add(manualStrategyRadioButton);
+        manualStrategyRadioButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         manualStrategyRadioButton.setSelected(true);
         manualStrategyRadioButton.setText("MAN");
         manualStrategyRadioButton.setMaximumSize(new java.awt.Dimension(54, 21));
@@ -436,21 +438,21 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 manualStrategyRadioButtonActionPerformed(evt);
             }
         });
-        rightUpperContainer.add(manualStrategyRadioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(19, 173, -1, -1));
+        rightUpperContainer.add(manualStrategyRadioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 180, -1, -1));
 
         unlimTotalPriceLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         unlimTotalPriceLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         unlimTotalPriceLabel.setText("PRICE:");
         unlimTotalPriceLabel.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        rightUpperContainer.add(unlimTotalPriceLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(65, 200, 40, -1));
+        rightUpperContainer.add(unlimTotalPriceLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(86, 210, 40, -1));
 
         unlimTotalPriceValueLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         unlimTotalPriceValueLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         unlimTotalPriceValueLabel.setText("0");
         unlimTotalPriceValueLabel.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        rightUpperContainer.add(unlimTotalPriceValueLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 200, 60, -1));
+        rightUpperContainer.add(unlimTotalPriceValueLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(147, 210, 60, -1));
 
-        getContentPane().add(rightUpperContainer, new org.netbeans.lib.awtextra.AbsoluteConstraints(399, 6, 195, 230));
+        getContentPane().add(rightUpperContainer, new org.netbeans.lib.awtextra.AbsoluteConstraints(344, 6, 240, 230));
 
         backgroundLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         backgroundLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/background.jpg"))); // NOI18N
