@@ -231,7 +231,8 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         for (int i = 1; i <= maxAttempts; i++) {
             try {
                 openURL();
-                wait(60_000).until(visibilityOfElementLocated(By.xpath(getBaseCookiesCloseBtn()))).click();
+                //wait(60_000).until(visibilityOfElementLocated(By.xpath(getBaseCookiesCloseBtn()))).click();
+                wait(60_000).until(elementToBeClickable(By.xpath(getBaseCookiesCloseBtn()))).click();
                 wait(60_000).until(elementToBeClickable(By.xpath(getBaseHaveAccountBtn()))).click();
                 driver.findElement(By.xpath(getBaseRecoveryCodeField())).sendKeys(state.getUser().getCode());
                 driver.findElement(By.xpath(getBaseFooterAcceptBtn())).click();
@@ -584,12 +585,12 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         String questionText;
         for (int i = 0; i < 5; i++) {
             driver.switchTo().defaultContent();
-            closePopup(1_000);
+            closePopup(2_000);
             wait(6_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getTriviaGameProcessFrame())));
             questionText = wait(20_000).until(presenceOfElementLocated(By.xpath(getTriviaQuestionHeader()))).getText();
             try {
-                if (i != 0 && i != 4) {
-                    TimeUnit.SECONDS.sleep(random.nextInt(10) + 2);
+                if (i != 4) {
+                    TimeUnit.SECONDS.sleep(random.nextInt(8) + 2);
                 } else {
                     TimeUnit.MILLISECONDS.sleep(500);
                 }
@@ -597,7 +598,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             }
             List<WebElement> elements = driver.findElements(By.xpath(getTriviaQuestionAnswer()));
             clickCorrectAnswer(questionText, elements);
-            wait(33_000).until(not(textToBe(By.xpath(getTriviaQuestionHeader()), questionText)));
+            wait(45_000).until(not(textToBe(By.xpath(getTriviaQuestionHeader()), questionText)));
         }
     }
 
