@@ -138,14 +138,17 @@
       <Color blue="33" green="33" red="33" type="rgb"/>
     </Property>
     <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-      <Dimension value="[700, 600]"/>
+      <Dimension value="[607, 509]"/>
     </Property>
     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-      <Dimension value="[600, 500]"/>
+      <Dimension value="[607, 509]"/>
+    </Property>
+    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+      <Dimension value="[607, 509]"/>
     </Property>
     <Property name="resizable" type="boolean" value="false"/>
     <Property name="size" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-      <Dimension value="[600, 500]"/>
+      <Dimension value="[607, 509]"/>
     </Property>
   </Properties>
   <SyntheticProperties>
@@ -214,13 +217,15 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="actualPointsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="actualPointsValueLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Group type="103" alignment="3" groupAlignment="3" attributes="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="103" alignment="0" groupAlignment="3" attributes="0">
                           <Component id="actualCoinsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="actualCoinsValueLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="logHeaderLabel" alignment="3" max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="actualPointsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="actualPointsValueLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
