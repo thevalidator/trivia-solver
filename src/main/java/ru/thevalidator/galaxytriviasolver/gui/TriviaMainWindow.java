@@ -40,6 +40,7 @@ import ru.thevalidator.galaxytriviasolver.notification.Observer;
 import ru.thevalidator.galaxytriviasolver.identity.Identifier;
 import ru.thevalidator.galaxytriviasolver.module.trivia.GameResult;
 import ru.thevalidator.galaxytriviasolver.module.trivia.State;
+import ru.thevalidator.galaxytriviasolver.module.trivia.TriviaUserStatsData;
 import ru.thevalidator.galaxytriviasolver.module.trivia.UnlimUtil;
 import ru.thevalidator.galaxytriviasolver.remote.Connector;
 import ru.thevalidator.galaxytriviasolver.service.Task;
@@ -617,7 +618,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 + "choose server and topic you want to play \n"
                 + "then click start button.\n"
                 + "\n\n"
-                + "v1.0.1.0-GCS\n"
+                + "v1.0.1.1-GCS\n"
                 + "[thevalidator]\n"
                 + "2023, April");
         jTextArea.setColumns(30);
@@ -1006,7 +1007,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     }
 
     @Override
-    public void onGameResultUpdateRecieve(GameResult result, int points) {
+    public void onGameResultUpdateRecieve(GameResult result, int points, TriviaUserStatsData data) {
         switch (result) {
             case WIN -> {
                 appendToPane("WIN (+" + points + ")");
@@ -1027,6 +1028,9 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         lostValueLabel.setText(String.valueOf(state.getLostCount()));
         drawValueLabel.setText(String.valueOf(state.getDrawCount()));
         averagePointsValueLabel.setText(String.valueOf(state.getAveragePoints()));
+        
+        actualPointsValueLabel.setText(String.valueOf(data.getUserDailyPoints()));
+        actualCoinsValueLabel.setText(String.valueOf(data.getUserCoins()));
     }
 
     private void strategyBlockEnable(boolean b) {
