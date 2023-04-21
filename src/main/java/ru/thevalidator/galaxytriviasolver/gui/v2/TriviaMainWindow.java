@@ -28,14 +28,15 @@ public class TriviaMainWindow extends javax.swing.JFrame {
     private static final Logger logger = LogManager.getLogger(TriviaMainWindow.class);
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm.ss");
     private static final int MAX_LINES = 1_000;
-    
+
     private final UserStorage userStorage;
-    
+
     public TriviaMainWindow() {
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/trivia.png")));
         this.userStorage = new UserStorage(readUserData());
         initComponents();
         setLocale();
+        setStrategy();
     }
 
     /**
@@ -47,6 +48,7 @@ public class TriviaMainWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        unlimButtonGroup = new javax.swing.ButtonGroup();
         jPanel1 = new BackgroundPanel();
         jPanel2 = new javax.swing.JPanel();
         personComboBox = new javax.swing.JComboBox<>();
@@ -59,6 +61,18 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         logTextArea = new javax.swing.JTextArea();
         jLabel4 = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jPanel5 = new javax.swing.JPanel();
+        autoStrategyRadioButton = new javax.swing.JRadioButton();
+        manualStrategyRadioButton = new javax.swing.JRadioButton();
+        unlimHoursLabel = new javax.swing.JLabel();
+        unlimMinutesLabel = new javax.swing.JLabel();
+        unlimHoursValueComboBox = new javax.swing.JComboBox<>();
+        unlimMinutesValueComboBox = new javax.swing.JComboBox<>();
+        unlimTotalPriceLabel = new javax.swing.JLabel();
+        unlimTotalPriceValueLabel = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
@@ -89,12 +103,15 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         });
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(204, 204, 204));
         jLabel1.setText("Person");
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(204, 204, 204));
         jLabel2.setText("Topic");
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(204, 204, 204));
         jLabel3.setText("Server");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -140,6 +157,7 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         jScrollPane1.setViewportView(logTextArea);
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(204, 204, 204));
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel4.setText("LOG CONSOLE");
 
@@ -157,12 +175,112 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(15, Short.MAX_VALUE)
+                .addContainerGap(12, Short.MAX_VALUE)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
+
+        jPanel4.setOpaque(false);
+
+        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jButton1.setText("GO");
+        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton1.setMargin(new java.awt.Insets(2, 14, 2, 14));
+        jButton1.setMaximumSize(new java.awt.Dimension(99, 50));
+        jButton1.setMinimumSize(new java.awt.Dimension(99, 22));
+        jButton1.setPreferredSize(new java.awt.Dimension(99, 50));
+
+        jButton2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton2.setLabel("HARD STOP");
+        jButton2.setMargin(new java.awt.Insets(2, 14, 2, 14));
+        jButton2.setMaximumSize(new java.awt.Dimension(99, 50));
+        jButton2.setPreferredSize(new java.awt.Dimension(99, 50));
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        jPanel5.setOpaque(false);
+        jPanel5.setPreferredSize(new java.awt.Dimension(225, 95));
+        jPanel5.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        unlimButtonGroup.add(autoStrategyRadioButton);
+        autoStrategyRadioButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        autoStrategyRadioButton.setForeground(new java.awt.Color(204, 204, 204));
+        autoStrategyRadioButton.setSelected(true);
+        autoStrategyRadioButton.setText("AUTO");
+        autoStrategyRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                strategyRadioButtonActionPerformed(evt);
+            }
+        });
+        jPanel5.add(autoStrategyRadioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(18, 0, -1, 22));
+
+        unlimButtonGroup.add(manualStrategyRadioButton);
+        manualStrategyRadioButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        manualStrategyRadioButton.setForeground(new java.awt.Color(204, 204, 204));
+        manualStrategyRadioButton.setText("MANUAL");
+        manualStrategyRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                strategyRadioButtonActionPerformed(evt);
+            }
+        });
+        jPanel5.add(manualStrategyRadioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(108, 0, -1, -1));
+
+        unlimHoursLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        unlimHoursLabel.setForeground(new java.awt.Color(204, 204, 204));
+        unlimHoursLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        unlimHoursLabel.setText("H:");
+        unlimHoursLabel.setMaximumSize(new java.awt.Dimension(25, 16));
+        unlimHoursLabel.setMinimumSize(new java.awt.Dimension(25, 16));
+        unlimHoursLabel.setPreferredSize(new java.awt.Dimension(25, 16));
+        jPanel5.add(unlimHoursLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 42, -1, -1));
+
+        unlimMinutesLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        unlimMinutesLabel.setForeground(new java.awt.Color(204, 204, 204));
+        unlimMinutesLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        unlimMinutesLabel.setText("M:");
+        unlimMinutesLabel.setMaximumSize(new java.awt.Dimension(25, 16));
+        unlimMinutesLabel.setMinimumSize(new java.awt.Dimension(25, 16));
+        unlimMinutesLabel.setPreferredSize(new java.awt.Dimension(25, 16));
+        jPanel5.add(unlimMinutesLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(98, 42, -1, -1));
+
+        unlimHoursValueComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new Integer[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24 }));
+        jPanel5.add(unlimHoursValueComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(37, 39, 55, -1));
+
+        unlimMinutesValueComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new Integer[] { 0, 30 }));
+        jPanel5.add(unlimMinutesValueComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(129, 39, 55, -1));
+
+        unlimTotalPriceLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        unlimTotalPriceLabel.setForeground(new java.awt.Color(170, 170, 170));
+        unlimTotalPriceLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        unlimTotalPriceLabel.setText("PRICE:");
+        jPanel5.add(unlimTotalPriceLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(43, 73, 60, -1));
+
+        unlimTotalPriceValueLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        unlimTotalPriceValueLabel.setForeground(new java.awt.Color(170, 170, 170));
+        unlimTotalPriceValueLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        unlimTotalPriceValueLabel.setText("0");
+        jPanel5.add(unlimTotalPriceValueLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(109, 73, 55, -1));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -171,18 +289,29 @@ public class TriviaMainWindow extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 412, Short.MAX_VALUE))
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(35, 35, 35)
+                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 41, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(9, 9, 9))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                 .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -220,6 +349,10 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         setLocale();
     }//GEN-LAST:event_languageServerComboBoxActionPerformed
 
+    private void strategyRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_strategyRadioButtonActionPerformed
+        setStrategy();
+    }//GEN-LAST:event_strategyRadioButtonActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -231,6 +364,9 @@ public class TriviaMainWindow extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JRadioButton autoStrategyRadioButton;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -241,11 +377,21 @@ public class TriviaMainWindow extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JComboBox<String> languageServerComboBox;
     private javax.swing.JTextArea logTextArea;
+    private javax.swing.JRadioButton manualStrategyRadioButton;
     private javax.swing.JComboBox<String> personComboBox;
     private javax.swing.JComboBox<String> topicComboBox;
+    private javax.swing.ButtonGroup unlimButtonGroup;
+    private javax.swing.JLabel unlimHoursLabel;
+    private javax.swing.JComboBox<Integer> unlimHoursValueComboBox;
+    private javax.swing.JLabel unlimMinutesLabel;
+    private javax.swing.JComboBox<Integer> unlimMinutesValueComboBox;
+    private javax.swing.JLabel unlimTotalPriceLabel;
+    private javax.swing.JLabel unlimTotalPriceValueLabel;
     // End of variables declaration//GEN-END:variables
 
     private List<User> readUserData() {
@@ -259,7 +405,7 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         }
         return users;
     }
-    
+
     public void appendToPane(String msg) {
         try {
             String timestamp = LocalDateTime.now().format(formatter);
@@ -271,7 +417,7 @@ public class TriviaMainWindow extends javax.swing.JFrame {
             logger.error("APPEND METHOD: {}", e.getMessage());
         }
     }
-    
+
     private void cleanConsole() {
         try {
             javax.swing.text.Element root = logTextArea.getDocument().getDefaultRootElement();
@@ -292,5 +438,32 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         String selectedServer = (String) languageServerComboBox.getSelectedItem();
         initLocale(Locale.valueOf(selectedServer));
         appendToPane(selectedServer + " server selected");
+    }
+
+    private void setStrategy() {
+        boolean b;
+        if (unlimButtonGroup.isSelected(autoStrategyRadioButton.getModel())) {
+            b = false;
+            appendToPane("AUTO strategy enabled");
+        } else {
+            b = true;
+            appendToPane("MANUAL strategy enabled");
+        }
+
+        //state.setShouldStayInTop(!b); //!b
+        //state.setShouldGetOnTop(false);
+        unlimHoursValueComboBox.setEnabled(b);
+        unlimHoursValueComboBox.setVisible(b);
+        unlimHoursLabel.setVisible(b);
+
+        unlimMinutesValueComboBox.setEnabled(b);
+        unlimMinutesValueComboBox.setVisible(b);
+        unlimMinutesLabel.setVisible(b);
+
+        unlimTotalPriceLabel.setVisible(b);
+        unlimTotalPriceValueLabel.setVisible(b);
+
+        //unlimStrategyRepeatCheckBox.setEnabled(b);
+        //unlimStrategyRepeatCheckBox.setVisible(b);
     }
 }
