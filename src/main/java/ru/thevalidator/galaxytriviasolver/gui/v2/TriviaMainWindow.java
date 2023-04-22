@@ -25,6 +25,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
+import javax.swing.UIManager;
 import javax.swing.text.BadLocationException;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.logging.log4j.LogManager;
@@ -217,6 +218,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         addPersonButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         addPersonButton.setText("+");
         addPersonButton.setToolTipText("Add person");
+        addPersonButton.setFocusPainted(false);
         addPersonButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         addPersonButton.setMargin(new java.awt.Insets(1, 1, 1, 1));
         addPersonButton.setMaximumSize(new java.awt.Dimension(24, 24));
@@ -230,6 +232,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         deletePersonButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         deletePersonButton.setText("-");
         deletePersonButton.setToolTipText("Remove person");
+        deletePersonButton.setFocusPainted(false);
         deletePersonButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         deletePersonButton.setMargin(new java.awt.Insets(1, 1, 1, 1));
         deletePersonButton.setMaximumSize(new java.awt.Dimension(24, 24));
@@ -498,6 +501,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         startButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         startButton.setForeground(new java.awt.Color(0, 0, 0));
         startButton.setText("GO");
+        startButton.setFocusPainted(false);
         startButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         startButton.setMargin(new java.awt.Insets(2, 14, 2, 14));
         startButton.setMaximumSize(new java.awt.Dimension(99, 50));
@@ -512,6 +516,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         hardStopButton.setBackground(javax.swing.UIManager.getDefaults().getColor("Objects.RedStatus"));
         hardStopButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         hardStopButton.setEnabled(false);
+        hardStopButton.setFocusPainted(false);
         hardStopButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         hardStopButton.setLabel("HARD STOP");
         hardStopButton.setMargin(new java.awt.Insets(2, 14, 2, 14));
@@ -865,6 +870,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
      */
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(() -> {
+            UIManager.put("Button.arc", 15);
             FlatDarkLaf.setup();
             new TriviaMainWindow().setVisible(true);
         });
