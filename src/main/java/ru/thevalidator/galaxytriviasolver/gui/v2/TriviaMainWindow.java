@@ -5,6 +5,7 @@ package ru.thevalidator.galaxytriviasolver.gui.v2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.formdev.flatlaf.FlatDarkLaf;
+import java.awt.Component;
 import java.awt.Toolkit;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -12,11 +13,17 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.text.BadLocationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.thevalidator.galaxytriviasolver.account.User;
 import ru.thevalidator.galaxytriviasolver.account.UserStorage;
+import ru.thevalidator.galaxytriviasolver.module.trivia.UnlimUtil;
 import ru.thevalidator.galaxytriviasolver.web.Locale;
 
 /**
@@ -91,14 +98,22 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         unlimMinutesValueComboBox = new javax.swing.JComboBox<>();
         unlimTotalPriceLabel = new javax.swing.JLabel();
         unlimTotalPriceValueLabel = new javax.swing.JLabel();
+        unlimApproxPointsLabel = new javax.swing.JLabel();
+        unlimApproxPointsValueLabel = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        jMenu2 = new javax.swing.JMenu();
+        helpMenu = new javax.swing.JMenu();
+        aboutMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Trivia solver");
         setMinimumSize(new java.awt.Dimension(750, 422));
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jPanel1.setPreferredSize(new java.awt.Dimension(750, 422));
 
@@ -438,7 +453,7 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         unlimHoursLabel.setMaximumSize(new java.awt.Dimension(25, 16));
         unlimHoursLabel.setMinimumSize(new java.awt.Dimension(25, 16));
         unlimHoursLabel.setPreferredSize(new java.awt.Dimension(25, 16));
-        jPanel5.add(unlimHoursLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 42, -1, -1));
+        jPanel5.add(unlimHoursLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 33, -1, -1));
 
         unlimMinutesLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         unlimMinutesLabel.setForeground(new java.awt.Color(204, 204, 204));
@@ -447,25 +462,47 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         unlimMinutesLabel.setMaximumSize(new java.awt.Dimension(25, 16));
         unlimMinutesLabel.setMinimumSize(new java.awt.Dimension(25, 16));
         unlimMinutesLabel.setPreferredSize(new java.awt.Dimension(25, 16));
-        jPanel5.add(unlimMinutesLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(98, 42, -1, -1));
+        jPanel5.add(unlimMinutesLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 33, -1, -1));
 
         unlimHoursValueComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new Integer[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24 }));
-        jPanel5.add(unlimHoursValueComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(37, 39, 55, -1));
+        unlimHoursValueComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                unlimTimeComboBoxActionPerformed(evt);
+            }
+        });
+        jPanel5.add(unlimHoursValueComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 30, 55, -1));
 
         unlimMinutesValueComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new Integer[] { 0, 30 }));
-        jPanel5.add(unlimMinutesValueComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(129, 39, 55, -1));
+        unlimMinutesValueComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                unlimTimeComboBoxActionPerformed(evt);
+            }
+        });
+        jPanel5.add(unlimMinutesValueComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 30, 55, -1));
 
         unlimTotalPriceLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         unlimTotalPriceLabel.setForeground(new java.awt.Color(170, 170, 170));
         unlimTotalPriceLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         unlimTotalPriceLabel.setText("PRICE:");
-        jPanel5.add(unlimTotalPriceLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(43, 73, 60, -1));
+        jPanel5.add(unlimTotalPriceLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(65, 60, 60, -1));
 
         unlimTotalPriceValueLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         unlimTotalPriceValueLabel.setForeground(new java.awt.Color(170, 170, 170));
-        unlimTotalPriceValueLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        unlimTotalPriceValueLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         unlimTotalPriceValueLabel.setText("0");
-        jPanel5.add(unlimTotalPriceValueLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(109, 73, 55, -1));
+        jPanel5.add(unlimTotalPriceValueLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 60, 55, -1));
+
+        unlimApproxPointsLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        unlimApproxPointsLabel.setForeground(new java.awt.Color(170, 170, 170));
+        unlimApproxPointsLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        unlimApproxPointsLabel.setText("APPROX POINTS:");
+        jPanel5.add(unlimApproxPointsLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 78, 120, -1));
+
+        unlimApproxPointsValueLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        unlimApproxPointsValueLabel.setForeground(new java.awt.Color(170, 170, 170));
+        unlimApproxPointsValueLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        unlimApproxPointsValueLabel.setText("-");
+        jPanel5.add(unlimApproxPointsValueLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 78, 75, -1));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -504,8 +541,17 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         jMenu1.setText("File");
         jMenuBar1.add(jMenu1);
 
-        jMenu2.setText("Edit");
-        jMenuBar1.add(jMenu2);
+        helpMenu.setText("Help");
+
+        aboutMenuItem.setText("About");
+        aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aboutMenuItemActionPerformed(evt);
+            }
+        });
+        helpMenu.add(aboutMenuItem);
+
+        jMenuBar1.add(helpMenu);
 
         setJMenuBar(jMenuBar1);
 
@@ -538,6 +584,49 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         setStrategy();
     }//GEN-LAST:event_strategyRadioButtonActionPerformed
 
+    private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
+        Component component = new JLabel();
+        JScrollPane jScrollPane = new JScrollPane(component);
+        jScrollPane.setBorder(BorderFactory.createEmptyBorder());
+        JTextArea jTextArea = new JTextArea(
+                "\n"
+                + "Galaxy Trivia solver helps you to win in the \n"
+                + "Trivia game and get into the daily top 10 list.\n\n"
+                + "For use select person (add new if no persons), \n"
+                + "choose server and topic you want to play \n"
+                + "then click start button.\n"
+                + "\n\n"
+                + "v1.0.2.0-GCS\n"
+                + "[thevalidator]\n"
+                + "2023, April");
+        jTextArea.setColumns(30);
+        jTextArea.setLineWrap(true);
+        jTextArea.setRows(12);
+        jTextArea.setEditable(false);
+        jScrollPane.setViewportView(jTextArea);
+        JLabel header = new JLabel();
+        header.setText("Trivia solver (\"Galaxy Chat Soft\" edition)");
+        header.setFont(new java.awt.Font("Segoe UI", 1, 14));
+        header.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        header.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jScrollPane.setColumnHeaderView(header);
+        JOptionPane.showMessageDialog(this, jScrollPane, "About", JOptionPane.PLAIN_MESSAGE);
+    }//GEN-LAST:event_aboutMenuItemActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // TODO add your handling code here:
+//        if (worker != null && !worker.isCancelled()) {
+//            worker.cancel(true);
+//        }
+//        if (driver != null) {
+//            driver.quit();
+//        }
+    }//GEN-LAST:event_formWindowClosing
+
+    private void unlimTimeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_unlimTimeComboBoxActionPerformed
+        updateUnlimInfoLabels();
+    }//GEN-LAST:event_unlimTimeComboBoxActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -549,7 +638,9 @@ public class TriviaMainWindow extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JRadioButton autoStrategyRadioButton;
+    private javax.swing.JMenu helpMenu;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
@@ -572,7 +663,6 @@ public class TriviaMainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -588,6 +678,8 @@ public class TriviaMainWindow extends javax.swing.JFrame {
     private javax.swing.JRadioButton manualStrategyRadioButton;
     private javax.swing.JComboBox<String> personComboBox;
     private javax.swing.JComboBox<String> topicComboBox;
+    private javax.swing.JLabel unlimApproxPointsLabel;
+    private javax.swing.JLabel unlimApproxPointsValueLabel;
     private javax.swing.ButtonGroup unlimButtonGroup;
     private javax.swing.JLabel unlimHoursLabel;
     private javax.swing.JComboBox<Integer> unlimHoursValueComboBox;
@@ -665,8 +757,21 @@ public class TriviaMainWindow extends javax.swing.JFrame {
 
         unlimTotalPriceLabel.setVisible(b);
         unlimTotalPriceValueLabel.setVisible(b);
+        
+        unlimApproxPointsLabel.setVisible(b);
+        unlimApproxPointsValueLabel.setVisible(b);
 
         //unlimStrategyRepeatCheckBox.setEnabled(b);
         //unlimStrategyRepeatCheckBox.setVisible(b);
+    }
+
+    private void updateUnlimInfoLabels() {
+        int hours = Integer.parseInt(String.valueOf(unlimHoursValueComboBox.getSelectedItem()));
+        int minutes = Integer.parseInt(String.valueOf(unlimMinutesValueComboBox.getSelectedItem()));
+        int totalMinutes = hours * 60 + minutes;
+        double totalPrice = UnlimUtil.getPrice(totalMinutes);
+        int approximatelyPoints = UnlimUtil.getApproxPoints(totalMinutes);
+        unlimTotalPriceValueLabel.setText(String.valueOf(totalPrice));
+        unlimApproxPointsValueLabel.setText(String.valueOf(approximatelyPoints));
     }
 }
