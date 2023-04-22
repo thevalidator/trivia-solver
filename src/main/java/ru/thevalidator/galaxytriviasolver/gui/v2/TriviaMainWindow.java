@@ -120,6 +120,8 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        jMenuItem2 = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
 
@@ -556,7 +558,7 @@ public class TriviaMainWindow extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        jMenu1.setText("File");
+        jMenu1.setText("Menu");
 
         jMenuItem1.setText("Check status");
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
@@ -567,6 +569,14 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         jMenu1.add(jMenuItem1);
 
         jMenuBar1.add(jMenu1);
+
+        jMenu2.setText("Person");
+
+        jMenuItem2.setText("Manage");
+        jMenuItem2.setToolTipText("");
+        jMenu2.add(jMenuItem2);
+
+        jMenuBar1.add(jMenu2);
 
         helpMenu.setText("Help");
 
@@ -693,8 +703,10 @@ public class TriviaMainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -807,6 +819,9 @@ public class TriviaMainWindow extends javax.swing.JFrame {
     }
 
     public String getFormattedNumberString(double value) {
+        if (value == 0) {
+            return "-";
+        }
         DecimalFormat df = new DecimalFormat("###,###");
         return df.format(value);
     }
