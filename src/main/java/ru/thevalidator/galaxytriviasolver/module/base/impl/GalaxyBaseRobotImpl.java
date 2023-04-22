@@ -97,7 +97,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             webDriver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(60));
 
         } catch (Exception e) {
-            logger.error(Arrays.toString(e.getStackTrace()));
+            logger.error(ExceptionUtil.getFormattedDescription(e));
             informObservers("ERROR: Can't create webdriver");
             if (webDriver != null) {
                 webDriver.close();
@@ -183,8 +183,8 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                     break;
                 }
             } catch (Exception e) {
-                System.out.println(e.getClass());
-                informObservers("\n>>>>\n" + ExceptionUtil.getFormattedDescription(e) + "\n<<<<\n");
+//                System.out.println(e.getClass());
+//                informObservers("\n>>>>\n" + ExceptionUtil.getFormattedDescription(e) + "\n<<<<\n");
                 String fileName = getFileNameTimeStamp() + "_login";
                 takeScreenshot(fileName + ".png");
                 saveDataToFile(fileName, e);
