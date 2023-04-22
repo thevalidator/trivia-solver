@@ -5,16 +5,19 @@ package ru.thevalidator.galaxytriviasolver.gui.v2;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import ru.thevalidator.galaxytriviasolver.exception.ExceptionUtil;
 
 /**
  * @author thevalidator <the.validator@yandex.ru>
  */
 public class BackgroundPanel extends JPanel {
     
+    private static final Logger logger = LogManager.getLogger(BackgroundPanel.class);
     private final BufferedImage image;
 
     public BackgroundPanel() {
@@ -31,11 +34,9 @@ public class BackgroundPanel extends JPanel {
     private BufferedImage loadImage() {
         BufferedImage img = null;
         try {
-            String s = getClass().getClassLoader().getResource("bkgnd.jpg").getPath();
-            File f = new File(s);
-            img = ImageIO.read(f);
+            img = ImageIO.read(getClass().getClassLoader().getResource("bkgnd.jpg"));
         } catch (IOException ex) {
-            //missmatch exception
+            logger.error(ExceptionUtil.getFormattedDescription(ex));
         }
         
         return img;
