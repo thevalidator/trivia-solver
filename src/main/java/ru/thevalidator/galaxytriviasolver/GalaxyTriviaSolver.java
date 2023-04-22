@@ -3,9 +3,7 @@
  */
 package ru.thevalidator.galaxytriviasolver;
 
-import com.formdev.flatlaf.FlatDarkLaf;
-import javax.swing.UIManager;
-import ru.thevalidator.galaxytriviasolver.gui.TriviaMainWindow;
+import ru.thevalidator.galaxytriviasolver.gui.v2.TriviaMainWindow;
 
 /**
  *
@@ -14,11 +12,6 @@ import ru.thevalidator.galaxytriviasolver.gui.TriviaMainWindow;
 public class GalaxyTriviaSolver {
 
     public static void main(String[] args) {
-        java.awt.EventQueue.invokeLater(() -> {
-            UIManager.put("Button.arc", 30);
-            FlatDarkLaf.setup();
-            
-            new TriviaMainWindow().setVisible(true);
-        });
+        TriviaMainWindow.main(args);
     }
 }
