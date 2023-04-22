@@ -775,7 +775,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 //strategyBlockEnable(false);
                 startTask();
             } else {
-                appendToPane("ERROR: NO USER KEY DATA");
+                appendToPane("ERROR: NO REGISTERED USER KEY DATA");
             }
             //hardStopButton.setEnabled(true);
         } else {
@@ -1036,7 +1036,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         String result;
         result = switch (responseCode) {
             case HttpStatus.SC_NOT_FOUND ->
-                "THE KEY IS NOT REGISTERED";
+                "NO REGISTERED KEY";
             case HttpStatus.SC_MOVED_TEMPORARILY ->
                 "THE KEY IS EXPIRED";
             case HttpStatus.SC_OK ->
