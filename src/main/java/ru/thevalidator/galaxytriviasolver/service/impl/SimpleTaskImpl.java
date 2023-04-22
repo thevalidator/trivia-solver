@@ -6,7 +6,6 @@ package ru.thevalidator.galaxytriviasolver.service.impl;
 import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.thevalidator.galaxytriviasolver.exception.ExceptionUtil;
 import ru.thevalidator.galaxytriviasolver.exception.LoginErrorException;
 import ru.thevalidator.galaxytriviasolver.exception.TokenNotFoundErrorException;
 import ru.thevalidator.galaxytriviasolver.gui.v2.TriviaMainWindow;
@@ -61,6 +60,7 @@ public class SimpleTaskImpl implements Runnable, Task {
         //GalaxyBaseRobot robot = new GalaxyBaseRobotImpl(state);
         ((GalaxyBaseRobotImpl) robot).registerObserver(window);
         int sleepTimeInSeconds = TIME_TO_SLEEP_IN_SECONDS;
+        
 //        for (int i = 0; i < 10; i++) {
 //            try {
 //                TimeUnit.SECONDS.sleep(i);
@@ -72,7 +72,7 @@ public class SimpleTaskImpl implements Runnable, Task {
         while (isActive) {
             try {
                 robot.login();
-                //robot.openMail();
+                robot.openMail();
                 robot.openGames();
                 robot.selectTriviaGame();
                 if (robot.startTriviaGame()) {
@@ -80,8 +80,7 @@ public class SimpleTaskImpl implements Runnable, Task {
                 }
                 sleepTimeInSeconds = robot.getSleepTime();
             } catch (Exception e) {
-                //System.out.println("ERR = " + e.getMessage());
-                window.appendToPane("\n>>>>\n" + ExceptionUtil.getFormattedDescription(e) + "\n<<<<\n");
+                //window.appendToPane("ERROR\n>>>>\n" + ExceptionUtil.getFormattedDescription(e) + "\n<<<<\n");
                 logger.error(e.getMessage());
                 String filename = ((GalaxyBaseRobotImpl) robot).getFileNameTimeStamp();
                 ((GalaxyBaseRobotImpl) robot).takeScreenshot(filename + ".png");
