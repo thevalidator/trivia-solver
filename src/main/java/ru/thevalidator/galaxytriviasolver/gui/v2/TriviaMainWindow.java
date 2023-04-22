@@ -770,6 +770,10 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
         if (task == null || !task.isActive()) {
             if (!PERSONAL_CODE.equals(Identifier.ERROR_KEY)) {
+                if (userStorage.getUsers().isEmpty()) {
+                    appendToPane("ERROR: NO PERSON(S)");
+                    return;
+                }
                 personComboBox.setEnabled(false);
                 topicComboBox.setEnabled(false);
                 //strategyBlockEnable(false);
