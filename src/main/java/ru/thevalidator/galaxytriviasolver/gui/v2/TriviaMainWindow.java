@@ -9,6 +9,7 @@ import java.awt.Component;
 import java.awt.Toolkit;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -18,12 +19,20 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingWorker;
 import javax.swing.text.BadLocationException;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.ProtocolException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.WebDriver;
 import ru.thevalidator.galaxytriviasolver.account.User;
 import ru.thevalidator.galaxytriviasolver.account.UserStorage;
+import ru.thevalidator.galaxytriviasolver.identity.Identifier;
+import ru.thevalidator.galaxytriviasolver.module.trivia.State;
 import ru.thevalidator.galaxytriviasolver.module.trivia.UnlimUtil;
+import ru.thevalidator.galaxytriviasolver.remote.Connector;
+import ru.thevalidator.galaxytriviasolver.service.Task;
 import ru.thevalidator.galaxytriviasolver.web.Locale;
 
 /**
@@ -32,18 +41,26 @@ import ru.thevalidator.galaxytriviasolver.web.Locale;
  */
 public class TriviaMainWindow extends javax.swing.JFrame {
 
+    public static volatile WebDriver driver;
+    public static final String PERSONAL_CODE = Identifier.readKey();
     private static final Logger logger = LogManager.getLogger(TriviaMainWindow.class);
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm.ss");
     private static final int MAX_LINES = 1_000;
 
     private final UserStorage userStorage;
+    private State state;
+    private Task task;
+    private SwingWorker worker;
 
     public TriviaMainWindow() {
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/trivia.png")));
         this.userStorage = new UserStorage(readUserData());
+        this.state = new State();
+        this.task = null;
         initComponents();
         setLocale();
         setStrategy();
+        checkSubscriptionStatus();
     }
 
     /**
@@ -102,6 +119,7 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         unlimApproxPointsValueLabel = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
 
@@ -539,6 +557,15 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         );
 
         jMenu1.setText("File");
+
+        jMenuItem1.setText("Check status");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem1);
+
         jMenuBar1.add(jMenu1);
 
         helpMenu.setText("Help");
@@ -614,18 +641,21 @@ public class TriviaMainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_aboutMenuItemActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        // TODO add your handling code here:
-//        if (worker != null && !worker.isCancelled()) {
-//            worker.cancel(true);
-//        }
-//        if (driver != null) {
-//            driver.quit();
-//        }
+        if (worker != null && !worker.isCancelled()) {
+            worker.cancel(true);
+        }
+        if (driver != null) {
+            driver.quit();
+        }
     }//GEN-LAST:event_formWindowClosing
 
     private void unlimTimeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_unlimTimeComboBoxActionPerformed
         updateUnlimInfoLabels();
     }//GEN-LAST:event_unlimTimeComboBoxActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        checkSubscriptionStatus();
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -664,6 +694,7 @@ public class TriviaMainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -745,8 +776,8 @@ public class TriviaMainWindow extends javax.swing.JFrame {
             appendToPane("MANUAL strategy enabled");
         }
 
-        //state.setShouldStayInTop(!b); //!b
-        //state.setShouldGetOnTop(false);
+        state.setShouldStayInTop(!b); //!b
+        state.setShouldGetOnTop(false);
         unlimHoursValueComboBox.setEnabled(b);
         unlimHoursValueComboBox.setVisible(b);
         unlimHoursLabel.setVisible(b);
@@ -757,7 +788,7 @@ public class TriviaMainWindow extends javax.swing.JFrame {
 
         unlimTotalPriceLabel.setVisible(b);
         unlimTotalPriceValueLabel.setVisible(b);
-        
+
         unlimApproxPointsLabel.setVisible(b);
         unlimApproxPointsValueLabel.setVisible(b);
 
@@ -772,6 +803,32 @@ public class TriviaMainWindow extends javax.swing.JFrame {
         double totalPrice = UnlimUtil.getPrice(totalMinutes);
         int approximatelyPoints = UnlimUtil.getApproxPoints(totalMinutes);
         unlimTotalPriceValueLabel.setText(String.valueOf(totalPrice));
-        unlimApproxPointsValueLabel.setText(String.valueOf(approximatelyPoints));
+        unlimApproxPointsValueLabel.setText(getFormattedNumberString(approximatelyPoints));
+    }
+
+    public String getFormattedNumberString(double value) {
+        DecimalFormat df = new DecimalFormat("###,###");
+        return df.format(value);
+    }
+
+    private void checkSubscriptionStatus() {
+        int responseCode = 0;
+        try {
+            responseCode = Connector.getResponseCode(PERSONAL_CODE);
+        } catch (IOException ex) {
+            logger.error(ex.getMessage());
+        }
+        String result;
+        result = switch (responseCode) {
+            case HttpStatus.SC_NOT_FOUND ->
+                "THE KEY IS NOT REGISTERED";
+            case HttpStatus.SC_MOVED_TEMPORARILY ->
+                "THE KEY IS EXPIRED";
+            case HttpStatus.SC_OK ->
+                "THE KEY IS ACTIVE";
+            default ->
+                "NO CONNECTION WITH THE SERVER";
+        };
+        appendToPane("status: " + result);
     }
 }
