@@ -44,6 +44,7 @@ import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElem
 import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.thevalidator.galaxytriviasolver.notification.Informer;
 import ru.thevalidator.galaxytriviasolver.exception.CanNotPlayException;
+import ru.thevalidator.galaxytriviasolver.exception.ExceptionUtil;
 import ru.thevalidator.galaxytriviasolver.exception.LoginErrorException;
 import ru.thevalidator.galaxytriviasolver.gui.TriviaMainWindow;
 import static ru.thevalidator.galaxytriviasolver.gui.TriviaMainWindow.driver;
@@ -74,9 +75,11 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     private final State state;
     private final TriviaUserStatsData userStats;
     private final Solver solver;
+    private final Task task;
 
-    public GalaxyBaseRobotImpl(State state) {
+    public GalaxyBaseRobotImpl(State state, Task task) {
         this.state = state;
+        this.task = task;
         this.userStats = new TriviaUserStatsData();
         this.solver = new SolverRestImpl(new Connector(TriviaMainWindow.PERSONAL_CODE));
     }
@@ -85,7 +88,9 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         WebDriver webDriver = null;
         try {
             ChromeOptions options = new ChromeOptions();
-            options.addArguments("--headless=new");
+            if (state.isHeadless()) {
+                options.addArguments("--headless=new");
+            }
             webDriver = new ChromeDriver(options);
             webDriver.manage().window().setSize(new Dimension(1600, 845));
             webDriver.manage().window().setPosition((new Point(-5, 0)));
@@ -178,6 +183,8 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                     break;
                 }
             } catch (Exception e) {
+                System.out.println(e.getClass());
+                informObservers("\n>>>>\n" + ExceptionUtil.getFormattedDescription(e) + "\n<<<<\n");
                 String fileName = getFileNameTimeStamp() + "_login";
                 takeScreenshot(fileName + ".png");
                 saveDataToFile(fileName, e);
@@ -362,7 +369,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             }
             gameResultNotifyObservers(result, points, userStats);
 
-            if (!Task.isActive) {
+            if (!task.isActive()) {
                 break;
             }
 
@@ -521,13 +528,13 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
 
     private void answerQuestions() {
         String questionText;
-        for (int i = 0; i < 5; i++) {
+        for (int i = 1; i < 6; i++) {
             driver.switchTo().defaultContent();
             closePopup(2_000);
             wait(6_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getTriviaGameProcessFrame())));
             questionText = wait(20_000).until(presenceOfElementLocated(By.xpath(getTriviaQuestionHeader()))).getText();
             try {
-                if (i != 4) {
+                if (i != 5) {
                     TimeUnit.SECONDS.sleep(random.nextInt(8) + 2);
                 } else {
                     TimeUnit.MILLISECONDS.sleep(500);
@@ -536,6 +543,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             }
             List<WebElement> elements = driver.findElements(By.xpath(getTriviaQuestionAnswer()));
             clickCorrectAnswer(questionText, elements);
+            informObservers("question " + i + " answered");
             wait(45_000).until(not(textToBe(By.xpath(getTriviaQuestionHeader()), questionText)));
         }
     }
