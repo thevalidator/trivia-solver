@@ -11,6 +11,7 @@ public class UnlimUtil {
     public static final int MAX_UNLIM_MINUTES = (int) (Unlim.MAX.getHours() * 60);
     public static final int MID_UNLIM_MINUTES = (int) (Unlim.MID.getHours() * 60);
     public static final int MIN_UNLIM_MINUTES = (int) (Unlim.MIN.getHours() * 60);
+    public static final int AVERAGE_POINTS_PER_ROUND = 135;
 
     public static double getPrice(int unlimTime) {
 
@@ -41,5 +42,9 @@ public class UnlimUtil {
             double price = getPrice(unlimTime);
             return userCoins >= price;
         }
+
+    public static int getApproxPoints(int totalMinutes) {
+        return AVERAGE_POINTS_PER_ROUND * totalMinutes;
+    }
 
 }
