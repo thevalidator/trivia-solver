@@ -6,7 +6,7 @@ package ru.thevalidator.galaxytriviasolver.identity.uuid;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import ru.thevalidator.galaxytriviasolver.identity.os.OSValidator;
+import static ru.thevalidator.galaxytriviasolver.identity.os.OSValidator.*;
 
 /**
  * @author thevalidator <the.validator@yandex.ru>
@@ -17,43 +17,48 @@ public class UUIDUtil {
 
     public static String getUUID() throws IOException, InterruptedException {
         String uuid = null;
-        if (OSValidator.IS_WINDOWS) {
-            uuid = UUIDUtil.getWindowsUUID();
-        } else if (OSValidator.IS_UNIX) {
-
-        } else if (OSValidator.IS_MAC) {
-
+        ProcessBuilder builder = new ProcessBuilder();
+        String command;
+        if (IS_WINDOWS) {
+            command = "wmic path win32_computersystemproduct get uuid";
+            builder.command("cmd.exe", "/c", command);
+        } else if (IS_UNIX) {
+            command = "ls -la /dev/disk/by-uuid/ | grep -E \"" + UUID_PATTERN + "\"";
+            builder.command("sh", "-c", command);
+        } else if (IS_MAC) {
+            command = "ioreg -d2 -c IOPlatformExpertDevice | awk -F\\\" '/IOPlatformUUID/{print $(NF-1)}'";
+            builder.command("sh", "-c", command);
         } else {
             throw new UnsupportedOperationException("Unsupported operating system");
         }
 
-        return uuid;
-    }
-
-    private static String getWindowsUUID() throws IOException, InterruptedException {
-        String uuid = null;
-        Process proc = Runtime.getRuntime().exec("wmic path win32_computersystemproduct get uuid");
+        Process proc = builder.start();
         try (BufferedReader br = new BufferedReader(new InputStreamReader(proc.getInputStream()))) {
             String line;
             while ((line = br.readLine()) != null) {
-                line = line.trim();
-                if (line.matches(UUID_PATTERN)) {
-                    uuid = line;
+                if (IS_UNIX) {
+                    String[] parts = line.split("(\\s){1,}");
+                    for (String p: parts) {
+                        if (p.length() == 36 && p.matches(UUID_PATTERN)) {
+                            uuid = p;
+                            break;
+                        }
+                    }
+                } else {
+                    line = line.trim();
+                    if (line.matches(UUID_PATTERN)) {
+                        uuid = line;
+                        break;
+                    }
                 }
+
             }
         }
+
         proc.waitFor();
         proc.destroy();
 
         return uuid;
-    }
-
-    private static String getUnixUUID() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    private static String getMacUUID() {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }
