@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.formdev.flatlaf.FlatDarkLaf;
 import java.awt.Component;
 import java.awt.GridLayout;
+import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -35,6 +36,7 @@ import ru.thevalidator.galaxytriviasolver.account.User;
 import ru.thevalidator.galaxytriviasolver.account.UserStorage;
 import ru.thevalidator.galaxytriviasolver.exception.ExceptionUtil;
 import ru.thevalidator.galaxytriviasolver.identity.Identifier;
+import ru.thevalidator.galaxytriviasolver.identity.uuid.UUIDUtil;
 import ru.thevalidator.galaxytriviasolver.module.trivia.GameResult;
 import static ru.thevalidator.galaxytriviasolver.module.trivia.GameResult.DRAW;
 import static ru.thevalidator.galaxytriviasolver.module.trivia.GameResult.WIN;
@@ -167,6 +169,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         menuBar = new javax.swing.JMenuBar();
         mainMenu = new javax.swing.JMenu();
         checkStatusMenuItem = new javax.swing.JMenuItem();
+        codeMenuItem = new javax.swing.JMenuItem();
         personMenu = new javax.swing.JMenu();
         manageMenuItem = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
@@ -515,10 +518,10 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
         hardStopButton.setBackground(javax.swing.UIManager.getDefaults().getColor("Objects.RedStatus"));
         hardStopButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        hardStopButton.setText("HARD STOP");
         hardStopButton.setEnabled(false);
         hardStopButton.setFocusPainted(false);
         hardStopButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        hardStopButton.setLabel("HARD STOP");
         hardStopButton.setMargin(new java.awt.Insets(2, 14, 2, 14));
         hardStopButton.setMaximumSize(new java.awt.Dimension(99, 50));
         hardStopButton.setPreferredSize(new java.awt.Dimension(99, 50));
@@ -660,6 +663,14 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
             }
         });
         mainMenu.add(checkStatusMenuItem);
+
+        codeMenuItem.setText("Show code");
+        codeMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                codeMenuItemActionPerformed(evt);
+            }
+        });
+        mainMenu.add(codeMenuItem);
 
         menuBar.add(mainMenu);
 
@@ -869,6 +880,10 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         }
     }//GEN-LAST:event_addPersonButtonActionPerformed
 
+    private void codeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_codeMenuItemActionPerformed
+        showPersonalCode();
+    }//GEN-LAST:event_codeMenuItemActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -892,6 +907,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JLabel averagePointsValueLabel;
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JMenuItem checkStatusMenuItem;
+    private javax.swing.JMenuItem codeMenuItem;
     private javax.swing.JPanel controlButtonsPanel;
     private javax.swing.JButton deletePersonButton;
     private javax.swing.JLabel drawLabel;
@@ -1141,6 +1157,28 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
             writer.writeValue(Paths.get(UserStorage.STORAGE_DATE_FILE_NAME).toFile(), users);
         } catch (IOException e) {
             logger.error(e.getMessage());
+        }
+    }
+
+    private void showPersonalCode() {
+        try {
+            String key = UUIDUtil.getUUID();
+            Component component = new JLabel();
+
+            JScrollPane jScrollPane = new JScrollPane(component);
+            jScrollPane.setBorder(BorderFactory.createEmptyBorder());
+            JTextArea jTextArea = new JTextArea("-==" + key + "==-");
+
+            jTextArea.setColumns(30);
+            jTextArea.setLineWrap(true);
+            jTextArea.setRows(5);
+            jScrollPane.setViewportView(jTextArea);
+
+            JOptionPane.showMessageDialog(this, jScrollPane, "Personal user code", JOptionPane.PLAIN_MESSAGE);
+
+        } catch (HeadlessException | IOException | InterruptedException e) {
+            appendToPane("ERROR: can't get the personal user code");
+            ExceptionUtil.getFormattedDescription(e);
         }
     }
 }
