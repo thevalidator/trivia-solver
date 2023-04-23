@@ -38,6 +38,7 @@ import ru.thevalidator.galaxytriviasolver.exception.ExceptionUtil;
 import ru.thevalidator.galaxytriviasolver.identity.Identifier;
 import ru.thevalidator.galaxytriviasolver.identity.os.OSValidator;
 import ru.thevalidator.galaxytriviasolver.identity.uuid.UUIDUtil;
+import ru.thevalidator.galaxytriviasolver.module.Option;
 import ru.thevalidator.galaxytriviasolver.module.trivia.GameResult;
 import static ru.thevalidator.galaxytriviasolver.module.trivia.GameResult.DRAW;
 import static ru.thevalidator.galaxytriviasolver.module.trivia.GameResult.WIN;
@@ -62,13 +63,15 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm.ss");
     private static final int MAX_LINES = 1_000;
 
+    private Option options;
     private UserStorage userStorage;
     private final State state;
     private Task task;
     private SwingWorker worker;
 
-    public TriviaMainWindow() {
+    public TriviaMainWindow(Option options) {
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/trivia.png")));
+        this.options = options;
         this.userStorage = new UserStorage(readUserData());
         this.state = new State();
         this.task = null;
@@ -645,8 +648,9 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
         headlessModeCheckBox.setSelected(true);
         headlessModeCheckBox.setText("headless");
-        headlessModeCheckBox.setEnabled(false);
-        headlessModeCheckBox.setVisible(false);
+        headlessModeCheckBox.setEnabled(options.isIsHeadlessModeAvailable());
+        headlessModeCheckBox.setVisible(options.isIsHeadlessModeAvailable());
+
         state.setIsHeadless(true);
         headlessModeCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -891,10 +895,20 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+        boolean isHeadlessModeAvailable = false;
+        if (args != null && args.length > 0) {
+            for (String a: args) {
+                System.out.println("> " + a);
+                if (a.equals("-h")) {
+                    isHeadlessModeAvailable = true;
+                }
+            }
+        }
+        Option options = new Option(isHeadlessModeAvailable);
         java.awt.EventQueue.invokeLater(() -> {
             UIManager.put("Button.arc", 15);
             FlatDarkLaf.setup();
-            new TriviaMainWindow().setVisible(true);
+            new TriviaMainWindow(options).setVisible(true);
         });
     }
 
