@@ -36,6 +36,7 @@ import ru.thevalidator.galaxytriviasolver.account.User;
 import ru.thevalidator.galaxytriviasolver.account.UserStorage;
 import ru.thevalidator.galaxytriviasolver.exception.ExceptionUtil;
 import ru.thevalidator.galaxytriviasolver.identity.Identifier;
+import ru.thevalidator.galaxytriviasolver.identity.os.OSValidator;
 import ru.thevalidator.galaxytriviasolver.identity.uuid.UUIDUtil;
 import ru.thevalidator.galaxytriviasolver.module.trivia.GameResult;
 import static ru.thevalidator.galaxytriviasolver.module.trivia.GameResult.DRAW;
@@ -744,12 +745,14 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 + "choose server and topic you want to play \n"
                 + "then click start button.\n"
                 + "\n\n"
-                + "v1.0.2.0-GCS\n"
+                + "v1.0.2.1-GCS\n"
                 + "[thevalidator]\n"
-                + "2023, April");
+                + "2023, April"
+                + "\n\nRunning on " + OSValidator.OS_NAME + "\n"
+                + "Powered by Java");
         jTextArea.setColumns(30);
         jTextArea.setLineWrap(true);
-        jTextArea.setRows(12);
+        jTextArea.setRows(16);
         jTextArea.setEditable(false);
         jScrollPane.setViewportView(jTextArea);
         JLabel header = new JLabel();
