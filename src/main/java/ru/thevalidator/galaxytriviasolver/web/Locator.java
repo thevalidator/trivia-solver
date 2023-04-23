@@ -114,7 +114,7 @@ public final class Locator {
         text = switch (locale) {
             case RU -> "Почта";
             case EN -> "Mail";
-            case ES -> " Correo";
+            case ES -> "Correo";
             default -> "Correio";
         };
         return "//nav//span[text()='" + text + "']/..";

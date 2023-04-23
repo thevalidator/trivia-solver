@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.thevalidator</groupId>
     <artifactId>galaxy-trivia-solver</artifactId>
-    <version>1.0.1.0-GCS</version>
+    <version>1.0.2.1-GCS</version>
     <packaging>jar</packaging>
     <url>https://github.com/thevalidator/trivia-solver</url>
     
@@ -126,6 +126,15 @@
         <finalName>TriviaSolver</finalName>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.0</version>
+                <configuration>
+                    <argLine>-Dfile.encoding=UTF-8</argLine>
+                    <!--<argLine>-Dconsole.encoding=UTF-8</argLine>-->
+                </configuration>
+            </plugin>
+            <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.4.2</version>
                 <configuration>
@@ -136,6 +145,9 @@
                         <manifest>
                             <mainClass>ru.thevalidator.galaxytriviasolver.GalaxyTriviaSolver</mainClass>
                         </manifest>
+                        <manifestEntries>
+                            <Multi-Release>true</Multi-Release>
+                        </manifestEntries>
                     </archive>
                 </configuration>
                 <executions>
@@ -183,11 +195,11 @@
                                 <runtimeBits>64/32</runtimeBits>
                             </jre>
                             <versionInfo>
-                                <fileVersion>1.0.1.0</fileVersion>
+                                <fileVersion>1.0.2.0</fileVersion>
                                 <txtFileVersion>${project.version}</txtFileVersion>
                                 <fileDescription>Trivia solver app</fileDescription>
                                 <copyright>Thevalidator 2022</copyright>
-                                <productVersion>1.0.1.0</productVersion>
+                                <productVersion>1.0.2.0</productVersion>
                                 <txtProductVersion>${project.version}</txtProductVersion>
                                 <productName>Trivia solver</productName>
                                 <companyName></companyName>
@@ -220,8 +232,15 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>                           
-                                                                                             
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <showDeprecation>true</showDeprecation>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     
