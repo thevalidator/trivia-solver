@@ -5,13 +5,12 @@
 package ru.thevalidator.galaxytriviasolver.module.base;
 
 import ru.thevalidator.galaxytriviasolver.exception.LoginErrorException;
-import ru.thevalidator.galaxytriviasolver.module.rides.RidesRobot;
 import ru.thevalidator.galaxytriviasolver.module.trivia.TriviaRobot;
 
 /**
  * @author thevalidator <the.validator@yandex.ru>
  */
-public interface GalaxyBaseRobot extends TriviaRobot, RidesRobot {
+public interface GalaxyBaseRobot extends TriviaRobot {
     
     void login() throws LoginErrorException;
     void openMail();

@@ -84,3 +84,6 @@ gradle-app.setting
 SolverImpl.java
 tmp/
 nbproject/project.properties
+driver/chromedriver
+LICENSE.chromedriver
+user.key

@@ -3,9 +3,96 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.thevalidator</groupId>
     <artifactId>galaxy-trivia-solver</artifactId>
-    <version>1.0.0.0-private</version>
+    <version>1.0.2.1-GCS</version>
     <packaging>jar</packaging>
     <url>https://github.com/thevalidator/trivia-solver</url>
+    
+    <profiles>
+        <profile>
+            <id>on-windows</id>
+            <activation>
+                <os>
+                    <family>Windows</family>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                        <artifactId>launch4j-maven-plugin</artifactId>
+                        <version>2.1.2</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>launch4j</goal>
+                                </goals>
+                                <configuration>
+                                    <headerType>gui</headerType>
+                                    <stayAlive>true</stayAlive>
+                                    <jar>target/${project.build.finalName}-jar-with-dependencies.jar</jar>
+                                    <outfile>${basedir}/${project.build.finalName}_${project.version}.exe</outfile>
+                                    <icon>${project.basedir}/src/main/resources/trivia.ico</icon>
+                                    <singleInstance>
+                                        <mutexName>triviaMutex0</mutexName>
+                                        <windowTitle>Trivia Solver</windowTitle>
+                                    </singleInstance>
+                                    <classPath>
+                                        <mainClass>ru.thevalidator.galaxytriviasolver.GalaxyTriviaSolver</mainClass>
+                                    </classPath>
+                                    <jre>
+                                        <!--<path>${java.home}</path>-->
+                                        <path>jre</path>
+                                        <bundledJre64Bit>true</bundledJre64Bit>
+                                        <bundledJreAsFallback>false</bundledJreAsFallback>
+                                        <minVersion></minVersion>
+                                        <maxVersion></maxVersion>
+                                        <jdkPreference>jdkOnly</jdkPreference>
+                                        <runtimeBits>64/32</runtimeBits>
+                                    </jre>
+                                    <versionInfo>
+                                        <fileVersion>1.0.2.0</fileVersion>
+                                        <txtFileVersion>${project.version}</txtFileVersion>
+                                        <fileDescription>Trivia solver app</fileDescription>
+                                        <copyright>Thevalidator 2022</copyright>
+                                        <productVersion>1.0.2.0</productVersion>
+                                        <txtProductVersion>${project.version}</txtProductVersion>
+                                        <productName>Trivia solver</productName>
+                                        <companyName></companyName>
+                                        <internalName>triviasolver</internalName>
+                                        <originalFilename>${project.build.finalName}_${project.version}.exe</originalFilename>
+                                        <trademarks></trademarks>
+                                        <language>ENGLISH</language>
+                                    </versionInfo>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+            
+                    <plugin>
+                        <groupId>net.jsign</groupId>
+                        <artifactId>jsign-maven-plugin</artifactId>
+                        <version>4.2</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <configuration>
+                                    <file>${project.build.finalName}_${project.version}.exe</file>
+                                    <name>Trivia solver</name>
+                                    <!--<url>http://www.website.ru</url>-->
+                                    <keystore>C:\Users\User\keystore.jks</keystore>
+                                    <alias>trivia.solver</alias>
+                                    <storepass>trvaslvr</storepass>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
     
     <licenses>
         <license>
@@ -126,6 +213,29 @@
         <finalName>TriviaSolver</finalName>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-help-plugin</artifactId>
+                <version>3.4.0</version>
+                <executions>
+                    <execution>
+                        <id>show-profiles</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>active-profiles</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.0</version>
+                <configuration>
+                    <argLine>-Dfile.encoding=UTF-8</argLine>
+                    <!--<argLine>-Dconsole.encoding=UTF-8</argLine>-->
+                </configuration>
+            </plugin>
+            <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.4.2</version>
                 <configuration>
@@ -136,6 +246,9 @@
                         <manifest>
                             <mainClass>ru.thevalidator.galaxytriviasolver.GalaxyTriviaSolver</mainClass>
                         </manifest>
+                        <manifestEntries>
+                            <Multi-Release>true</Multi-Release>
+                        </manifestEntries>
                     </archive>
                 </configuration>
                 <executions>
@@ -147,81 +260,15 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>    
-            
-            <plugin>
-                <groupId>com.akathist.maven.plugins.launch4j</groupId>
-                <artifactId>launch4j-maven-plugin</artifactId>
-                <version>2.1.2</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>launch4j</goal>
-                        </goals>
-                        <configuration>
-                            <headerType>gui</headerType>
-                            <stayAlive>true</stayAlive>
-                            <jar>target/${project.build.finalName}-jar-with-dependencies.jar</jar>
-                            <outfile>${basedir}/${project.build.finalName}_${project.version}.exe</outfile>
-                            <icon>${project.basedir}/src/main/resources/trivia.ico</icon>
-                            <singleInstance>
-                                <mutexName>triviaMutex0</mutexName>
-                                <windowTitle>Trivia Solver</windowTitle>
-                            </singleInstance>
-                            <classPath>
-                                <mainClass>ru.thevalidator.galaxytriviasolver.GalaxyTriviaSolver</mainClass>
-                            </classPath>
-                            <jre>
-                                <!--<path>${java.home}</path>-->
-                                <path>jre</path>
-                                <bundledJre64Bit>true</bundledJre64Bit>
-                                <bundledJreAsFallback>false</bundledJreAsFallback>
-                                <minVersion></minVersion>
-                                <maxVersion></maxVersion>
-                                <jdkPreference>jdkOnly</jdkPreference>
-                                <runtimeBits>64/32</runtimeBits>
-                            </jre>
-                            <versionInfo>
-                                <fileVersion>1.0.0.0</fileVersion>
-                                <txtFileVersion>${project.version}</txtFileVersion>
-                                <fileDescription>Trivia solver app</fileDescription>
-                                <copyright>Thevalidator 2022</copyright>
-                                <productVersion>1.0.0.0</productVersion>
-                                <txtProductVersion>${project.version}</txtProductVersion>
-                                <productName>Trivia solver</productName>
-                                <companyName></companyName>
-                                <internalName>triviasolver</internalName>
-                                <originalFilename>${project.build.finalName}_${project.version}.exe</originalFilename>
-                                <trademarks></trademarks>
-                                <language>ENGLISH</language>
-                            </versionInfo>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
-
             <plugin>
-                <groupId>net.jsign</groupId>
-                <artifactId>jsign-maven-plugin</artifactId>
-                <version>4.2</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                        <configuration>
-                            <file>${project.build.finalName}_${project.version}.exe</file>
-                            <name>Trivia solver</name>
-                            <!--<url>http://www.website.ru</url>-->
-                            <keystore>C:\Users\User\keystore.jks</keystore>
-                            <alias>trivia.solver</alias>
-                            <storepass>trvaslvr</storepass>
-                        </configuration>
-                    </execution>
-                </executions>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <showDeprecation>true</showDeprecation>
+                </configuration>
             </plugin>
-                                   
         </plugins>
     </build>
     

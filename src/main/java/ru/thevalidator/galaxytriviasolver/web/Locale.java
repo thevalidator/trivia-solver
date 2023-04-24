@@ -27,32 +27,32 @@ public enum Locale {
         "ФУТБОЛ"
     }),
     EN(new String[]{
-        "Random",
-        "Logos",
-        "Music",
-        "Movie Stars",
-        "TV Shows",
-        "Comic Book Characters",
-        "Soccer",
-        "Anime Characters",
-        "Cars",
-        "Flags",
-        "World Currencies"
+        "RANDOM",
+        "LOGOS",
+        "MUSIC",
+        "MOVIE STARS",
+        "TV SHOWS",
+        "COMIC BOOK CHARACTERS",
+        "SOCCER",
+        "ANIME CHARACTERS",
+        "CARS",
+        "FLAGS",
+        "WORLD CURRENCIES"
     }),
     PT(new String[]{
-        "Aleatória",
-        "Logos",
-        "Clubes de futebol",
-        "Personagens de Quadrinhos",
-        "Estrelas do cinema",
-        "Personagens de anime",
-        "Carros"
+        "ALEATÓRIA",
+        "LOGOS",
+        "CLUBES DE FUTEBOL",
+        "PERSONAGENS DE QUADRINHOS",
+        "ESTRELAS DO CINEMA",
+        "PERSONAGENS DE ANIME",
+        "CARROS"
     }),
     ES(new String[]{
         "ALEATORIO",
-        "Logos",
-        "Clubes de fútbol",
-        "Personajes de cómic",
+        "LOGOS",
+        "CLUBES DE FÚTBOL",
+        "PERSONAJES DE CÓMIC",
         "ESTRELLAS DE CINE",
         "PERSONAJES DE ANIME",
         "COCHES"
@@ -69,7 +69,7 @@ public enum Locale {
     }
 
     public static Locale getDefaultLocale() {
-        return EN;
+        return RU;
     }
 
     public static String getLocaleURL(Locale locale) {

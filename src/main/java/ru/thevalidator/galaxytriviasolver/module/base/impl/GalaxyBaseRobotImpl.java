@@ -36,7 +36,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import static org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClickable;
 import static org.openqa.selenium.support.ui.ExpectedConditions.frameToBeAvailableAndSwitchToIt;
-import static org.openqa.selenium.support.ui.ExpectedConditions.invisibilityOfElementLocated;
 import static org.openqa.selenium.support.ui.ExpectedConditions.not;
 import static org.openqa.selenium.support.ui.ExpectedConditions.presenceOfElementLocated;
 import static org.openqa.selenium.support.ui.ExpectedConditions.textToBe;
@@ -45,100 +44,46 @@ import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElem
 import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.thevalidator.galaxytriviasolver.notification.Informer;
 import ru.thevalidator.galaxytriviasolver.exception.CanNotPlayException;
+import ru.thevalidator.galaxytriviasolver.exception.ExceptionUtil;
 import ru.thevalidator.galaxytriviasolver.exception.LoginErrorException;
+import ru.thevalidator.galaxytriviasolver.gui.v2.TriviaMainWindow;
+import static ru.thevalidator.galaxytriviasolver.gui.v2.TriviaMainWindow.driver;
 import ru.thevalidator.galaxytriviasolver.module.base.GalaxyBaseRobot;
 import ru.thevalidator.galaxytriviasolver.module.trivia.GameResult;
 import ru.thevalidator.galaxytriviasolver.module.trivia.State;
+import ru.thevalidator.galaxytriviasolver.module.trivia.TriviaUserStatsData;
 import ru.thevalidator.galaxytriviasolver.module.trivia.Unlim;
+import ru.thevalidator.galaxytriviasolver.module.trivia.UnlimUtil;
+import static ru.thevalidator.galaxytriviasolver.module.trivia.UnlimUtil.MAX_UNLIM_MINUTES;
+import static ru.thevalidator.galaxytriviasolver.module.trivia.UnlimUtil.MID_UNLIM_MINUTES;
+import static ru.thevalidator.galaxytriviasolver.module.trivia.UnlimUtil.MIN_UNLIM_MINUTES;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.Solver;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.entity.trivia.Answer;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.entity.trivia.Question;
-import ru.thevalidator.galaxytriviasolver.module.trivia.solver.impl.SolverImpl;
+import ru.thevalidator.galaxytriviasolver.module.trivia.solver.impl.SolverRestImpl;
+import ru.thevalidator.galaxytriviasolver.remote.Connector;
+import ru.thevalidator.galaxytriviasolver.service.Task;
 import ru.thevalidator.galaxytriviasolver.web.Locale;
 import static ru.thevalidator.galaxytriviasolver.web.Locator.*;
 
 public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
-
-    class TriviaUserStatsData {
-
-        private int userDailyPoints;
-        private double userCoins;
-        private int tenthPlacePoints;
-        private int secondPlacePoints;
-        private int firstPlacePoints;
-        private static final int START_TIME_IN_SECONDS = 28_800;
-        private static final int ONE_DAY_TIME_IN_SECONDS = 86_400;
-        private static final int AVERAGE_POINTS_PER_HOUR = 7_000;
-
-        public TriviaUserStatsData() {
-            this.userCoins = 0;
-            this.userDailyPoints = 0;
-            this.tenthPlacePoints = 0;
-            this.secondPlacePoints = 0;
-            this.firstPlacePoints = 0;
-        }
-
-        public boolean isUnlimAvailable(Unlim type, int times) {
-            return (userCoins - (type.getPrice() * times)) > 0;
-        }
-
-        public int getUserDailyPoints() {
-            return userDailyPoints;
-        }
-
-        public void setUserDailyPoints(int userPoints) {
-            this.userDailyPoints = userPoints;
-        }
-
-        public double getUserCoins() {
-            return userCoins;
-        }
-
-        public void setUserCoins(double userCoins) {
-            this.userCoins = userCoins;
-        }
-
-        public int getTenthPlacePoints() {
-            return tenthPlacePoints;
-        }
-
-        public void setTenthPlacePoints(int tenthPlacePoints) {
-            this.tenthPlacePoints = tenthPlacePoints;
-        }
-
-        public int getFirstPlacePoints() {
-            return firstPlacePoints;
-        }
-
-        public void setFirstPlacePoints(int firstPlacePoints) {
-            this.firstPlacePoints = firstPlacePoints;
-        }
-
-        public int getSecondPlacePoints() {
-            return secondPlacePoints;
-        }
-
-        public void setSecondPlacePoints(int secondPlacePoints) {
-            this.secondPlacePoints = secondPlacePoints;
-        }
-
-    }
 
     private static final Logger logger = LogManager.getLogger(GalaxyBaseRobotImpl.class);
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy_HHmmss");
     private static final Random random = new Random();
 
     private final State state;
-    private WebDriver driver;
-    private TriviaUserStatsData userStats;
+    private final TriviaUserStatsData userStats;
     private final Solver solver;
+    private final Task task;
 
-    public GalaxyBaseRobotImpl(State state) {
+    public GalaxyBaseRobotImpl(State state, Task task) {
         this.state = state;
+        this.task = task;
         this.userStats = new TriviaUserStatsData();
-        this.solver = new SolverImpl();
+        this.solver = new SolverRestImpl(new Connector(TriviaMainWindow.PERSONAL_CODE));
     }
-    
+
     private WebDriver createWebDriver() {
         WebDriver webDriver = null;
         try {
@@ -152,8 +97,11 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             webDriver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(60));
 
         } catch (Exception e) {
-            logger.error(Arrays.toString(e.getStackTrace()));
+            logger.error(ExceptionUtil.getFormattedDescription(e));
             informObservers("ERROR: Can't create webdriver");
+            if (webDriver != null) {
+                webDriver.close();
+            }
             //throw new CanNotCreateWebdriverException("Can't create webdriver");
         }
         return webDriver;
@@ -171,21 +119,18 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             logger.error(e.getMessage());
         }
     }
-    
+
     public void saveDataToFile(String pathname, Exception exception) {
-        try (StringWriter sw = new StringWriter(); 
-                PrintWriter pw = new PrintWriter(sw); 
-                FileOutputStream fos = new FileOutputStream(pathname);  
-                DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos))) {
+        try (StringWriter sw = new StringWriter(); PrintWriter pw = new PrintWriter(sw); FileOutputStream fos = new FileOutputStream(pathname); DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos))) {
             exception.printStackTrace(pw);
             outStream.writeUTF(sw.toString());
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
-    
+
     public void savePageSourceToFile(String pathname) {
-        try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(pathname + "_src", Charset.forName("UTF-8")))){
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(pathname + "_src", Charset.forName("UTF-8")))) {
             bufferedWriter.write(driver.getPageSource());
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -214,8 +159,6 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     private void openURL() {
         driver = createWebDriver();
         driver.get(Locale.getLocaleURL(state.getLocale()));
-        wait(20_000).until(visibilityOfElementLocated(By.xpath(getBaseCookiesCloseBtn()))).click();
-        driver.findElement(By.xpath(getBaseHaveAccountBtn())).isDisplayed();
     }
 
     @Override
@@ -229,26 +172,33 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         for (int i = 1; i <= maxAttempts; i++) {
             try {
                 openURL();
-                driver.findElement(By.xpath(getBaseHaveAccountBtn())).click();
+                //wait(60_000).until(visibilityOfElementLocated(By.xpath(getBaseCookiesCloseBtn()))).click();
+                wait(60_000).until(elementToBeClickable(By.xpath(getBaseCookiesCloseBtn()))).click();
+                wait(60_000).until(elementToBeClickable(By.xpath(getBaseHaveAccountBtn()))).click();
                 driver.findElement(By.xpath(getBaseRecoveryCodeField())).sendKeys(state.getUser().getCode());
                 driver.findElement(By.xpath(getBaseFooterAcceptBtn())).click();
                 TimeUnit.SECONDS.sleep(2);
-                if (wait(30_000).until(presenceOfElementLocated(By.xpath(getBaseAuthUserContent()))).isDisplayed()) {
+                if (wait(60_000).until(presenceOfElementLocated(By.xpath(getBaseAuthUserContent()))).isDisplayed()) {
                     informObservers("logged in successfully");
                     break;
                 }
             } catch (Exception e) {
+//                System.out.println(e.getClass());
+//                informObservers("\n>>>>\n" + ExceptionUtil.getFormattedDescription(e) + "\n<<<<\n");
                 String fileName = getFileNameTimeStamp() + "_login";
                 takeScreenshot(fileName + ".png");
                 saveDataToFile(fileName, e);
+                if (driver != null) {
+                    driver.quit();
+                }
                 if (i == maxAttempts) {
                     informObservers("LOGIN ERROR: couldn't log in " + maxAttempts + " times in a row, task stopped");
                     throw new LoginErrorException(e.getMessage());
                 } else {
                     logger.error(e.getMessage());   //need to be deleted?
                     int timeToWait = (2 * i) + ((i - 1) * 10);
-                    informObservers("LOGIN ERROR: try " + i + " was unsuccessfull, next try in " + timeToWait);
-                    driver.quit();
+                    informObservers("LOGIN ERROR: try " + i + " was unsuccessfull, next try in " + timeToWait
+                            + "\nreason: " + e.getMessage());
                     try {
                         TimeUnit.MINUTES.sleep(timeToWait);
                     } catch (InterruptedException ex) {
@@ -295,14 +245,6 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         updateTriviaUsersData();
     }
 
-    @Override
-    public void selectRidesGame() {
-        closePopup(2_500);
-        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
-        wait(15_000).until(visibilityOfElementLocated(By.xpath(getGamesRidesBtn(state.getLocale())))).click();
-        informObservers("opening Rides");
-    }
-
     private void updateTriviaUsersData() {
         closePopup(2_500);
         String userBalance = wait(10_000).until(visibilityOfElementLocated(By.xpath(getBaseUserBalance()))).getText();
@@ -339,14 +281,11 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         
         informObservers("TOPLIST: 1st: " + first + " 10th: " + tenth);
         informObservers("balance: " + userBalance + " my daily points: " + dailyPoints);
-        
+
     }
 
     @Override
     public boolean startTriviaGame() throws CanNotPlayException {
-//        if () {
-//            for soft stop
-//        }
         closePopup(1_500);
         wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
         String attempts = wait(10_000).until(visibilityOfElementLocated(By.xpath(getTriviaEnergyCount()))).getText();
@@ -370,13 +309,40 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             topic.click();
             return true;
         } else {
+//            if (state.shouldGetOnTop() || state.shouldStayInTop()) {
+//                if (pointsDiff > -5_000) {
+//
+//                    Unlim unlimType = Unlim.MAX;
+//                    if (pointsDiff <= TriviaUserStatsData.AVERAGE_POINTS_PER_HOUR * hoursLeft
+//                            && userStats.isUnlimAvailable(unlimType, (int) Math.ceil(hoursLeft / unlimType.getHours()))) {
+//
+//                        informObservers("BUYING UNLIM TO REACH THE TARGET!");
+//                        buyUnlimOption(unlimType);
+//                        try {
+//                            startTriviaGame();
+//                            continue;
+//                        } catch (CanNotPlayException ex) {
+//                            takeScreenshot(getFileNameTimeStamp() + "_continueAfterUnlim.png");
+//                            logger.error(ex.getMessage());
+//                        }
+//                    } else {
+//                        String message = "Top list target is UNREACHABLE!" + pointsDiff
+//                                + " hour left: " + hoursLeft
+//                                + " coins: " + userStats.getUserCoins();
+//                        logger.error(message);
+//                        informObservers("Top list target is UNREACHABLE!");
+//                        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
+//                        break;
+//                    }
+//                }
+//            }
             informObservers("TRIVIA: no attempts available");
             return false;
         }
     }
 
     private WebElement getTopic(String topic, List<WebElement> topics) throws CanNotPlayException {
-        for (WebElement t : topics) {
+        for (WebElement t: topics) {
             if (t.getText().equalsIgnoreCase(topic)) {
                 return t;
             }
@@ -395,29 +361,96 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     @Override
     public void playTriviaGame() {
         while (true) {
-            /*boolean isStarted = */
             wait(70_000).until(visibilityOfElementLocated(By.xpath(getTriviaGameProcessFrame()))).isDisplayed();
             informObservers("game started");
             answerQuestions();
-            /*boolean isFinished = */
             wait(30_000).until(visibilityOfElementLocated(By.xpath(getTriviaGameResultsFrame()))).isDisplayed();
             informObservers("game finished");
 
             driver.switchTo().frame(driver.findElement(By.xpath(getTriviaGameResultsFrame())));
 
             String attempts = driver.findElement(By.xpath(getTriviaEnergyCount())).getText().trim();
-            String points = driver.findElement(By.xpath(getTriviaResultPoints())).getText().trim();
+            int points = Integer.parseInt(driver.findElement(By.xpath(getTriviaResultPoints())).getText().trim());
             GameResult result = getTriviaRoundResult();
+            if (result.equals(GameResult.WIN)) {
+                userStats.setUserDailyPoints(userStats.getUserDailyPoints() + points);
+            }
+            gameResultNotifyObservers(result, points, userStats);
 
-            gameResultNotifyObservers(result, Integer.parseInt(points));
+            if (!task.isActive()) {
+                break;
+            }
 
             if (attempts.equals("0")) {
-                if (state.shouldGetOnTop() || state.shouldStayInTop()) {
+                if (state.isManualStrategy() && state.getUnlimStrategyTime() > 0) {
+
+                    int unlimTime = state.getUnlimStrategyTime();
+
+                    if (!UnlimUtil.isUnlimAvailable(userStats.getUserCoins(), unlimTime)) {
+                        String message = String.format("Not enough coins for the selected strategy. Need: %.2f, you have: %.2f",
+                                UnlimUtil.getPrice(unlimTime), userStats.getUserCoins());
+                        informObservers(message);
+                        break;
+                    }
+                    
                     driver.switchTo().defaultContent();
                     closePopup(1_500);
                     driver.switchTo().frame(driver.findElement(By.xpath(getTriviaGameResultsFrame())));
                     driver.findElement(By.xpath(getTriviaReturnToMainPageBtn())).click();
-                    //check if on default frame
+                    updateTriviaUsersData();
+                    informObservers("1st: " + userStats.getFirstPlacePoints()
+                            + " 10th: " + userStats.getTenthPlacePoints()
+                            + " YOU: " + userStats.getUserDailyPoints());
+                    driver.switchTo().frame(driver.findElement(By.xpath(getTriviaGameMainFrame())));
+                    driver.switchTo().defaultContent();
+
+                    int maxUnlimCount = unlimTime / MAX_UNLIM_MINUTES;
+                    if (maxUnlimCount > 0) {
+                        // buy max unlim
+                        buyUnlimOption(Unlim.MAX);
+                        state.setUnlimStrategyTime(unlimTime - MAX_UNLIM_MINUTES);
+                        try {
+                            startTriviaGame();
+                            continue;
+                        } catch (CanNotPlayException ex) {
+                            takeScreenshot(getFileNameTimeStamp() + "_continueAfterUnlimMax.png");
+                            logger.error(ex.getMessage());
+                        }
+                    }
+
+                    int midUnlimCount = unlimTime / MID_UNLIM_MINUTES;
+                    if (midUnlimCount > 0) {
+                        // buy mid unlim
+                        buyUnlimOption(Unlim.MID);
+                        state.setUnlimStrategyTime(unlimTime - MID_UNLIM_MINUTES);
+                        try {
+                            startTriviaGame();
+                            continue;
+                        } catch (CanNotPlayException ex) {
+                            takeScreenshot(getFileNameTimeStamp() + "_continueAfterUnlimMid.png");
+                            logger.error(ex.getMessage());
+                        }
+                    }
+
+                    int minUnlimCount = unlimTime / MIN_UNLIM_MINUTES;
+                    if (minUnlimCount > 0) {
+                        // buy min unlim
+                        buyUnlimOption(Unlim.MIN);
+                        state.setUnlimStrategyTime(unlimTime - MIN_UNLIM_MINUTES);
+                        try {
+                            startTriviaGame();
+                            continue;
+                        } catch (CanNotPlayException ex) {
+                            takeScreenshot(getFileNameTimeStamp() + "_continueAfterUnlimMin.png");
+                            logger.error(ex.getMessage());
+                        }
+                    }
+
+                } else if (state.shouldGetOnTop() || state.shouldStayInTop()) {
+                    driver.switchTo().defaultContent();
+                    closePopup(1_500);
+                    driver.switchTo().frame(driver.findElement(By.xpath(getTriviaGameResultsFrame())));
+                    driver.findElement(By.xpath(getTriviaReturnToMainPageBtn())).click();
                     updateTriviaUsersData();
 
                     int pointsDiff = state.shouldGetOnTop()
@@ -446,7 +479,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                     }
 
                     driver.switchTo().defaultContent();
-                    
+
                     if (state.shouldGetOnTop() && pointsDiff == 0) {
                         int pointsAhead = userStats.getUserDailyPoints() - userStats.getSecondPlacePoints();
                         if (pointsAhead > 10_000) {
@@ -495,51 +528,49 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             } else {
                 informObservers("games left: " + attempts);
             }
-//            if () {
-//                stop(); for soft stop
-//            }
+
             startAgainTriviaGame();
         }
 
     }
 
     private void answerQuestions() {
-        String questionText = null;
-        for (int i = 0; i < 5; i++) {
+        String questionText;
+        for (int i = 1; i < 6; i++) {
             driver.switchTo().defaultContent();
-            closePopup(1_000);
+            closePopup(2_000);
             wait(6_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getTriviaGameProcessFrame())));
             questionText = wait(20_000).until(presenceOfElementLocated(By.xpath(getTriviaQuestionHeader()))).getText();
             try {
-                if (i != 0 && i != 4) {
-                    TimeUnit.SECONDS.sleep(random.nextInt(10) + 2);
+                if (i != 5) {
+                    TimeUnit.SECONDS.sleep(random.nextInt(8) + 2);
                 } else {
                     TimeUnit.MILLISECONDS.sleep(500);
                 }
             } catch (InterruptedException e) {
             }
-            clickCorrectAnswer();
-            wait(33_000).until(not(textToBe(By.xpath(getTriviaQuestionHeader()), questionText)));
+            List<WebElement> elements = driver.findElements(By.xpath(getTriviaQuestionAnswer()));
+            clickCorrectAnswer(questionText, elements);
+            informObservers("question " + i + " answered");
+            wait(45_000).until(not(textToBe(By.xpath(getTriviaQuestionHeader()), questionText)));
         }
     }
 
-    private void clickCorrectAnswer() {
-        List<WebElement> elements = driver.findElements(By.xpath(getTriviaQuestionAnswer()));
+    private void clickCorrectAnswer(String questionText, List<WebElement> elements) {
         Answer[] answers = new Answer[elements.size()];
         int index = 0;
-        for (WebElement e : elements) {
+        for (WebElement e: elements) {
             String text = e.getText();
             String rel = e.getAttribute("rel");
             Answer answer = new Answer(text, rel, index);
             answers[index++] = answer;
         }
-        Question question = new Question("q", answers);
+        Question question = new Question(questionText, answers);
         Answer correctAnswer = solver.getCorrectAnswer(question);
         elements.get(correctAnswer.getIndex()).click();
     }
 
     private GameResult getTriviaRoundResult() {
-        //closePopup(2_000);
         String result = driver.findElement(By.xpath(getTriviaResultHeader())).getText().trim();
         if (result.contains(Locale.getWinText(state.getLocale()))) {
             return GameResult.WIN;
@@ -586,92 +617,27 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         }
         wait(10_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
         driver.findElement(By.xpath(getTriviaReturnToMainPageBtn())).click();
+        userStats.setUserCoins(userStats.getUserCoins() - option.getPrice());
     }
 
     @Override
     public void terminate() {
         if (driver != null) {
-            driver.quit();
+            try {
+                synchronized (this) {
+                    driver.quit();
+                }
+
+            } catch (Exception e) {
+                informObservers("error closing the driver");
+            }
+
         }
     }
 
     @Override
     public void refreshPage() {
         driver.navigate().refresh();
-    }
-
-    @Override
-    public boolean startRidesGame() {
-        closePopup(1_500);
-        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
-        String attempts = wait(10_000).until(visibilityOfElementLocated(By.xpath(getRidesGameAttemptsCounter()))).getText().trim();
-        informObservers("Race attempts: " + attempts);
-        if (attempts.equals("0")) {
-            return false;
-        }
-        driver.findElement(By.xpath(getRidesStartRaceBtn())).click();
-
-        return true;
-    }
-
-    @Override
-    public void playRidesGame() {
-        int wins = 0;
-        while (true) {
-            wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
-            informObservers("Race: searching for the opponent");
-            wait(25_000).until(visibilityOfElementLocated(By.xpath(getRidesWaitOverlay())));
-            wait(25_000).until(invisibilityOfElementLocated(By.xpath(getRidesWaitOverlay())));
-            informObservers("Race started");
-            try {
-                long start = System.currentTimeMillis();
-
-                while ((System.currentTimeMillis() - start) < state.getNosDelayTime()) {
-                    java.lang.Thread.onSpinWait();
-                }
-                try {
-                    wait(500).until(elementToBeClickable(By.xpath(getRidesNitroBtn()))).click();
-                } catch (Exception e) {
-
-                }
-                wait(15_000).until(
-                        visibilityOfElementLocated(
-                                By.xpath(getRidesPopupCloseBtn())
-                        )
-                ).click();
-                while (true) {
-                    wait(3_000).until(
-                            visibilityOfElementLocated(
-                                    By.xpath(getRidesPopupCloseBtn())
-                            )
-                    ).click();
-                }
-            } catch (Exception e) {
-            }
-
-            WebElement resultDiv = wait(3_000).until(visibilityOfElementLocated(By.xpath(getRidesResultsDiv())));
-            if (resultDiv.getAttribute("id").contains("lose")) {
-                informObservers("Race finished - LOST");
-            } else {
-                informObservers("Race finished - WIN");
-                wins++;
-            }
-
-            driver.switchTo().defaultContent();
-            closePopup(1_500);
-            wait(5_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
-
-            //race again button
-            WebElement raceAgainBtn = driver.findElement(By.xpath(getRidesRaceAgainBtn()));
-
-            if (raceAgainBtn.getAttribute("action") != null) {
-                raceAgainBtn.click();
-            } else {
-                informObservers("Race: no attempts left, won " + wins + " races.");
-                break;
-            }
-        }
-
     }
 
 }
