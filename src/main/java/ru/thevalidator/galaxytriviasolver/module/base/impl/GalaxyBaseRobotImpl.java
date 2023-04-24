@@ -281,6 +281,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         
         informObservers("TOPLIST: 1st: " + first + " 10th: " + tenth);
         informObservers("balance: " + userBalance + " my daily points: " + dailyPoints);
+
     }
 
     @Override
@@ -469,7 +470,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                     informObservers("Diff: " + pointsDiff 
                             + " hours left: " + hoursLeft 
                             + " coins: " + userStats.getUserCoins());
-                    
+
                     driver.switchTo().frame(driver.findElement(By.xpath(getTriviaGameMainFrame())));
                     if (state.isPassive() && state.shouldGetOnTop() && hoursLeft > 10 && pointsDiff < 20_000) {
                         break;
@@ -478,6 +479,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                     }
 
                     driver.switchTo().defaultContent();
+
                     if (state.shouldGetOnTop() && pointsDiff == 0) {
                         int pointsAhead = userStats.getUserDailyPoints() - userStats.getSecondPlacePoints();
                         if (pointsAhead > 10_000) {
@@ -514,6 +516,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                         wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
                         break;
                     }
+                    
                 } else {
                     informObservers("not enough energy");
                     break;
