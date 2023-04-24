@@ -2,7 +2,7 @@
  * Copyright (C) 2022 thevalidator
  */
 
-package ru.thevalidator.galaxytriviasolver.module.base;
+package ru.thevalidator.galaxytriviasolver.module.robot;
 
 import ru.thevalidator.galaxytriviasolver.exception.LoginErrorException;
 import ru.thevalidator.galaxytriviasolver.module.trivia.TriviaRobot;

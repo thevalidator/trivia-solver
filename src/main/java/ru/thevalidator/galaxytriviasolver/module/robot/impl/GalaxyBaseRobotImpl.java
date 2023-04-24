@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2022 thevalidator
  */
-package ru.thevalidator.galaxytriviasolver.module.base.impl;
+package ru.thevalidator.galaxytriviasolver.module.robot.impl;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
@@ -47,7 +47,7 @@ import ru.thevalidator.galaxytriviasolver.exception.ExceptionUtil;
 import ru.thevalidator.galaxytriviasolver.exception.LoginErrorException;
 import ru.thevalidator.galaxytriviasolver.gui.v2.TriviaMainWindow;
 import static ru.thevalidator.galaxytriviasolver.gui.v2.TriviaMainWindow.driver;
-import ru.thevalidator.galaxytriviasolver.module.base.GalaxyBaseRobot;
+import ru.thevalidator.galaxytriviasolver.module.robot.GalaxyBaseRobot;
 import ru.thevalidator.galaxytriviasolver.module.trivia.GameResult;
 import ru.thevalidator.galaxytriviasolver.module.trivia.State;
 import ru.thevalidator.galaxytriviasolver.module.trivia.TriviaUserStatsData;
@@ -209,6 +209,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
 
     @Override
     public void logoff() {
+        informObservers("loggin off");
         driver.switchTo().defaultContent();
         closePopup(2_500);
         wait(15_000).until(elementToBeClickable(By.xpath(getBaseMenuExitBtn(state.getLocale())))).click();
