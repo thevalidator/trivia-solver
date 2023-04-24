@@ -3,20 +3,15 @@
  */
 package ru.thevalidator.galaxytriviasolver.gui.v2;
 
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.formdev.flatlaf.FlatDarkLaf;
 import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -63,7 +58,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm.ss");
     private static final int MAX_LINES = 1_000;
 
-    private Option options;
+    private final Option options;
     private UserStorage userStorage;
     private final State state;
     private Task task;
@@ -72,7 +67,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     public TriviaMainWindow(Option options) {
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/trivia.png")));
         this.options = options;
-        this.userStorage = new UserStorage(readUserData());
+        this.userStorage = new UserStorage();
         this.state = new State();
         this.task = null;
         initComponents();
@@ -769,11 +764,11 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     }//GEN-LAST:event_aboutMenuItemActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        if (worker != null && !worker.isCancelled()) {
-            worker.cancel(true);
-        }
         if (driver != null) {
             driver.quit();
+        }
+        if (worker != null && !worker.isCancelled()) {
+            worker.cancel(true);
         }
     }//GEN-LAST:event_formWindowClosing
 
@@ -847,12 +842,18 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
             try {
                 List<User> userList = userStorage.getUsers();
                 userList.remove(selectedPersonImdex);
-                writeUserData(userList);
-                userStorage = new UserStorage(readUserData());
+                userStorage = new UserStorage(userList);
+                UserStorage.writeUserData(userList);
                 personComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(userStorage.getUserNames()));
             } catch (Exception e) {
-                appendToPane("Person removing error!");
-                logger.error(ExceptionUtil.getFormattedDescription(e));
+                String message;
+                if (e instanceof IllegalArgumentException) {
+                    message = e.getMessage();
+                } else {
+                    message = "Remove person error!";
+                    logger.error(ExceptionUtil.getFormattedDescription(e));
+                }
+                appendToPane(message);
             }
         }
     }//GEN-LAST:event_deletePersonButtonActionPerformed
@@ -877,12 +878,18 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 User u = new User(name, code);
                 userList.add(u);
 
-                writeUserData(userList);
-                userStorage = new UserStorage(readUserData());
+                userStorage = new UserStorage(userList);
+                UserStorage.writeUserData(userList);
                 personComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(userStorage.getUserNames()));
             } catch (Exception e) {
-                appendToPane("Person adding error!");
-                logger.error(ExceptionUtil.getFormattedDescription(e));
+                String message;
+                if (e instanceof IllegalArgumentException) {
+                    message = e.getMessage();
+                } else {
+                    message = "Add person error!";
+                    logger.error(ExceptionUtil.getFormattedDescription(e));
+                }
+                appendToPane(message);
             }
         }
     }//GEN-LAST:event_addPersonButtonActionPerformed
@@ -970,18 +977,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JLabel winLabel;
     private javax.swing.JLabel winValueLabel;
     // End of variables declaration//GEN-END:variables
-
-    private List<User> readUserData() {
-        List<User> users = null;
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            users = Arrays.asList(mapper.readValue(Paths.get(UserStorage.STORAGE_DATE_FILE_NAME).toFile(), User[].class));
-        } catch (IOException e) {
-            appendToPane("can't read user's data");
-            logger.error(e.getMessage());
-        }
-        return users;
-    }
 
     public void appendToPane(String msg) {
         try {
@@ -1162,21 +1157,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         unlimHoursValueComboBox.setEnabled(b);
         unlimMinutesValueComboBox.setEnabled(b);
     }
-
-    private void writeUserData(List<User> users) {
-        try {
-            if (users.size() > 20) {
-                appendToPane("ERROR: NOT ADDED! MAXIMUM 20 PERSONS ALLOWED");
-                return;
-            }
-            ObjectMapper mapper = new ObjectMapper();
-            ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
-            writer.writeValue(Paths.get(UserStorage.STORAGE_DATE_FILE_NAME).toFile(), users);
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
+    
     private void showPersonalCode() {
         try {
             String key = UUIDUtil.getUUID();
