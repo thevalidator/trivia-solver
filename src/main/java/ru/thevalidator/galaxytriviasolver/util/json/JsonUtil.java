@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2023 thevalidator
  */
-package ru.thevalidator.galaxytriviasolver.json;
+package ru.thevalidator.galaxytriviasolver.util.json;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 

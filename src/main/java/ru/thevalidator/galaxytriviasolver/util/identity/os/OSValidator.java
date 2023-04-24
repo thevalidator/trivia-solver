@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2023 thevalidator
  */
-package ru.thevalidator.galaxytriviasolver.identity.os;
+package ru.thevalidator.galaxytriviasolver.util.identity.os;
 
 /**
  * @author thevalidator <the.validator@yandex.ru>
