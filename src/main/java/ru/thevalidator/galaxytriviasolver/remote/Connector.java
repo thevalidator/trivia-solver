@@ -4,7 +4,6 @@
 package ru.thevalidator.galaxytriviasolver.remote;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -13,6 +12,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import ru.thevalidator.galaxytriviasolver.json.JsonUtil;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.entity.trivia.Question;
 
 /**
@@ -25,23 +25,23 @@ public class Connector {
     public static final String STATUS_PATH = "/api/v1/trivia/workstation/";
     public static final String REFRESH_TOKEN_PATH = "/api/v1/trivia/workstations/refresh-token";
     private static String refreshToken;
-    private final String userData;
+    private final String key;
 
-    public Connector(String data) {
-        this.userData = data;
+    public Connector(String key) {
+        this.key = key;
         if (refreshToken == null) {
-            refreshToken = getRefreshToken(data);
+            refreshToken = getRefreshToken(key);
         }
     }
 
-    public static String getRefreshToken(String id){
+    public static String getRefreshToken(String key){
         String token = null;
         try {
             URL url = new URL(DOMAIN + REFRESH_TOKEN_PATH);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setRequestProperty("User-Agent", "Trivia solver");
-            conn.setRequestProperty("User-data", id);
+            conn.setRequestProperty("User-data", key);
             conn.getResponseCode();
             token = conn.getHeaderField("Refresh-token");
             conn.disconnect();
@@ -51,8 +51,8 @@ public class Connector {
         return token;
     }
 
-    public static int getResponseCode(String id) throws MalformedURLException, ProtocolException, IOException {
-        URL url = new URL(DOMAIN + STATUS_PATH + id);
+    public static int getResponseCode(String key) throws MalformedURLException, ProtocolException, IOException {
+        URL url = new URL(DOMAIN + STATUS_PATH + key);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.setRequestProperty("User-Agent", "Trivia solver");
@@ -71,11 +71,10 @@ public class Connector {
         conn.setRequestProperty("Content-Type", "application/json");
         conn.setRequestProperty("Accept", "application/json");
         conn.setRequestProperty("Refresh-token", refreshToken);
-        conn.setRequestProperty("User-data", userData);
+        conn.setRequestProperty("User-data", key);
         conn.setDoOutput(true);
 
-        ObjectMapper mapper = new ObjectMapper();
-        String data = mapper.writeValueAsString(question);
+        String data = JsonUtil.getMapper().writeValueAsString(question);
 
         try ( OutputStream os = conn.getOutputStream()) {
             byte[] input = data.getBytes("utf-8");
