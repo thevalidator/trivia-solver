@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -205,7 +206,13 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                 }
             }
         }
+    }
 
+    @Override
+    public void logoff() {
+        driver.switchTo().defaultContent();
+        closePopup(2_500);
+        wait(15_000).until(elementToBeClickable(By.xpath(getBaseMenuExitBtn(state.getLocale())))).click();
     }
 
     @Override
@@ -219,6 +226,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             TimeUnit.SECONDS.sleep(3);
         } catch (Exception e) {
             driver.switchTo().defaultContent();
+            //TODO: check if no notifiaction folder works without errors
         }
     }
 
@@ -270,7 +278,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
         userStats.setTenthPlacePoints(Integer.parseInt(tenth));
         userStats.setUserCoins(Double.parseDouble(userBalance));
         userStats.setUserDailyPoints(Integer.parseInt(dailyPoints));
-
+        
         informObservers("TOPLIST: 1st: " + first + " 10th: " + tenth);
         informObservers("balance: " + userBalance + " my daily points: " + dailyPoints);
     }
@@ -453,15 +461,15 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                             ? TriviaUserStatsData.ONE_DAY_TIME_IN_SECONDS - currentTimeInSeconds + TriviaUserStatsData.START_TIME_IN_SECONDS
                             : TriviaUserStatsData.START_TIME_IN_SECONDS - currentTimeInSeconds;
                     int hoursLeft = Math.round(timeLeftInSeconds / 3_600F);
-
+                    
                     informObservers("1st: " + userStats.getFirstPlacePoints()
                             + " 10th: " + userStats.getTenthPlacePoints()
                             + " YOU: " + userStats.getUserDailyPoints());
-
-                    informObservers("Diff: " + pointsDiff
-                            + " hours left: " + hoursLeft
+                    
+                    informObservers("Diff: " + pointsDiff 
+                            + " hours left: " + hoursLeft 
                             + " coins: " + userStats.getUserCoins());
-
+                    
                     driver.switchTo().frame(driver.findElement(By.xpath(getTriviaGameMainFrame())));
                     if (state.isPassive() && state.shouldGetOnTop() && hoursLeft > 10 && pointsDiff < 20_000) {
                         break;
@@ -470,17 +478,16 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                     }
 
                     driver.switchTo().defaultContent();
-
                     if (state.shouldGetOnTop() && pointsDiff == 0) {
                         int pointsAhead = userStats.getUserDailyPoints() - userStats.getSecondPlacePoints();
                         if (pointsAhead > 10_000) {
                             break;
                         }
                     }
-
-                    if (pointsDiff > -4_000) {
-
-                        Unlim unlimType = Unlim.MAX;
+                    
+                    if (pointsDiff > -5_000) {
+                        
+                        Unlim unlimType = state.shouldStayInTop() ? (pointsDiff > 16_000 ? Unlim.MAX : Unlim.MID) : Unlim.MAX;
                         if (pointsDiff <= TriviaUserStatsData.AVERAGE_POINTS_PER_HOUR * hoursLeft
                                 && userStats.isUnlimAvailable(unlimType, (int) Math.ceil(hoursLeft / unlimType.getHours()))) {
 
@@ -507,7 +514,6 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
                         wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
                         break;
                     }
-
                 } else {
                     informObservers("not enough energy");
                     break;

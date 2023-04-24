@@ -12,5 +12,5 @@ public interface Task extends Runnable {
     boolean isActive();
     void setIsActive(boolean b);
     void hardStopAction();
-    
+
 }

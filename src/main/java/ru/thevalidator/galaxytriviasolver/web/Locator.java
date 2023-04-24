@@ -119,5 +119,16 @@ public final class Locator {
         };
         return "//nav//span[text()='" + text + "']/..";
     }
+    
+    public static final String getBaseMenuExitBtn(Locale locale) {
+        String text;
+        text = switch (locale) {
+            case RU -> "Выход";
+            case EN -> "Exit";
+            case ES -> "Salida";
+            default -> "Sair";
+        };
+        return "//nav//span[text()='" + text + "']/..";
+    }
 
 }

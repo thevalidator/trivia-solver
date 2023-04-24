@@ -15,7 +15,7 @@ public class State {
     private int topicIndex;
     private Locale locale;
     private User user;
-    private boolean isHeadless;
+    private volatile boolean isHeadless;
     private boolean isAnonymous;
     private boolean shouldStayInTop;
     private boolean shouldGetOnTop;
