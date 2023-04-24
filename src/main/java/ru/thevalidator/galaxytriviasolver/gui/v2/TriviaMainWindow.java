@@ -905,7 +905,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         boolean isHeadlessModeAvailable = false;
         if (args != null && args.length > 0) {
             for (String a: args) {
-                System.out.println("> " + a);
                 if (a.equals("-h")) {
                     isHeadlessModeAvailable = true;
                 }
