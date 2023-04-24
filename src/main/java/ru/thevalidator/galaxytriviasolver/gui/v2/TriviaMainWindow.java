@@ -643,9 +643,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
         headlessModeCheckBox.setSelected(true);
         headlessModeCheckBox.setText("headless");
-        headlessModeCheckBox.setEnabled(options.isIsHeadlessModeAvailable());
-        headlessModeCheckBox.setVisible(options.isIsHeadlessModeAvailable());
-
         state.setIsHeadless(true);
         headlessModeCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
