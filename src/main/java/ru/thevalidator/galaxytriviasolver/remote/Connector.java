@@ -12,7 +12,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import ru.thevalidator.galaxytriviasolver.json.JsonUtil;
+import ru.thevalidator.galaxytriviasolver.util.json.JsonUtil;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.entity.trivia.Question;
 
 /**
