@@ -11,8 +11,10 @@ import java.awt.Toolkit;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -26,7 +28,6 @@ import javax.swing.text.BadLocationException;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.WebDriver;
 import ru.thevalidator.galaxytriviasolver.account.User;
 import ru.thevalidator.galaxytriviasolver.account.UserStorage;
 import ru.thevalidator.galaxytriviasolver.exception.ExceptionUtil;
@@ -40,10 +41,14 @@ import static ru.thevalidator.galaxytriviasolver.module.trivia.GameResult.WIN;
 import ru.thevalidator.galaxytriviasolver.module.trivia.State;
 import ru.thevalidator.galaxytriviasolver.module.trivia.TriviaUserStatsData;
 import ru.thevalidator.galaxytriviasolver.module.trivia.UnlimUtil;
+import ru.thevalidator.galaxytriviasolver.module.trivia.solver.Solver;
+import ru.thevalidator.galaxytriviasolver.module.trivia.solver.impl.SolverRestImpl;
 import ru.thevalidator.galaxytriviasolver.notification.Observer;
 import ru.thevalidator.galaxytriviasolver.remote.Connector;
-import ru.thevalidator.galaxytriviasolver.service.impl.SimpleTaskImpl;
 import ru.thevalidator.galaxytriviasolver.service.Task;
+import ru.thevalidator.galaxytriviasolver.service.impl.AdvancedTaskImpl;
+import ru.thevalidator.galaxytriviasolver.util.formatter.DateTimeFormatter;
+import ru.thevalidator.galaxytriviasolver.util.formatter.impl.DateTimeFormatterForLogConsole;
 import ru.thevalidator.galaxytriviasolver.web.Locale;
 
 /**
@@ -52,10 +57,8 @@ import ru.thevalidator.galaxytriviasolver.web.Locale;
  */
 public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
-    public static volatile WebDriver driver;
     public static final String PERSONAL_CODE = Identifier.readKey();
     private static final Logger logger = LogManager.getLogger(TriviaMainWindow.class);
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm.ss");
     private static final int MAX_LINES = 1_000;
 
     private final Option options;
@@ -63,8 +66,10 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private final State state;
     private Task task;
     private SwingWorker worker;
+    private final DateTimeFormatter formatter;
 
     public TriviaMainWindow(Option options) {
+        formatter = new DateTimeFormatterForLogConsole();
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/trivia.png")));
         this.options = options;
         this.userStorage = new UserStorage();
@@ -169,8 +174,9 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         mainMenu = new javax.swing.JMenu();
         checkStatusMenuItem = new javax.swing.JMenuItem();
         codeMenuItem = new javax.swing.JMenuItem();
-        personMenu = new javax.swing.JMenu();
-        manageMenuItem = new javax.swing.JMenuItem();
+        optionsMenu = new javax.swing.JMenu();
+        triviaMenu = new javax.swing.JMenu();
+        anonymModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
 
@@ -671,20 +677,23 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
         menuBar.add(mainMenu);
 
-        personMenu.setText("Person");
-        personMenu.setEnabled(false);
-        personMenu.setVisible(false);
+        optionsMenu.setText("Options");
 
-        manageMenuItem.setText("Manage");
-        manageMenuItem.setToolTipText("");
-        manageMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        triviaMenu.setText("Trivia");
+
+        anonymModeCheckBoxMenuItem.setSelected(true);
+        anonymModeCheckBoxMenuItem.setText("Play anonymous");
+        anonymModeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                manageMenuItemActionPerformed(evt);
+                anonymModeCheckBoxMenuItemActionPerformed(evt);
             }
         });
-        personMenu.add(manageMenuItem);
+        state.setIsAnonymous(true);
+        triviaMenu.add(anonymModeCheckBoxMenuItem);
 
-        menuBar.add(personMenu);
+        optionsMenu.add(triviaMenu);
+
+        menuBar.add(optionsMenu);
 
         helpMenu.setText("Help");
 
@@ -761,10 +770,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     }//GEN-LAST:event_aboutMenuItemActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        if (driver != null) {
-            driver.quit();
-        }
-        if (worker != null && !worker.isCancelled()) {
+        if (worker != null && !worker.isDone()) {
             worker.cancel(true);
         }
     }//GEN-LAST:event_formWindowClosing
@@ -778,7 +784,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     }//GEN-LAST:event_checkStatusMenuItemActionPerformed
 
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
-        if (task == null || !task.isActive()) {
+        if (task == null || !task.isRunning()) {
             if (!PERSONAL_CODE.equals(Identifier.ERROR_KEY)) {
                 if (userStorage.getUsers().isEmpty()) {
                     appendToPane("ERROR: NO PERSON(S)");
@@ -786,30 +792,28 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 }
                 personComboBox.setEnabled(false);
                 topicComboBox.setEnabled(false);
-                //strategyBlockEnable(false);
                 startTask();
             } else {
                 appendToPane("ERROR: NO REGISTERED USER KEY DATA");
             }
-            //hardStopButton.setEnabled(true);
         } else {
+            appendToPane("Will stop after finishing playing");
             stopTask();
         }
     }//GEN-LAST:event_startButtonActionPerformed
 
     private void hardStopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hardStopButtonActionPerformed
-        // TODO add your handling code here:
-        setStartButtonStatus(0);
-        if (worker != null && !worker.isCancelled()) {
-            //hardStopButton.setEnabled(false);
+        if (worker != null && !worker.isDone()) {
+
+            task.interrupt();
+            worker.cancel(true);
 
             personComboBox.setEnabled(true);
             topicComboBox.setEnabled(true);
-            worker.cancel(true);
-
+            System.out.println(worker == null);
+            System.out.println(worker.isDone());
+            System.out.println(worker.isCancelled());
         }
-        //appendToPane("STOPPED - " + Thread.currentThread().getName());
-        setStartButtonStatus(-1);
     }//GEN-LAST:event_hardStopButtonActionPerformed
 
     private void headlessModeCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_headlessModeCheckBoxActionPerformed
@@ -821,11 +825,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
             appendToPane("HEADLESS MODE OFF");
         }
     }//GEN-LAST:event_headlessModeCheckBoxActionPerformed
-
-    private void manageMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_manageMenuItemActionPerformed
-        // TODO add your handling code here:
-        throw new UnsupportedOperationException("Not supported yet");
-    }//GEN-LAST:event_manageMenuItemActionPerformed
 
     private void deletePersonButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deletePersonButtonActionPerformed
         JPanel panel = new JPanel(new GridLayout(0, 1));
@@ -895,6 +894,16 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         showPersonalCode();
     }//GEN-LAST:event_codeMenuItemActionPerformed
 
+    private void anonymModeCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_anonymModeCheckBoxMenuItemActionPerformed
+        if (anonymModeCheckBoxMenuItem.isSelected()) {
+            appendToPane("ANONYMOUS MODE ON");
+            state.setIsAnonymous(true);
+        } else {
+            appendToPane("ANONYMOUS MODE OFF");
+            state.setIsAnonymous(false);
+        }
+    }//GEN-LAST:event_anonymModeCheckBoxMenuItemActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -922,6 +931,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JLabel actualPointsLabel;
     private javax.swing.JLabel actualPointsValueLabel;
     private javax.swing.JButton addPersonButton;
+    private javax.swing.JCheckBoxMenuItem anonymModeCheckBoxMenuItem;
     private javax.swing.JRadioButton autoStrategyRadioButton;
     private javax.swing.JLabel averagePointsLabel;
     private javax.swing.JLabel averagePointsValueLabel;
@@ -945,12 +955,11 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JLabel lostLabel;
     private javax.swing.JLabel lostValueLabel;
     private javax.swing.JMenu mainMenu;
-    private javax.swing.JMenuItem manageMenuItem;
     private javax.swing.JRadioButton manualStrategyRadioButton;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JMenu optionsMenu;
     private javax.swing.JComboBox<String> personComboBox;
     private javax.swing.JLabel personLabel;
-    private javax.swing.JMenu personMenu;
     private javax.swing.JPanel personPanel;
     private javax.swing.JLabel serverLabel;
     private javax.swing.JButton startButton;
@@ -961,6 +970,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JLabel topicLabel;
     private javax.swing.JLabel totalGamesLabel;
     private javax.swing.JLabel totalGamesValueLabel;
+    private javax.swing.JMenu triviaMenu;
     private javax.swing.JLabel unlimApproxPointsLabel;
     private javax.swing.JLabel unlimApproxPointsValueLabel;
     private javax.swing.ButtonGroup unlimButtonGroup;
@@ -976,7 +986,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
     public void appendToPane(String msg) {
         try {
-            String timestamp = LocalDateTime.now().format(formatter);
+            String timestamp = formatter.getFormattedDateTime(LocalDateTime.now());
             String line = "[" + timestamp + "] - " + msg + "\n";
             cleanConsole();
             logTextArea.append(line);
@@ -1076,40 +1086,51 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     }
 
     private void startTask() {
-        setStartButtonStatus(0);
-        User user = userStorage.getUser(personComboBox.getSelectedIndex());
-        int topicIndex = topicComboBox.getSelectedIndex();
-        state.setUser(user);
-        state.setTopicIndex(topicIndex);
-        if (manualStrategyRadioButton.isSelected()) {
-            state.setIsManualStrategy(true);
-            state.setShouldStayInTop(false);
-            state.setShouldGetOnTop(false);
-            int hours = Integer.parseInt(String.valueOf(unlimHoursValueComboBox.getSelectedItem()));
-            int minutes = Integer.parseInt(String.valueOf(unlimMinutesValueComboBox.getSelectedItem()));
-            state.setUnlimStrategyTime(hours * 60 + minutes);
-        } else {
-            state.setIsManualStrategy(false);
-            state.setShouldStayInTop(true);
-            state.setShouldGetOnTop(false);
-        }
+        setStartButtonStatus(1);
+        configureState();
 
         if (task == null) {
-            task = new SimpleTaskImpl(state, this);
+            //task = new SimpleTaskImpl(state, this);
+            Solver solver = new SolverRestImpl(new Connector(PERSONAL_CODE));
+            task = new AdvancedTaskImpl(this, solver);
         }
+        task.setState(state);
 
         worker = new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() throws Exception {
-                task.setIsActive(true);
-                task.run();
+                try {
+                    task.run();
 
+                } catch (Exception e) {
+                    appendToPane(e.getMessage());
+                    logger.error(ExceptionUtil.getFormattedDescription(e));
+                }
+                appendToPane("STOPPED");
                 return null;
+                //return true;
             }
 
             @Override
             protected void done() {
-                task.hardStopAction();
+                boolean status = false;
+                try {
+                    // Retrieve the return value of doInBackground.
+                    //status = get();
+                    //System.out.println(">> status " + status);
+                    appendToPane("Stopping immediately");
+                } catch (Exception e) {
+                    System.out.println(">>>>> " + e.getMessage());
+//                } catch (InterruptedException e) {
+//                    // This is thrown if the thread's interrupted.
+//                    System.out.println("This is thrown if the thread's interrupted");
+//                } catch (ExecutionException e) {
+//                    // This is thrown if we throw an exception
+//                    // from doInBackground.
+//                    System.out.println("This is thrown if we throw an exception from doInBackground");
+                } finally {
+                    setStartButtonStatus(-1);
+                }
             }
         };
         worker.execute();
@@ -1117,7 +1138,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
     private void stopTask() {
         setStartButtonStatus(0);
-        task.setIsActive(false);
+        task.stop();
     }
 
     public void setStartButtonStatus(int status) {
@@ -1153,7 +1174,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         unlimHoursValueComboBox.setEnabled(b);
         unlimMinutesValueComboBox.setEnabled(b);
     }
-    
+
     private void showPersonalCode() {
         try {
             String key = UUIDUtil.getUUID();
@@ -1173,6 +1194,25 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         } catch (HeadlessException | IOException | InterruptedException e) {
             appendToPane("ERROR: can't get the personal user code");
             ExceptionUtil.getFormattedDescription(e);
+        }
+    }
+
+    private void configureState() {
+        User user = userStorage.getUser(personComboBox.getSelectedIndex());
+        int topicIndex = topicComboBox.getSelectedIndex();
+        state.setUser(user);
+        state.setTopicIndex(topicIndex);
+        if (manualStrategyRadioButton.isSelected()) {
+            state.setIsManualStrategy(true);
+            state.setShouldStayInTop(false);
+            state.setShouldGetOnTop(false);
+            int hours = Integer.parseInt(String.valueOf(unlimHoursValueComboBox.getSelectedItem()));
+            int minutes = Integer.parseInt(String.valueOf(unlimMinutesValueComboBox.getSelectedItem()));
+            state.setUnlimStrategyTime(hours * 60 + minutes);
+        } else {
+            state.setIsManualStrategy(false);
+            state.setShouldStayInTop(true);
+            state.setShouldGetOnTop(false);
         }
     }
 }
