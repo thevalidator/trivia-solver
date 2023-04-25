@@ -82,6 +82,10 @@ public class AdvancedTaskImpl implements Task {
             } catch (Exception e) {
                 observer.onUpdateRecieve("UNEXPECTED ERROR");
                 logger.error(ExceptionUtil.getFormattedDescription(e));
+                String path = ((GalaxyAdvancedRobotImpl) robot).getFileNameTimeStamp();
+                WebDriverUtil.savePageSourceToFile(driver, path + ".html");
+                WebDriverUtil.takeScreenshot(driver, path + ".png");
+                ((GalaxyAdvancedRobotImpl) robot).saveDataToFile(path + ".log", e);
                 stop();
                 break;
             } finally {
