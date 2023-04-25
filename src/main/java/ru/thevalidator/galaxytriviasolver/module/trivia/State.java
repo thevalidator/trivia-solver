@@ -15,14 +15,14 @@ public class State {
     private int topicIndex;
     private Locale locale;
     private User user;
-    private volatile boolean isHeadless;
+    private boolean isHeadless;
     private boolean isAnonymous;
     private boolean shouldStayInTop;
     private boolean shouldGetOnTop;
     private boolean shouldPlayRides;
     private boolean isPassive;
-    private int nosDelayTime = 5_200;
     private boolean isManualStrategy;
+    private int nosDelayTime = 5_200;
     private int unlimStrategyTime = 0;
 
     public State() {
@@ -85,9 +85,9 @@ public class State {
         this.isAnonymous = isAnonymous;
     }
 
-//    public Statistic getStatistic() {
-//        return statistic;
-//    }
+    public Statistic getStatistic() {
+        return statistic;
+    }
 
     public Locale getLocale() {
         return locale;
