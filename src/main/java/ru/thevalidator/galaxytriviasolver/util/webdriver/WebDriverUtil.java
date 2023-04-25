@@ -15,7 +15,6 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.thevalidator.galaxytriviasolver.exception.CanNotCreateWebdriverException;
-import static ru.thevalidator.galaxytriviasolver.gui.v2.TriviaMainWindow.driver;
 import ru.thevalidator.galaxytriviasolver.module.trivia.State;
 
 /**
@@ -25,22 +24,26 @@ public interface WebDriverUtil {
 
     WebDriver createWebDriver(State state) throws CanNotCreateWebdriverException;
 
-    static WebDriverWait wait(WebDriver webDriver, int millis) {
+    static WebDriverWait wait(WebDriver driver, int millis) {
         return new WebDriverWait(driver, Duration.ofMillis(millis));
     }
 
-    static void takeScreenshot(WebDriver webDriver, String path) {
-        try {
-            File src = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-            FileUtils.copyFile(src, new File(path));
-        } catch (IOException ignoredException) {
+    static void takeScreenshot(WebDriver driver, String path) {
+        if (driver != null) {
+            try {
+                File src = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+                FileUtils.copyFile(src, new File(path));
+            } catch (IOException ignoredException) {
+            }
         }
     }
 
-    static void savePageSourceToFile(WebDriver webDriver, String path) {
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path + "_src", Charset.forName("UTF-8")))) {
-            bufferedWriter.write(driver.getPageSource());
-        } catch (IOException ignoredException) {
+    static void savePageSourceToFile(WebDriver driver, String path) {
+        if (driver != null) {
+            try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path + "_src", Charset.forName("UTF-8")))) {
+                bufferedWriter.write(driver.getPageSource());
+            } catch (IOException ignoredException) {
+            }
         }
     }
 
