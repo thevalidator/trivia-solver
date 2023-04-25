@@ -27,6 +27,7 @@ public class ChromeWebDriverUtilImpl implements WebDriverUtil {
         WebDriver webDriver = null;
         try {
             ChromeOptions options = new ChromeOptions();
+            options.addArguments("--remote-allow-origins=*");
             if (state.isHeadless()) {
                 options.addArguments("--headless=new");
             }
@@ -36,7 +37,8 @@ public class ChromeWebDriverUtilImpl implements WebDriverUtil {
             } else {
                 webDriver.manage().window().setSize(new Dimension(1600, 845));
             }
-            webDriver.manage().window().setPosition((new Point(-5, 0)));
+            //webDriver.manage().window().setPosition((new Point(-5, 0)));
+            webDriver.manage().window().setPosition((new Point(-6, 0)));
             webDriver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(60));
 
         } catch (Exception e) {
