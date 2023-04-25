@@ -426,7 +426,7 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
         return path + formatter.getFormattedDateTime(LocalDateTime.now());
     }
 
-    private void saveDataToFile(String path, Exception ex) {
+    public void saveDataToFile(String path, Exception ex) {
         try (StringWriter sw = new StringWriter(); PrintWriter pw = new PrintWriter(sw); FileOutputStream fos = new FileOutputStream(path); DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos))) {
             ex.printStackTrace(pw);
             outStream.writeUTF(sw.toString());
@@ -529,6 +529,11 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
                 clickCorrectAnswer(questionText, elements);
                 informObservers("question " + i + " answered");
             } catch (Exception e) {
+                String path = getFileNameTimeStamp();
+                WebDriverUtil.savePageSourceToFile(driver, path + "_Q.html");
+                WebDriverUtil.takeScreenshot(driver, path + "_Q.png");
+                saveDataToFile(path + "_Q.log", e);
+                
                 driver.switchTo().defaultContent();
                 closePopup(2_000);
                 WebDriverUtil.wait(driver, 6_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getTriviaGameProcessFrame())));
