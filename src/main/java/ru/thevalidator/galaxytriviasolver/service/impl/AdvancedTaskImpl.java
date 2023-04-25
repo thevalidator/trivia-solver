@@ -85,6 +85,7 @@ public class AdvancedTaskImpl implements Task {
                 stop();
                 break;
             } finally {
+                terminate(driver);
                 if (isRunning()) {
                     try {
                         int time = 120 + sleepTimeInSeconds;
@@ -99,17 +100,6 @@ public class AdvancedTaskImpl implements Task {
                 }
             }
 
-        }
-
-        try {
-            Thread.sleep(5_000);
-        } catch (InterruptedException e) {
-            System.out.println("Thread was interrupted, Failed to complete operation");
-        }
-
-        if (driver != null) {
-            robot.logoff();
-            driver.quit();
         }
 
     }
@@ -134,6 +124,13 @@ public class AdvancedTaskImpl implements Task {
     public void setState(State state) {
         this.state = state;
 
+    }
+
+    private void terminate(WebDriver driver) {
+        if (driver != null) {
+            robot.logoff();
+            driver.quit();
+        }
     }
 
 }
