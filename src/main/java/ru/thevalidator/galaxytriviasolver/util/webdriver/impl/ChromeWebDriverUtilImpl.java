@@ -27,7 +27,7 @@ public class ChromeWebDriverUtilImpl implements WebDriverUtil {
         WebDriver webDriver = null;
         try {
             ChromeOptions options = new ChromeOptions();
-            options.addArguments("--remote-allow-origins=*");
+            //options.addArguments("--remote-allow-origins=*");
             if (state.isHeadless()) {
                 options.addArguments("--headless=new");
             }
