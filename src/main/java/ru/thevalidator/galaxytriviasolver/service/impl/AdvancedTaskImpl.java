@@ -3,6 +3,7 @@
  */
 package ru.thevalidator.galaxytriviasolver.service.impl;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,7 +51,9 @@ public class AdvancedTaskImpl implements Task {
         }
 
         this.robot = new GalaxyAdvancedRobotImpl(solver, this, driver, state);
-        
+
+        ((GalaxyAdvancedRobotImpl) robot).registerObserver(observer);
+
         int sleepTimeInSeconds = 60;    // or ZERO?
         while (isRunning()) {
             try {
@@ -58,14 +61,14 @@ public class AdvancedTaskImpl implements Task {
                 robot.openMail();
                 robot.openGames();
                 robot.selectTriviaGame();
-                
+
                 //play Trivia
                 if (robot.startTriviaGame()) {
                     robot.playTriviaGame();
                 }
-                
+
                 sleepTimeInSeconds = robot.getSleepTime();
-                
+
                 //play Rides
                 if (state.shouldPlayRides()) {
                     robot.switchToDefaultContent();
@@ -77,24 +80,38 @@ public class AdvancedTaskImpl implements Task {
                 }
 
             } catch (Exception e) {
+                observer.onUpdateRecieve("UNEXPECTED ERROR");
                 logger.error(ExceptionUtil.getFormattedDescription(e));
-                //stop();
+                stop();
                 break;
+            } finally {
+                if (isRunning()) {
+                    try {
+                        int time = 120 + sleepTimeInSeconds;
+                        sleepTimeInSeconds = TIME_TO_SLEEP_IN_SECONDS;
+                        String message = time >= 60 ? (String.valueOf(time / 60) + " min") : (String.valueOf(time) + " sec");
+                        observer.onUpdateRecieve("SLEEPING " + message);
+                        TimeUnit.SECONDS.sleep(time);
+                    } catch (InterruptedException ignored) {
+                    }
+                } else {
+                    ((GalaxyAdvancedRobotImpl) robot).unregisterObserver(observer);
+                }
             }
 
         }
-        
+
         try {
             Thread.sleep(5_000);
         } catch (InterruptedException e) {
             System.out.println("Thread was interrupted, Failed to complete operation");
         }
-        
+
         if (driver != null) {
-            //robot.logoff();
+            robot.logoff();
             driver.quit();
         }
-        
+
     }
 
     @Override
@@ -116,7 +133,7 @@ public class AdvancedTaskImpl implements Task {
     @Override
     public void setState(State state) {
         this.state = state;
-        
+
     }
 
 }
