@@ -46,7 +46,6 @@ import ru.thevalidator.galaxytriviasolver.exception.CanNotPlayException;
 import ru.thevalidator.galaxytriviasolver.exception.ExceptionUtil;
 import ru.thevalidator.galaxytriviasolver.exception.LoginErrorException;
 import ru.thevalidator.galaxytriviasolver.gui.v2.TriviaMainWindow;
-import static ru.thevalidator.galaxytriviasolver.gui.v2.TriviaMainWindow.driver;
 import ru.thevalidator.galaxytriviasolver.module.robot.GalaxyBaseRobot;
 import ru.thevalidator.galaxytriviasolver.module.trivia.GameResult;
 import ru.thevalidator.galaxytriviasolver.module.trivia.State;
@@ -75,6 +74,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
     private final TriviaUserStatsData userStats;
     private final Solver solver;
     private final Task task;
+    private WebDriver driver;
 
     public GalaxyBaseRobotImpl(State state, Task task) {
         this.state = state;
@@ -377,7 +377,7 @@ public class GalaxyBaseRobotImpl extends Informer implements GalaxyBaseRobot {
             }
             gameResultNotifyObservers(result, points, userStats);
 
-            if (!task.isActive()) {
+            if (!task.isRunning()) {
                 break;
             }
 
