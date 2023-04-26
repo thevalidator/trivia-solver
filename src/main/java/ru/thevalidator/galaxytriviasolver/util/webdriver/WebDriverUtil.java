@@ -15,14 +15,14 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.thevalidator.galaxytriviasolver.exception.CanNotCreateWebdriverException;
-import ru.thevalidator.galaxytriviasolver.module.trivia.State;
+import ru.thevalidator.galaxytriviasolver.options.webdriver.WebDriverArgument;
 
 /**
  * @author thevalidator <the.validator@yandex.ru>
  */
 public interface WebDriverUtil {
 
-    WebDriver createWebDriver(State state) throws CanNotCreateWebdriverException;
+    WebDriver createWebDriver(WebDriverArgument args) throws CanNotCreateWebdriverException;
 
     static WebDriverWait wait(WebDriver driver, int millis) {
         return new WebDriverWait(driver, Duration.ofMillis(millis));
