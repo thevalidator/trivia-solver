@@ -35,7 +35,7 @@ import ru.thevalidator.galaxytriviasolver.exception.ExceptionUtil;
 import ru.thevalidator.galaxytriviasolver.util.identity.Identifier;
 import ru.thevalidator.galaxytriviasolver.util.identity.os.OSValidator;
 import ru.thevalidator.galaxytriviasolver.util.identity.uuid.UUIDUtil;
-import ru.thevalidator.galaxytriviasolver.module.Argument;
+import ru.thevalidator.galaxytriviasolver.options.TriviaArgument;
 import ru.thevalidator.galaxytriviasolver.module.trivia.GameResult;
 import static ru.thevalidator.galaxytriviasolver.module.trivia.GameResult.DRAW;
 import static ru.thevalidator.galaxytriviasolver.module.trivia.GameResult.WIN;
@@ -45,6 +45,7 @@ import ru.thevalidator.galaxytriviasolver.module.trivia.UnlimUtil;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.Solver;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.impl.SolverRestImpl;
 import ru.thevalidator.galaxytriviasolver.notification.Observer;
+import ru.thevalidator.galaxytriviasolver.options.ChromeDriverArgument;
 import ru.thevalidator.galaxytriviasolver.remote.Connector;
 import ru.thevalidator.galaxytriviasolver.service.Task;
 import ru.thevalidator.galaxytriviasolver.service.impl.AdvancedTaskImpl;
@@ -62,14 +63,14 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private static final Logger logger = LogManager.getLogger(TriviaMainWindow.class);
     private static final int MAX_LINES = 1_000;
 
-    private final Argument options;
+    private final TriviaArgument options;
     private UserStorage userStorage;
     private final State state;
     private Task task;
     private SwingWorker worker;
     private final DateTimeFormatter formatter;
 
-    public TriviaMainWindow(Argument options) {
+    public TriviaMainWindow(TriviaArgument options) {
         formatter = new DateTimeFormatterForLogConsole();
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/trivia.png")));
         this.options = options;
@@ -906,14 +907,28 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
      */
     public static void main(String args[]) {
         
-        Argument arguments = new Argument();
-        JCommander commander = JCommander.newBuilder().addObject(arguments).build();
+        TriviaArgument triviaArgs = new TriviaArgument();
+        ChromeDriverArgument chromeArgs = new ChromeDriverArgument();
+        JCommander commander = JCommander.newBuilder()
+                .addObject(triviaArgs)
+                .addObject(chromeArgs)
+                .build();
         commander.parse(args);
+        
+        System.out.println("> deb " + triviaArgs.hasDebugOption());
+        System.out.println("> adv " + triviaArgs.hasAdvancedSettingsOption());
+        System.out.println("> eml " + triviaArgs.hasCheckMailOption());
+        System.out.println("> lgf " + triviaArgs.hasLogOffOption());
+        System.out.println("> rds " + triviaArgs.hasPlayRidesOption());
+        
+        System.out.println("> ori " + chromeArgs.isHasRemoteAllowOriginsOption());
+        System.out.println("> cus " + chromeArgs.getWebdriverCustomPath());
+        System.out.println("> hed " + chromeArgs.isHasHeadlessModeOption());
 
         java.awt.EventQueue.invokeLater(() -> {
             UIManager.put("Button.arc", 15);
             FlatDarkLaf.setup();
-            new TriviaMainWindow(arguments).setVisible(true);
+            new TriviaMainWindow(triviaArgs).setVisible(true);
         });
     }
 
