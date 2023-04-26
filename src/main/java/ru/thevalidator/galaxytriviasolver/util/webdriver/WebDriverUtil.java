@@ -40,7 +40,7 @@ public interface WebDriverUtil {
 
     static void savePageSourceToFile(WebDriver driver, String path) {
         if (driver != null) {
-            try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path + "_src", Charset.forName("UTF-8")))) {
+            try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path, Charset.forName("UTF-8")))) {
                 bufferedWriter.write(driver.getPageSource());
             } catch (IOException ignoredException) {
             }

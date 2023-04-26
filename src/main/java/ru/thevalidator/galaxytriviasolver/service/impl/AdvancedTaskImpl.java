@@ -82,7 +82,7 @@ public class AdvancedTaskImpl implements Task {
                 
                 logger.error(ExceptionUtil.getFormattedDescription(e));
                 String path = ((GalaxyAdvancedRobotImpl) robot).getFileNameTimeStamp();
-                WebDriverUtil.savePageSourceToFile(driver, path + ".html");
+                WebDriverUtil.savePageSourceToFile(driver, path + "_src.html");
                 WebDriverUtil.takeScreenshot(driver, path + ".png");
                 ((GalaxyAdvancedRobotImpl) robot).saveDataToFile(path + ".log", e);
                 stop();
