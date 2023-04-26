@@ -43,20 +43,14 @@ public class AdvancedTaskImpl implements Task {
         WebDriverUtil driverUtil = new ChromeWebDriverUtilImpl();
         WebDriver driver = null;
 
-        try {
-            driver = driverUtil.createWebDriver(state);
-        } catch (CanNotCreateWebdriverException ex) {
-            observer.onUpdateRecieve(ex.getMessage());
-            stop();
-        }
-
-        this.robot = new GalaxyAdvancedRobotImpl(solver, this, driver, state);
-
+        robot = new GalaxyAdvancedRobotImpl(solver, this, driver, state);
         ((GalaxyAdvancedRobotImpl) robot).registerObserver(observer);
 
         int sleepTimeInSeconds = 60;    // or ZERO?
-        while (isRunning()) {
+        while (isRunning()) {            
             try {
+                driver = driverUtil.createWebDriver(state);
+                ((GalaxyAdvancedRobotImpl) robot).setDriver(driver);
                 robot.login();
                 robot.openMail();
                 robot.openGames();
@@ -80,7 +74,12 @@ public class AdvancedTaskImpl implements Task {
                 }
 
             } catch (Exception e) {
-                observer.onUpdateRecieve("UNEXPECTED ERROR");
+                if (e instanceof CanNotCreateWebdriverException) {
+                    observer.onUpdateRecieve(e.getMessage());
+                } else {
+                    observer.onUpdateRecieve("UNEXPECTED ERROR");
+                }
+                
                 logger.error(ExceptionUtil.getFormattedDescription(e));
                 String path = ((GalaxyAdvancedRobotImpl) robot).getFileNameTimeStamp();
                 WebDriverUtil.savePageSourceToFile(driver, path + ".html");
