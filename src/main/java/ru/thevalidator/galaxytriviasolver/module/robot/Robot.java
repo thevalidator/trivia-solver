@@ -472,7 +472,7 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
         userStats.setUserDailyPoints(Integer.parseInt(dailyPoints));
 
         informObservers("TOPLIST: 1st: " + first + " 10th: " + tenth);
-        informObservers("balance: " + userBalance + " my daily points: " + dailyPoints);
+        informObservers("coins: " + userBalance + " daily points: " + dailyPoints);
     }
 
     private void switchAnonToggle(WebElement anonSwitcher) {
