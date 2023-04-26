@@ -4,6 +4,8 @@
 package ru.thevalidator.galaxytriviasolver.module.trivia;
 
 import ru.thevalidator.galaxytriviasolver.account.User;
+import ru.thevalidator.galaxytriviasolver.options.ChromeDriverArgument;
+import ru.thevalidator.galaxytriviasolver.options.TriviaArgument;
 import ru.thevalidator.galaxytriviasolver.web.Locale;
 
 /**
@@ -11,11 +13,12 @@ import ru.thevalidator.galaxytriviasolver.web.Locale;
  */
 public class State {
 
+    private TriviaArgument triviaArgs;
+    private ChromeDriverArgument chromeArgs;
     private final Statistic statistic;
     private int topicIndex;
     private Locale locale;
     private User user;
-    private boolean isHeadless;
     private boolean isAnonymous;
     private boolean shouldStayInTop;
     private boolean shouldGetOnTop;
@@ -27,6 +30,22 @@ public class State {
 
     public State() {
         statistic = new Statistic();
+    }
+
+    public TriviaArgument getTriviaArgs() {
+        return triviaArgs;
+    }
+
+    public void setTriviaArgs(TriviaArgument triviaArgs) {
+        this.triviaArgs = triviaArgs;
+    }
+
+    public ChromeDriverArgument getChromeArgs() {
+        return chromeArgs;
+    }
+
+    public void setChromeArgs(ChromeDriverArgument chromeArgs) {
+        this.chromeArgs = chromeArgs;
     }
 
     public boolean isPassive() {
@@ -67,14 +86,6 @@ public class State {
 
     public void setShouldStayInTop(boolean shouldStayInTop) {
         this.shouldStayInTop = shouldStayInTop;
-    }
-
-    public boolean isHeadless() {
-        return isHeadless;
-    }
-
-    public void setIsHeadless(boolean isHeadless) {
-        this.isHeadless = isHeadless;
     }
 
     public boolean isAnonymous() {
