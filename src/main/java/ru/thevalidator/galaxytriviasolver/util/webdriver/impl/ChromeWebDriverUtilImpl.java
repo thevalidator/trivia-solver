@@ -32,7 +32,7 @@ public class ChromeWebDriverUtilImpl implements WebDriverUtil {
                 options.addArguments("--headless=new");
             }
             webDriver = new ChromeDriver(options);
-            if (state.isHeadless()) {
+            if (!state.isHeadless()) {
                 webDriver.manage().window().maximize();
             } else {
                 webDriver.manage().window().setSize(new Dimension(1600, 845));
