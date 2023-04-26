@@ -85,10 +85,6 @@ public class State {
         this.isAnonymous = isAnonymous;
     }
 
-    public Statistic getStatistic() {
-        return statistic;
-    }
-
     public Locale getLocale() {
         return locale;
     }
