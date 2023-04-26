@@ -804,15 +804,11 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
     private void hardStopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hardStopButtonActionPerformed
         if (worker != null && !worker.isDone()) {
-
             task.interrupt();
             worker.cancel(true);
 
             personComboBox.setEnabled(true);
             topicComboBox.setEnabled(true);
-            System.out.println(worker == null);
-            System.out.println(worker.isDone());
-            System.out.println(worker.isCancelled());
         }
     }//GEN-LAST:event_hardStopButtonActionPerformed
 
@@ -1106,7 +1102,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                     appendToPane(e.getMessage());
                     logger.error(ExceptionUtil.getFormattedDescription(e));
                 }
-                appendToPane("STOPPED");
+                //appendToPane("STOPPED");
                 return null;
                 //return true;
             }
@@ -1118,7 +1114,8 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                     // Retrieve the return value of doInBackground.
                     //status = get();
                     //System.out.println(">> status " + status);
-                    appendToPane("Stopping immediately");
+                    //appendToPane("Stopping immediately");
+                    appendToPane("STOPPED");
                 } catch (Exception e) {
                     System.out.println(">>>>> " + e.getMessage());
 //                } catch (InterruptedException e) {
