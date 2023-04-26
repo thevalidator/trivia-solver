@@ -49,7 +49,7 @@ public class AdvancedTaskImpl implements Task {
         int sleepTimeInSeconds = 60;    // or ZERO?
         while (isRunning()) {            
             try {
-                driver = driverUtil.createWebDriver(state);
+                driver = driverUtil.createWebDriver(state.getChromeArgs());
                 ((GalaxyAdvancedRobotImpl) robot).setDriver(driver);
                 robot.login();
                 robot.openMail();
