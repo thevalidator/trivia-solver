@@ -36,9 +36,6 @@ import ru.thevalidator.galaxytriviasolver.module.trivia.State;
 import ru.thevalidator.galaxytriviasolver.module.trivia.TriviaUserStatsData;
 import ru.thevalidator.galaxytriviasolver.module.trivia.Unlim;
 import ru.thevalidator.galaxytriviasolver.module.trivia.UnlimUtil;
-import static ru.thevalidator.galaxytriviasolver.module.trivia.UnlimUtil.MAX_UNLIM_MINUTES;
-import static ru.thevalidator.galaxytriviasolver.module.trivia.UnlimUtil.MID_UNLIM_MINUTES;
-import static ru.thevalidator.galaxytriviasolver.module.trivia.UnlimUtil.MIN_UNLIM_MINUTES;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.Solver;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.entity.trivia.Answer;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.entity.trivia.Question;
@@ -60,10 +57,10 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
 
     private final Solver solver;
     private final Task task;
-    private final WebDriver driver;
+    protected WebDriver driver;
     private final TriviaUserStatsData userStats;
     private final State state;
-    private DateTimeFormatter formatter;
+    private final DateTimeFormatter formatter;
 
     public Robot(Solver solver, Task task, WebDriver driver, State state) {
         this.solver = solver;
@@ -72,6 +69,10 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
         this.state = state;
         this.userStats = new TriviaUserStatsData();
         formatter = new DateTimeFormatterForName();
+    }
+
+    public void setDriver(WebDriver driver) {
+        this.driver = driver;
     }
 
     @Override
@@ -257,6 +258,7 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
             }
 
             if (attempts.equals("0")) {
+                informObservers("not enough energy");
                 if (state.isManualStrategy()) {
                     if (state.getUnlimStrategyTime() > 0) {
 
@@ -280,47 +282,29 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
                         driver.switchTo().frame(driver.findElement(By.xpath(getTriviaGameMainFrame())));
                         driver.switchTo().defaultContent();
 
-                        int maxUnlimCount = unlimTime / MAX_UNLIM_MINUTES;
+                        int maxUnlimCount = unlimTime / UnlimUtil.getUnlimMinutesValue(Unlim.MAX);
                         if (maxUnlimCount > 0) {
-                            // buy max unlim
-                            buyUnlimOption(Unlim.MAX);
-                            state.setUnlimStrategyTime(unlimTime - MAX_UNLIM_MINUTES);
-                            try {
-                                startTriviaGame();
+                            if (strategyRequireToBuyUnlim(unlimTime, Unlim.MAX)) {
                                 continue;
-                            } catch (CanNotPlayException ex) {
-                                WebDriverUtil.takeScreenshot(driver, getFileNameTimeStamp() + "_continueAfterUnlimMax.png");
-                                logger.error(ex.getMessage());
                             }
                         }
 
-                        int midUnlimCount = unlimTime / MID_UNLIM_MINUTES;
+                        int midUnlimCount = unlimTime / UnlimUtil.getUnlimMinutesValue(Unlim.MID);
                         if (midUnlimCount > 0) {
-                            // buy mid unlim
-                            buyUnlimOption(Unlim.MID);
-                            state.setUnlimStrategyTime(unlimTime - MID_UNLIM_MINUTES);
-                            try {
-                                startTriviaGame();
+                            if (strategyRequireToBuyUnlim(unlimTime, Unlim.MID)) {
                                 continue;
-                            } catch (CanNotPlayException ex) {
-                                WebDriverUtil.takeScreenshot(driver, getFileNameTimeStamp() + "_continueAfterUnlimMid.png");
-                                logger.error(ex.getMessage());
                             }
                         }
 
-                        int minUnlimCount = unlimTime / MIN_UNLIM_MINUTES;
+                        int minUnlimCount = unlimTime / UnlimUtil.getUnlimMinutesValue(Unlim.MIN);
                         if (minUnlimCount > 0) {
-                            // buy min unlim
-                            buyUnlimOption(Unlim.MIN);
-                            state.setUnlimStrategyTime(unlimTime - MIN_UNLIM_MINUTES);
-                            try {
-                                startTriviaGame();
+                            if (strategyRequireToBuyUnlim(unlimTime, Unlim.MIN)) {
                                 continue;
-                            } catch (CanNotPlayException ex) {
-                                WebDriverUtil.takeScreenshot(driver, getFileNameTimeStamp() + "_continueAfterUnlimMin.png");
-                                logger.error(ex.getMessage());
                             }
                         }
+                        break;
+                    } else {
+                        break;
                     }
 
                 } else if (state.shouldGetOnTop() || state.shouldStayInTop()) {
@@ -395,7 +379,6 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
                     }
 
                 } else {
-                    informObservers("not enough energy");
                     break;
                 }
 
@@ -405,7 +388,6 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
             } else {
                 informObservers("games left: " + attempts);
             }
-
             startAgainTriviaGame();
         }
     }
@@ -533,7 +515,7 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
                 WebDriverUtil.savePageSourceToFile(driver, path + "_Q.html");
                 WebDriverUtil.takeScreenshot(driver, path + "_Q.png");
                 saveDataToFile(path + "_Q.log", e);
-                
+
                 driver.switchTo().defaultContent();
                 closePopup(2_000);
                 WebDriverUtil.wait(driver, 6_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getTriviaGameProcessFrame())));
@@ -563,7 +545,7 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
         } else if (result.contains(Locale.getDrawText(state.getLocale()))) {
             return GameResult.DRAW;
         } else {
-            WebDriverUtil.takeScreenshot(driver, getFileNameTimeStamp() + "_lost.png");
+            //WebDriverUtil.takeScreenshot(driver, getFileNameTimeStamp() + "_lost.png");
             return GameResult.LOST;
         }
     }
@@ -593,6 +575,21 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
         closePopup(2_000);
         WebDriverUtil.wait(driver, 5_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getTriviaGameResultsFrame())));
         driver.findElement(By.xpath(getTriviaPlayAgainBtn(state.getLocale()))).click();
+    }
+
+    private boolean strategyRequireToBuyUnlim(int unlimTime, Unlim unlim) {
+        try {
+            buyUnlimOption(unlim);
+            state.setUnlimStrategyTime(unlimTime - UnlimUtil.getUnlimMinutesValue(unlim));
+            startTriviaGame();
+            return true;
+        } catch (CanNotPlayException ex) {
+            WebDriverUtil.takeScreenshot(driver, getFileNameTimeStamp() + "_continueAfterUnlim.png");
+            logger.error(ex.getMessage());
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+        return false;
     }
 
 }
