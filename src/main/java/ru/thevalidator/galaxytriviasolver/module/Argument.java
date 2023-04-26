@@ -9,6 +9,9 @@ import com.beust.jcommander.Parameter;
  * @author thevalidator <the.validator@yandex.ru>
  */
 public class Argument {
+    
+    @Parameter(names = { "-o", "--origin" }, description = "Remote allow origins option for chrome driver")
+    private boolean hasRemoteAllowOriginsOption;
 
     @Parameter(names = { "-d", "--debug" }, description = "Debug mode ON")
     private boolean hasDebugOption;
@@ -30,6 +33,10 @@ public class Argument {
     
     @Parameter(names = { "-w", "--webdriver" }, description = "Custom chrome webdriver path")
     private String webdriverCustomPath;
+
+    public boolean isHasRemoteAllowOriginsOption() {
+        return hasRemoteAllowOriginsOption;
+    }
 
     public boolean hasDebugOption() {
         return hasDebugOption;
