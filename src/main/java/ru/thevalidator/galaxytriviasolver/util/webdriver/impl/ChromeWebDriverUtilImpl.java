@@ -37,13 +37,11 @@ public class ChromeWebDriverUtilImpl implements WebDriverUtil {
             }
             
             webDriver = new ChromeDriver(options);
-            if (!chromeDriverArgs.isHeadlessMode()) {
-                webDriver.manage().window().maximize();
-            } else {
+            if (chromeDriverArgs.isHeadlessMode()) {
                 webDriver.manage().window().setSize(new Dimension(1600, 845));
+            } else {
+                webDriver.manage().window().maximize();
             }
-            //webDriver.manage().window().setPosition((new Point(-5, 0)));
-            webDriver.manage().window().setPosition((new Point(-6, 0)));
             webDriver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(60));
 
         } catch (Exception e) {
