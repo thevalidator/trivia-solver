@@ -63,19 +63,19 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private static final Logger logger = LogManager.getLogger(TriviaMainWindow.class);
     private static final int MAX_LINES = 1_000;
 
-    private final TriviaArgument options;
     private UserStorage userStorage;
     private final State state;
     private Task task;
     private SwingWorker worker;
     private final DateTimeFormatter formatter;
 
-    public TriviaMainWindow(TriviaArgument options) {
+    public TriviaMainWindow(TriviaArgument triviaArgs, ChromeDriverArgument chromeArgs) {
         formatter = new DateTimeFormatterForLogConsole();
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/trivia.png")));
-        this.options = options;
         this.userStorage = new UserStorage();
         this.state = new State();
+        state.setTriviaArgs(triviaArgs);
+        state.setChromeArgs(chromeArgs);
         this.task = null;
         initComponents();
         setLocale();
@@ -649,9 +649,8 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
         backgroundPanel.add(strategyModePanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(367, 43, -1, -1));
 
-        headlessModeCheckBox.setSelected(true);
+        headlessModeCheckBox.setSelected(state.getChromeArgs().isHeadlessMode());
         headlessModeCheckBox.setText("headless");
-        state.setIsHeadless(true);
         headlessModeCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 headlessModeCheckBoxActionPerformed(evt);
@@ -792,8 +791,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                     appendToPane("ERROR: NO PERSON(S)");
                     return;
                 }
-                personComboBox.setEnabled(false);
-                topicComboBox.setEnabled(false);
                 startTask();
             } else {
                 appendToPane("ERROR: NO REGISTERED USER KEY DATA");
@@ -816,10 +813,10 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
     private void headlessModeCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_headlessModeCheckBoxActionPerformed
         if (headlessModeCheckBox.isSelected()) {
-            state.setIsHeadless(true);
+            state.getChromeArgs().setIsHeadlessMode(true);
             appendToPane("HEADLESS MODE ON");
         } else {
-            state.setIsHeadless(false);
+            state.getChromeArgs().setIsHeadlessMode(false);
             appendToPane("HEADLESS MODE OFF");
         }
     }//GEN-LAST:event_headlessModeCheckBoxActionPerformed
@@ -915,20 +912,20 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 .build();
         commander.parse(args);
         
-        System.out.println("> deb " + triviaArgs.hasDebugOption());
-        System.out.println("> adv " + triviaArgs.hasAdvancedSettingsOption());
-        System.out.println("> eml " + triviaArgs.hasCheckMailOption());
-        System.out.println("> lgf " + triviaArgs.hasLogOffOption());
-        System.out.println("> rds " + triviaArgs.hasPlayRidesOption());
-        
-        System.out.println("> ori " + chromeArgs.isHasRemoteAllowOriginsOption());
-        System.out.println("> cus " + chromeArgs.getWebdriverCustomPath());
-        System.out.println("> hed " + chromeArgs.isHasHeadlessModeOption());
+//        System.out.println("> deb " + triviaArgs.hasDebugOption());
+//        System.out.println("> adv " + triviaArgs.hasAdvancedSettingsOption());
+//        System.out.println("> eml " + triviaArgs.hasCheckMailOption());
+//        System.out.println("> lgf " + triviaArgs.hasLogOffOption());
+//        System.out.println("> rds " + triviaArgs.hasPlayRidesOption());
+//        
+//        System.out.println("> ori " + chromeArgs.hasRemoteAllowOriginsOption());
+//        System.out.println("> cus " + chromeArgs.getWebdriverCustomPath());
+//        System.out.println("> hed " + chromeArgs.isHeadlessMode());
 
         java.awt.EventQueue.invokeLater(() -> {
             UIManager.put("Button.arc", 15);
             FlatDarkLaf.setup();
-            new TriviaMainWindow(triviaArgs).setVisible(true);
+            new TriviaMainWindow(triviaArgs, chromeArgs).setVisible(true);
         });
     }
 
@@ -1153,6 +1150,9 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     public void setStartButtonStatus(int status) {
         switch (status) {
             case 1 -> {
+                personComboBox.setEnabled(false);
+                topicComboBox.setEnabled(false);
+                languageServerComboBox.setEnabled(false);
                 strategyBlockEnable(false);
                 hardStopButton.setEnabled(true);
                 hardStopButton.setVisible(true);
@@ -1161,6 +1161,9 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 startButton.setText("STOP");
             }
             case -1 -> {
+                personComboBox.setEnabled(true);
+                topicComboBox.setEnabled(true);
+                languageServerComboBox.setEnabled(true);
                 strategyBlockEnable(true);
                 hardStopButton.setEnabled(false);
                 hardStopButton.setVisible(false);

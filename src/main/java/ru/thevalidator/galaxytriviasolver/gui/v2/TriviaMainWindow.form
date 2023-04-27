@@ -1015,15 +1015,14 @@
         </Container>
         <Component class="javax.swing.JCheckBox" name="headlessModeCheckBox">
           <Properties>
-            <Property name="selected" type="boolean" value="true"/>
+            <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="state.getChromeArgs().isHeadlessMode()" type="code"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="headless"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="headlessModeCheckBoxActionPerformed"/>
           </Events>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="state.setIsHeadless(true);"/>
-          </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
               <AbsoluteConstraints x="384" y="10" width="85" height="-1"/>
