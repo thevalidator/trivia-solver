@@ -61,6 +61,7 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
     private final TriviaUserStatsData userStats;
     private final State state;
     private final DateTimeFormatter formatter;
+    protected final boolean hasHumanImitationMode;
 
     public Robot(Solver solver, Task task, WebDriver driver, State state) {
         this.solver = solver;
@@ -69,6 +70,7 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
         this.state = state;
         this.userStats = new TriviaUserStatsData();
         formatter = new DateTimeFormatterForName();
+        hasHumanImitationMode = state.getTriviaArgs().hasHumanImitation();
     }
 
     public void setDriver(WebDriver driver) {
@@ -80,8 +82,8 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
         int maxAttempts = 15;
         for (int i = 1; i <= maxAttempts; i++) {
             try {
-
                 openURL();
+                imitateHumanActivityDelay(6);
 
                 //wait(60_000).until(visibilityOfElementLocated(By.xpath(getBaseCookiesCloseBtn()))).click();
                 WebDriverUtil.wait(driver, 60_000).until(elementToBeClickable(By.xpath(getBaseCookiesCloseBtn()))).click();
@@ -94,7 +96,6 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
                     informObservers("logged in successfully");
                     break;
                 }
-
             } catch (Exception e) {
                 String fileName = getFileNameTimeStamp() + "_login";
                 saveDataToFile(fileName + ".log", e);
@@ -155,12 +156,14 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
 
     @Override
     public void terminate() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (driver != null) {
+            driver.quit();
+        }
     }
 
     @Override
     public void refreshPage() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        driver.navigate().refresh();
     }
 
     @Override
@@ -590,6 +593,17 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
             logger.error(e.getMessage());
         }
         return false;
+    }
+
+    private void sleepRandomPeriod(int bound) throws InterruptedException {
+        int seconds = random.nextInt(bound + 4);
+        TimeUnit.SECONDS.sleep(seconds);
+    }
+
+    private void imitateHumanActivityDelay(int delay) throws InterruptedException {
+        if (hasHumanImitationMode) {
+            sleepRandomPeriod(delay);
+        }
     }
 
 }
