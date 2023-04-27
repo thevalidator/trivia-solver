@@ -40,6 +40,7 @@ import ru.thevalidator.galaxytriviasolver.module.trivia.State;
 import ru.thevalidator.galaxytriviasolver.module.trivia.TriviaUserStatsData;
 import ru.thevalidator.galaxytriviasolver.module.trivia.UnlimUtil;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.Solver;
+import ru.thevalidator.galaxytriviasolver.module.trivia.solver.impl.SolverImpl;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.impl.SolverRestImpl;
 import ru.thevalidator.galaxytriviasolver.notification.Observer;
 import ru.thevalidator.galaxytriviasolver.options.ChromeDriverArgument;
@@ -758,18 +759,19 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 + "choose server and topic you want to play \n"
                 + "then click start button.\n"
                 + "\n\n"
-                + "v1.0.3.0\n"
+                + "v1.0.3.1\n"
                 + "[thevalidator]\n"
                 + "2023, April"
                 + "\n\nRunning on " + OSValidator.OS_NAME + "\n"
-                + "Powered by Java");
+                + "Powered by Java\n"
+                + "Photo by Andrew Kliatskyi on Unsplash.com");
         jTextArea.setColumns(30);
         jTextArea.setLineWrap(true);
         jTextArea.setRows(16);
         jTextArea.setEditable(false);
         jScrollPane.setViewportView(jTextArea);
         JLabel header = new JLabel();
-        header.setText("Trivia solver (\"Galaxy Chat Soft\" edition)");
+        header.setText("Trivia solver (Private edition)");
         header.setFont(new java.awt.Font("Segoe UI", 1, 14));
         header.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         header.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -1112,7 +1114,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         configureState();
 
         if (task == null) {
-            Solver solver = new SolverRestImpl(new Connector(PERSONAL_CODE));
+            Solver solver = new SolverImpl();//SolverRestImpl(new Connector(PERSONAL_CODE));
             task = new AdvancedTaskImpl(this, solver);
         }
         task.setState(state);
