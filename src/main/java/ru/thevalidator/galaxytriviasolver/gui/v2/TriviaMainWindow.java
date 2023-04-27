@@ -759,7 +759,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 + "choose server and topic you want to play \n"
                 + "then click start button.\n"
                 + "\n\n"
-                + "v1.0.3.1\n"
+                + "v1.0.3.1-PVT\n"
                 + "[thevalidator]\n"
                 + "2023, April"
                 + "\n\nRunning on " + OSValidator.OS_NAME + "\n"
@@ -771,7 +771,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         jTextArea.setEditable(false);
         jScrollPane.setViewportView(jTextArea);
         JLabel header = new JLabel();
-        header.setText("Trivia solver (Private edition)");
+        header.setText("Trivia solver");
         header.setFont(new java.awt.Font("Segoe UI", 1, 14));
         header.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         header.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
