@@ -41,7 +41,6 @@ import ru.thevalidator.galaxytriviasolver.module.trivia.TriviaUserStatsData;
 import ru.thevalidator.galaxytriviasolver.module.trivia.UnlimUtil;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.Solver;
 import ru.thevalidator.galaxytriviasolver.module.trivia.solver.impl.SolverImpl;
-import ru.thevalidator.galaxytriviasolver.module.trivia.solver.impl.SolverRestImpl;
 import ru.thevalidator.galaxytriviasolver.notification.Observer;
 import ru.thevalidator.galaxytriviasolver.options.ChromeDriverArgument;
 import ru.thevalidator.galaxytriviasolver.remote.Connector;
@@ -1110,35 +1109,40 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     }
 
     private void startTask() {
-        setStartButtonStatus(1);
-        configureState();
+        try {
+            setStartButtonStatus(1);
+            configureState();
 
-        if (task == null) {
-            Solver solver = new SolverImpl();//SolverRestImpl(new Connector(PERSONAL_CODE));
-            task = new AdvancedTaskImpl(this, solver);
-        }
-        task.setState(state);
+            if (task == null) {
+                Solver solver = new SolverImpl();//SolverRestImpl(new Connector(PERSONAL_CODE));
+                task = new AdvancedTaskImpl(this, solver);
+            }
+            task.setState(state);
 
-        worker = new SwingWorker<Void, Void>() {
-            @Override
-            protected Void doInBackground() throws Exception {
-                try {
-                    task.run();
+            worker = new SwingWorker<Void, Void>() {
+                @Override
+                protected Void doInBackground() throws Exception {
+                    try {
+                        task.run();
 
-                } catch (Exception e) {
-                    appendToPane(e.getMessage());
-                    logger.error(ExceptionUtil.getFormattedDescription(e));
+                    } catch (Exception e) {
+                        appendToPane(e.getMessage());
+                        logger.error(ExceptionUtil.getFormattedDescription(e));
+                    }
+                    return null;
                 }
-                return null;
-            }
 
-            @Override
-            protected void done() {
-                appendToPane("STOPPED");
-                setStartButtonStatus(-1);
-            }
-        };
-        worker.execute();
+                @Override
+                protected void done() {
+                    appendToPane("STOPPED");
+                    setStartButtonStatus(-1);
+                }
+            };
+            worker.execute();
+        } catch (Exception e) {
+            setStartButtonStatus(-1);
+        }
+
     }
 
     private void stopTask() {
