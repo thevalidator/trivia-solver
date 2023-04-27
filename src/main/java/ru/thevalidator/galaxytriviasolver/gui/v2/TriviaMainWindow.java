@@ -13,9 +13,6 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -179,6 +176,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         optionsMenu = new javax.swing.JMenu();
         triviaMenu = new javax.swing.JMenu();
         anonymModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        humanImitationCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
 
@@ -694,6 +692,15 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
         optionsMenu.add(triviaMenu);
 
+        humanImitationCheckBoxMenuItem.setSelected(state.getTriviaArgs().hasHumanImitation());
+        humanImitationCheckBoxMenuItem.setText("Human imitation");
+        humanImitationCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                humanImitationCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        optionsMenu.add(humanImitationCheckBoxMenuItem);
+
         menuBar.add(optionsMenu);
 
         helpMenu.setText("Help");
@@ -899,6 +906,16 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         }
     }//GEN-LAST:event_anonymModeCheckBoxMenuItemActionPerformed
 
+    private void humanImitationCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_humanImitationCheckBoxMenuItemActionPerformed
+        if (humanImitationCheckBoxMenuItem.isSelected()) {
+            appendToPane("HUMAN IMITATION MODE ON");
+            state.setIsAnonymous(true);
+        } else {
+            appendToPane("HUMAN IMITATION MODE OFF");
+            state.setIsAnonymous(false);
+        }
+    }//GEN-LAST:event_humanImitationCheckBoxMenuItemActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -949,6 +966,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JButton hardStopButton;
     private javax.swing.JCheckBox headlessModeCheckBox;
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JCheckBoxMenuItem humanImitationCheckBoxMenuItem;
     private javax.swing.JPanel infoPanel;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;

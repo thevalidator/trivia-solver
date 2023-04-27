@@ -24,6 +24,9 @@ public class TriviaArgument {
     
     @Parameter(names = { "-m", "--mail" }, description = "Check mail ON")
     private boolean hasCheckMailOption;
+    
+    @Parameter(names = { "-i", "--imitation" }, description = "Human imitation ON")
+    private boolean hasHumanImitation;
 
     public boolean hasDebugOption() {
         return hasDebugOption;
@@ -43,6 +46,14 @@ public class TriviaArgument {
 
     public boolean hasCheckMailOption() {
         return hasCheckMailOption;
+    }
+
+    public boolean hasHumanImitation() {
+        return hasHumanImitation;
+    }
+
+    public void setHasHumanImitation(boolean hasHumanImitation) {
+        this.hasHumanImitation = hasHumanImitation;
     }
     
 }
