@@ -903,7 +903,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        
+
         TriviaArgument triviaArgs = new TriviaArgument();
         ChromeDriverArgument chromeArgs = new ChromeDriverArgument();
         JCommander commander = JCommander.newBuilder()
@@ -911,7 +911,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 .addObject(chromeArgs)
                 .build();
         commander.parse(args);
-        
+
 //        System.out.println("> deb " + triviaArgs.hasDebugOption());
 //        System.out.println("> adv " + triviaArgs.hasAdvancedSettingsOption());
 //        System.out.println("> eml " + triviaArgs.hasCheckMailOption());
@@ -921,7 +921,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 //        System.out.println("> ori " + chromeArgs.hasRemoteAllowOriginsOption());
 //        System.out.println("> cus " + chromeArgs.getWebdriverCustomPath());
 //        System.out.println("> hed " + chromeArgs.isHeadlessMode());
-
         java.awt.EventQueue.invokeLater(() -> {
             UIManager.put("Button.arc", 15);
             FlatDarkLaf.setup();
@@ -1095,7 +1094,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         configureState();
 
         if (task == null) {
-            //task = new SimpleTaskImpl(state, this);
             Solver solver = new SolverRestImpl(new Connector(PERSONAL_CODE));
             task = new AdvancedTaskImpl(this, solver);
         }
@@ -1111,32 +1109,13 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                     appendToPane(e.getMessage());
                     logger.error(ExceptionUtil.getFormattedDescription(e));
                 }
-                //appendToPane("STOPPED");
                 return null;
-                //return true;
             }
 
             @Override
             protected void done() {
-                boolean status = false;
-                try {
-                    // Retrieve the return value of doInBackground.
-                    //status = get();
-                    //System.out.println(">> status " + status);
-                    //appendToPane("Stopping immediately");
-                    appendToPane("STOPPED");
-                } catch (Exception e) {
-                    System.out.println(">>>>> " + e.getMessage());
-//                } catch (InterruptedException e) {
-//                    // This is thrown if the thread's interrupted.
-//                    System.out.println("This is thrown if the thread's interrupted");
-//                } catch (ExecutionException e) {
-//                    // This is thrown if we throw an exception
-//                    // from doInBackground.
-//                    System.out.println("This is thrown if we throw an exception from doInBackground");
-                } finally {
-                    setStartButtonStatus(-1);
-                }
+                appendToPane("STOPPED");
+                setStartButtonStatus(-1);
             }
         };
         worker.execute();
