@@ -31,7 +31,8 @@ public class UserStorage {
     public UserStorage() {
         Path path = Paths.get(STORAGE_DATE_FILE_NAME);
         if (Files.exists(path)) {
-            users = readUserData().toArray(User[]::new);
+            //users = readUserData().toArray(User[]::new);
+            users = readUserData();
         } else {
             users = new User[0];
             try {
@@ -68,17 +69,30 @@ public class UserStorage {
     public ArrayList<User> getUsers() {
         return new ArrayList<>(Arrays.asList(users));
     }
-
-    public static List<User> readUserData() {
-        List<User> users = null;
+    
+    public static User[] readUserData() {
+        User[] users;
         try {
             File file = Paths.get(UserStorage.STORAGE_DATE_FILE_NAME).toFile();
-            users = Arrays.asList(JsonUtil.getMapper().readValue(file, User[].class));
+            users = JsonUtil.getMapper().readValue(file, User[].class);
         } catch (IOException e) {
+            users = new User[0];
             logger.error(ExceptionUtil.getFormattedDescription(e));
         }
         return users;
     }
+
+//    public static List<User> readUserData() {
+//        List<User> users = null;
+//        try {
+//            File file = Paths.get(UserStorage.STORAGE_DATE_FILE_NAME).toFile();
+//            User[] usersArray = JsonUtil.getMapper().readValue(file, User[].class);
+//            users = Arrays.asList(usersArray);
+//        } catch (IOException e) {
+//            logger.error(ExceptionUtil.getFormattedDescription(e));
+//        }
+//        return users;
+//    }
 
     public static void writeUserData(List<User> users) {
         try {
