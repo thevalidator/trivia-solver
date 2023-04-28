@@ -173,7 +173,7 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
 
     @Override
     public void selectTriviaGame() {
-        closePopup(2_500);
+        closePopup(4_500);
         WebDriverUtil.wait(driver, 15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
         WebDriverUtil.wait(driver, 15_000).until(visibilityOfElementLocated(By.xpath(getGamesTriviaBtn(state.getLocale())))).click();
         informObservers("opening Trivia");
