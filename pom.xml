@@ -248,6 +248,7 @@
                 <configuration>
                     <excludes>
                         <exclude>ru/thevalidator/galaxytriviasolver/module/trivia/solver/impl/SolverImpl.class</exclude>
+                        <exclude>bkgnd_.jpg</exclude>
                     </excludes>
                 </configuration>
             </plugin>
