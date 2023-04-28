@@ -20,7 +20,7 @@
                     <plugin>
                         <groupId>com.akathist.maven.plugins.launch4j</groupId>
                         <artifactId>launch4j-maven-plugin</artifactId>
-                        <version>2.1.2</version>
+                        <version>2.3.3</version>
                         <executions>
                             <execution>
                                 <phase>package</phase>
@@ -43,19 +43,23 @@
                                     <jre>
                                         <!--<path>${java.home}</path>-->
                                         <path>data/jre</path>
-                                        <bundledJre64Bit>true</bundledJre64Bit>
-                                        <bundledJreAsFallback>false</bundledJreAsFallback>
+                                        <requiresJdk>false</requiresJdk>
+                                        <requires64Bit>true</requires64Bit>
                                         <minVersion></minVersion>
                                         <maxVersion></maxVersion>
-                                        <jdkPreference>jdkOnly</jdkPreference>
-                                        <runtimeBits>64/32</runtimeBits>
                                     </jre>
-                                    <versionInfo>
-                                        <fileVersion>1.0.2.0</fileVersion>
+                                    <splash>
+                                        <file>splash.bmp</file>
+                                        <waitForWindow>true</waitForWindow>
+                                        <timeout>10</timeout>
+                                        <timeoutErr>true</timeoutErr>
+                                    </splash>
+                                    <versionInfo>                                        
+                                        <fileVersion>1.0.3.2</fileVersion>
                                         <txtFileVersion>${project.version}</txtFileVersion>
                                         <fileDescription>Trivia solver app</fileDescription>
                                         <copyright>Thevalidator 2022</copyright>
-                                        <productVersion>1.0.2.0</productVersion>
+                                        <productVersion>1.0.3.2</productVersion>
                                         <txtProductVersion>${project.version}</txtProductVersion>
                                         <productName>Trivia solver</productName>
                                         <companyName></companyName>
@@ -64,6 +68,14 @@
                                         <trademarks></trademarks>
                                         <language>ENGLISH</language>
                                     </versionInfo>
+                                    <messages>
+                                        <startupErr>Error found, can't start the app</startupErr>
+                                        <jreNotFoundErr>Error! No JRE found</jreNotFoundErr>
+                                        <jreVersionErr>JRE version error</jreVersionErr>
+                                        <launcherErr>Launcher error found</launcherErr>
+                                        <!-- Used by console header only. -->
+                                        <instanceAlreadyExistsMsg>Instatnce already exists</instanceAlreadyExistsMsg>
+                                    </messages>
                                 </configuration>
                             </execution>
                         </executions>
