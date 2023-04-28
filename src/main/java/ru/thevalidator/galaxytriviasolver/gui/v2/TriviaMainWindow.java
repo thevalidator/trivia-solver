@@ -654,7 +654,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 headlessModeCheckBoxActionPerformed(evt);
             }
         });
-        backgroundPanel.add(headlessModeCheckBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(384, 10, 85, -1));
+        backgroundPanel.add(headlessModeCheckBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(384, 17, 85, -1));
 
         mainMenu.setText("Menu");
 
@@ -758,7 +758,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 + "choose server and topic you want to play \n"
                 + "then click start button.\n"
                 + "\n\n"
-                + "v1.0.3.1-PVT\n"
+                + "v1.0.3.2-PVT\n"
                 + "[thevalidator]\n"
                 + "2023, April"
                 + "\n\nRunning on " + OSValidator.OS_NAME + "\n"
