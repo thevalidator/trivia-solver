@@ -47,7 +47,7 @@ public class AdvancedTaskImpl implements Task {
         ((GalaxyAdvancedRobotImpl) robot).registerObserver(observer);
 
         int sleepTimeInSeconds = 60;    // or ZERO?
-        while (isRunning()) {            
+        while (isRunning()) {
             try {
                 driver = driverUtil.createWebDriver(state.getChromeArgs());
                 ((GalaxyAdvancedRobotImpl) robot).setDriver(driver);
@@ -59,9 +59,10 @@ public class AdvancedTaskImpl implements Task {
                 //play Trivia
                 if (robot.startTriviaGame()) {
                     robot.playTriviaGame();
+                    if (isRunning()) {
+                        sleepTimeInSeconds = robot.getSleepTime();
+                    }
                 }
-
-                sleepTimeInSeconds = robot.getSleepTime();
 
                 //play Rides
                 if (state.shouldPlayRides()) {
@@ -74,19 +75,21 @@ public class AdvancedTaskImpl implements Task {
                 }
 
             } catch (Exception e) {
+                logger.error(ExceptionUtil.getFormattedDescription(e));
                 if (e instanceof CanNotCreateWebdriverException) {
                     observer.onUpdateRecieve(e.getMessage());
+                    stop();
+                    break;
                 } else {
                     observer.onUpdateRecieve("UNEXPECTED ERROR");
+                    String path = ((GalaxyAdvancedRobotImpl) robot).getFileNameTimeStamp();
+                    WebDriverUtil.savePageSourceToFile(driver, path + "_src.html");
+                    WebDriverUtil.takeScreenshot(driver, path + ".png");
+                    ((GalaxyAdvancedRobotImpl) robot).saveDataToFile(path + ".log", e);
                 }
-                
-                logger.error(ExceptionUtil.getFormattedDescription(e));
-                String path = ((GalaxyAdvancedRobotImpl) robot).getFileNameTimeStamp();
-                WebDriverUtil.savePageSourceToFile(driver, path + "_src.html");
-                WebDriverUtil.takeScreenshot(driver, path + ".png");
-                ((GalaxyAdvancedRobotImpl) robot).saveDataToFile(path + ".log", e);
-                stop();
-                break;
+
+//                stop();
+//                break;
             } finally {
                 terminate(driver);
                 if (isRunning()) {
