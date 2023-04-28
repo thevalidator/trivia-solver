@@ -42,7 +42,7 @@
                                     </classPath>
                                     <jre>
                                         <!--<path>${java.home}</path>-->
-                                        <path>jre</path>
+                                        <path>data/jre</path>
                                         <bundledJre64Bit>true</bundledJre64Bit>
                                         <bundledJreAsFallback>false</bundledJreAsFallback>
                                         <minVersion></minVersion>
