@@ -31,17 +31,14 @@ public class UserStorage {
     public UserStorage() {
         Path path = Paths.get(STORAGE_DATE_FILE_NAME);
         if (Files.exists(path)) {
-            //users = readUserData().toArray(User[]::new);
             users = readUserData();
         } else {
             users = new User[0];
             try {
-                //Files.createFile(file);
                 File f = new File(STORAGE_DATE_FILE_NAME);
                 f.getParentFile().mkdirs();
                 f.createNewFile();
             } catch (IOException ex) {
-                //ex.printStackTrace();
                 logger.error(ExceptionUtil.getFormattedDescription(ex));
             }
         }
@@ -81,18 +78,6 @@ public class UserStorage {
         }
         return users;
     }
-
-//    public static List<User> readUserData() {
-//        List<User> users = null;
-//        try {
-//            File file = Paths.get(UserStorage.STORAGE_DATE_FILE_NAME).toFile();
-//            User[] usersArray = JsonUtil.getMapper().readValue(file, User[].class);
-//            users = Arrays.asList(usersArray);
-//        } catch (IOException e) {
-//            logger.error(ExceptionUtil.getFormattedDescription(e));
-//        }
-//        return users;
-//    }
 
     public static void writeUserData(List<User> users) {
         try {
