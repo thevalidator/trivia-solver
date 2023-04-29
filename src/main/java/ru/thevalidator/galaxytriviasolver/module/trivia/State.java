@@ -51,13 +51,6 @@ public class State {
             Path p = Paths.get("data/driver/" + chromeArgs.getWebdriverCustomPath());
             Path absPath = p.normalize().toAbsolutePath();
             System.setProperty("webdriver.chrome.driver", absPath.toString());
-            
-//            String absPath = FileSystems.getDefault()
-//                    .getPath("data/driver/" + chromeArgs.getWebdriverCustomPath())
-//                    .normalize()
-//                    .toAbsolutePath()
-//                    .toString();
-//            System.setProperty("webdriver.chrome.driver", absPath);
         }
         this.chromeArgs = chromeArgs;
     }
