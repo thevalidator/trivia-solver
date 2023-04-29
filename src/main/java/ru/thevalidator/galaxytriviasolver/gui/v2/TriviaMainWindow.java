@@ -176,6 +176,10 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         optionsMenu = new javax.swing.JMenu();
         triviaMenu = new javax.swing.JMenu();
         anonymModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        advancedMenu = new javax.swing.JMenu();
+        ridesMenu = new javax.swing.JMenu();
+        playRidesCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        setNOSDelayMenuItem = new javax.swing.JMenuItem();
         humanImitationCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
@@ -649,6 +653,8 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
         headlessModeCheckBox.setSelected(state.getChromeArgs().isHeadlessMode());
         headlessModeCheckBox.setText("headless");
+        headlessModeCheckBox.setEnabled(!state.getChromeArgs().isHeadlessMode());
+        headlessModeCheckBox.setVisible(!state.getChromeArgs().isHeadlessMode());
         headlessModeCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 headlessModeCheckBoxActionPerformed(evt);
@@ -692,6 +698,30 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
         optionsMenu.add(triviaMenu);
 
+        advancedMenu.setText("Advanced");
+        advancedMenu.setEnabled(state.getTriviaArgs().hasAdvancedSettingsOption());
+
+        ridesMenu.setText("Rides");
+
+        playRidesCheckBoxMenuItem.setSelected(state.getTriviaArgs().hasPlayRidesOption());
+        playRidesCheckBoxMenuItem.setText("Play rides");
+        playRidesCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                playRidesCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        ridesMenu.add(playRidesCheckBoxMenuItem);
+
+        setNOSDelayMenuItem.setText("NOS delay");
+        setNOSDelayMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                setNOSDelayMenuItemActionPerformed(evt);
+            }
+        });
+        ridesMenu.add(setNOSDelayMenuItem);
+
+        advancedMenu.add(ridesMenu);
+
         humanImitationCheckBoxMenuItem.setSelected(state.getTriviaArgs().hasHumanImitation());
         humanImitationCheckBoxMenuItem.setText("Human imitation");
         humanImitationCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -699,7 +729,11 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 humanImitationCheckBoxMenuItemActionPerformed(evt);
             }
         });
-        optionsMenu.add(humanImitationCheckBoxMenuItem);
+        advancedMenu.add(humanImitationCheckBoxMenuItem);
+
+        advancedMenu.setVisible(state.getTriviaArgs().hasAdvancedSettingsOption());
+
+        optionsMenu.add(advancedMenu);
 
         menuBar.add(optionsMenu);
 
@@ -917,6 +951,20 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         }
     }//GEN-LAST:event_humanImitationCheckBoxMenuItemActionPerformed
 
+    private void playRidesCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playRidesCheckBoxMenuItemActionPerformed
+        if (playRidesCheckBoxMenuItem.isSelected()) {
+            appendToPane("PLAY RIDES MODE ON");
+            state.setShouldPlayRides(true);
+        } else {
+            appendToPane("PLAY RIDES MODE OFF");
+            state.setShouldPlayRides(false);
+        }
+    }//GEN-LAST:event_playRidesCheckBoxMenuItemActionPerformed
+
+    private void setNOSDelayMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setNOSDelayMenuItemActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_setNOSDelayMenuItemActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -939,6 +987,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 //        System.out.println("> ori " + chromeArgs.hasRemoteAllowOriginsOption());
 //        System.out.println("> cus " + chromeArgs.getWebdriverCustomPath());
 //        System.out.println("> hed " + chromeArgs.isHeadlessMode());
+
         java.awt.EventQueue.invokeLater(() -> {
             UIManager.put("Button.arc", 15);
             FlatDarkLaf.setup();
@@ -953,6 +1002,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JLabel actualPointsLabel;
     private javax.swing.JLabel actualPointsValueLabel;
     private javax.swing.JButton addPersonButton;
+    private javax.swing.JMenu advancedMenu;
     private javax.swing.JCheckBoxMenuItem anonymModeCheckBoxMenuItem;
     private javax.swing.JRadioButton autoStrategyRadioButton;
     private javax.swing.JLabel averagePointsLabel;
@@ -984,7 +1034,10 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JComboBox<String> personComboBox;
     private javax.swing.JLabel personLabel;
     private javax.swing.JPanel personPanel;
+    private javax.swing.JCheckBoxMenuItem playRidesCheckBoxMenuItem;
+    private javax.swing.JMenu ridesMenu;
     private javax.swing.JLabel serverLabel;
+    private javax.swing.JMenuItem setNOSDelayMenuItem;
     private javax.swing.JButton startButton;
     private javax.swing.JLabel statsLabel;
     private javax.swing.JPanel statsPanel;
@@ -1142,7 +1195,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         } catch (Throwable e) {
             appendToPane("Internal error, can't start the app!");
             logger.error(ExceptionUtil.getFormattedDescription(e));
-        } finally {
             setStartButtonStatus(-1);
         }
 

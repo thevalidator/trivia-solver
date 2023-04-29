@@ -53,17 +53,56 @@
                 </MenuItem>
               </SubComponents>
             </Menu>
-            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="humanImitationCheckBoxMenuItem">
+            <Menu class="javax.swing.JMenu" name="advancedMenu">
               <Properties>
-                <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="state.getTriviaArgs().hasHumanImitation()" type="code"/>
+                <Property name="text" type="java.lang.String" value="Advanced"/>
+                <Property name="enabled" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="state.getTriviaArgs().hasAdvancedSettingsOption()" type="code"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Human imitation"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="humanImitationCheckBoxMenuItemActionPerformed"/>
-              </Events>
-            </MenuItem>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_LayoutCodePost" type="java.lang.String" value="advancedMenu.setVisible(state.getTriviaArgs().hasAdvancedSettingsOption());"/>
+              </AuxValues>
+              <SubComponents>
+                <Menu class="javax.swing.JMenu" name="ridesMenu">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Rides"/>
+                  </Properties>
+                  <SubComponents>
+                    <MenuItem class="javax.swing.JCheckBoxMenuItem" name="playRidesCheckBoxMenuItem">
+                      <Properties>
+                        <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                          <Connection code="state.getTriviaArgs().hasPlayRidesOption()" type="code"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Play rides"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="playRidesCheckBoxMenuItemActionPerformed"/>
+                      </Events>
+                    </MenuItem>
+                    <MenuItem class="javax.swing.JMenuItem" name="setNOSDelayMenuItem">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="NOS delay"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="setNOSDelayMenuItemActionPerformed"/>
+                      </Events>
+                    </MenuItem>
+                  </SubComponents>
+                </Menu>
+                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="humanImitationCheckBoxMenuItem">
+                  <Properties>
+                    <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="state.getTriviaArgs().hasHumanImitation()" type="code"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="Human imitation"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="humanImitationCheckBoxMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+              </SubComponents>
+            </Menu>
           </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="helpMenu">
@@ -1030,10 +1069,16 @@
               <Connection code="state.getChromeArgs().isHeadlessMode()" type="code"/>
             </Property>
             <Property name="text" type="java.lang.String" value="headless"/>
+            <Property name="enabled" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="!state.getChromeArgs().isHeadlessMode()" type="code"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="headlessModeCheckBoxActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="headlessModeCheckBox.setVisible(!state.getChromeArgs().isHeadlessMode());"/>
+          </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
               <AbsoluteConstraints x="384" y="17" width="85" height="-1"/>
