@@ -1,7 +1,6 @@
 /*
  * Copyright (C) 2023 thevalidator
  */
-
 package ru.thevalidator.galaxytriviasolver.util.webdriver.impl;
 
 import java.time.Duration;
@@ -16,7 +15,6 @@ import ru.thevalidator.galaxytriviasolver.exception.ExceptionUtil;
 import ru.thevalidator.galaxytriviasolver.options.ChromeDriverArgument;
 import ru.thevalidator.galaxytriviasolver.options.webdriver.WebDriverArgument;
 import ru.thevalidator.galaxytriviasolver.util.webdriver.WebDriverUtil;
-
 
 public class ChromeWebDriverUtilImpl implements WebDriverUtil {
     
