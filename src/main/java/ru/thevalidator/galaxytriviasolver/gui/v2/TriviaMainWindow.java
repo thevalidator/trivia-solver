@@ -1139,7 +1139,10 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 }
             };
             worker.execute();
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            appendToPane("Internal error, can't start the app!");
+            logger.error(ExceptionUtil.getFormattedDescription(e));
+        } finally {
             setStartButtonStatus(-1);
         }
 
