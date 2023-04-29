@@ -88,8 +88,6 @@ public class AdvancedTaskImpl implements Task {
                     ((GalaxyAdvancedRobotImpl) robot).saveDataToFile(path + ".log", e);
                 }
 
-//                stop();
-//                break;
             } finally {
                 terminate(driver);
                 if (isRunning()) {
