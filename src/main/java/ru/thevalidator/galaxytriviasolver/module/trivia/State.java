@@ -49,7 +49,7 @@ public class State {
     public void setChromeArgs(ChromeDriverArgument chromeArgs) {
         if (chromeArgs.getWebdriverCustomPath() != null && !chromeArgs.getWebdriverCustomPath().isEmpty()) {
             Path p = Paths.get("data/driver/" + chromeArgs.getWebdriverCustomPath());
-            Path absPath = p.toAbsolutePath();
+            Path absPath = p.normalize().toAbsolutePath();
             System.setProperty("webdriver.chrome.driver", absPath.toString());
             
 //            String absPath = FileSystems.getDefault()
