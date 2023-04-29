@@ -59,7 +59,7 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
     private final Task task;
     protected WebDriver driver;
     private final TriviaUserStatsData userStats;
-    private final State state;
+    protected final State state;
     private final DateTimeFormatter formatter;
     protected final boolean hasHumanImitationMode;
 
@@ -424,7 +424,7 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
         driver.get(Locale.getLocaleURL(state.getLocale()));
     }
 
-    private void closePopup(int timeToWait) {
+    protected void closePopup(int timeToWait) {
         try {
             while (!WebDriverUtil.wait(driver, timeToWait)
                     .until(visibilityOfAllElementsLocatedBy(By.xpath(getBasePopupIframe()))).
