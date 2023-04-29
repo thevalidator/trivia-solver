@@ -3,6 +3,8 @@
  */
 package ru.thevalidator.galaxytriviasolver.module.trivia;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import ru.thevalidator.galaxytriviasolver.account.User;
 import ru.thevalidator.galaxytriviasolver.options.ChromeDriverArgument;
 import ru.thevalidator.galaxytriviasolver.options.TriviaArgument;
@@ -45,6 +47,18 @@ public class State {
     }
 
     public void setChromeArgs(ChromeDriverArgument chromeArgs) {
+        if (chromeArgs.getWebdriverCustomPath() != null && !chromeArgs.getWebdriverCustomPath().isEmpty()) {
+            Path p = Paths.get("data/driver/" + chromeArgs.getWebdriverCustomPath());
+            Path absPath = p.toAbsolutePath();
+            System.setProperty("webdriver.chrome.driver", absPath.toString());
+            
+//            String absPath = FileSystems.getDefault()
+//                    .getPath("data/driver/" + chromeArgs.getWebdriverCustomPath())
+//                    .normalize()
+//                    .toAbsolutePath()
+//                    .toString();
+//            System.setProperty("webdriver.chrome.driver", absPath);
+        }
         this.chromeArgs = chromeArgs;
     }
 
