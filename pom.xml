@@ -177,7 +177,7 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-manager</artifactId>
-            <version>4.8.3</version>
+            <version>${selenium.version}</version>
         </dependency>
         
         <dependency>
