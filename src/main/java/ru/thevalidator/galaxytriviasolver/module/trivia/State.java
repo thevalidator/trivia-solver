@@ -27,6 +27,7 @@ public class State {
     private boolean shouldPlayRides;
     private boolean isPassive;
     private boolean isManualStrategy;
+    private boolean isMaxUnlimOnly;
     private int nosDelayTime = 5_200;
     private int unlimStrategyTime = 0;
 
@@ -179,6 +180,14 @@ public class State {
         this.unlimStrategyTime = unlimStrategyTime;
     }
 
+    public boolean isMaxUnlimOnly() {
+        return isMaxUnlimOnly;
+    }
+
+    public void setIsMaxUnlimOnly(boolean isMaxUnlimOnly) {
+        this.isMaxUnlimOnly = isMaxUnlimOnly;
+    }
+
     class Statistic {
 
         private int winCount;
@@ -193,6 +202,25 @@ public class State {
             this.pointCount = 0;
         }
 
+    }
+
+    @Override
+    public String toString() {
+        return "State{" 
+                + "\ntriviaArgs=" + triviaArgs 
+                + ", \nchromeArgs=" + chromeArgs 
+                + ", \ntopicIndex=" + topicIndex 
+                + ", \nlocale=" + locale 
+                + ", \nuser=" + user 
+                + ", \nisAnonymous=" + isAnonymous 
+                + ", \nshouldStayInTop=" + shouldStayInTop 
+                + ", \nshouldGetOnTop=" + shouldGetOnTop 
+                + ", \nshouldPlayRides=" + shouldPlayRides 
+                + ", \nisPassive=" + isPassive 
+                + ", \nisManualStrategy=" + isManualStrategy 
+                + ", \nnosDelayTime=" + nosDelayTime 
+                + ", \nisMaxUnlimOnly=" + isMaxUnlimOnly 
+                + ", \nunlimStrategyTime=" + unlimStrategyTime + '}';
     }
 
 }
