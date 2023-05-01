@@ -29,6 +29,7 @@ import org.apache.logging.log4j.Logger;
 import ru.thevalidator.galaxytriviasolver.account.User;
 import ru.thevalidator.galaxytriviasolver.account.UserStorage;
 import ru.thevalidator.galaxytriviasolver.exception.ExceptionUtil;
+import ru.thevalidator.galaxytriviasolver.gui.statistic.Statistic;
 import ru.thevalidator.galaxytriviasolver.util.identity.Identifier;
 import ru.thevalidator.galaxytriviasolver.util.identity.os.OSValidator;
 import ru.thevalidator.galaxytriviasolver.util.identity.uuid.UUIDUtil;
@@ -61,6 +62,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private static final int MAX_LINES = 1_000;
 
     private UserStorage userStorage;
+    private Statistic stats;
     private final State state;
     private Task task;
     private SwingWorker worker;
@@ -70,10 +72,11 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         formatter = new DateTimeFormatterForLogConsole();
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/trivia.png")));
         this.userStorage = new UserStorage();
-        this.state = new State();
+        stats = new Statistic();
+        state = new State();
         state.setTriviaArgs(triviaArgs);
         state.setChromeArgs(chromeArgs);
-        this.task = null;
+        task = null;
         initComponents();
         setLocale();
         setStrategy();
@@ -90,24 +93,19 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         switch (result) {
             case WIN -> {
                 appendToPane("WIN (+" + points + ")");
-                state.incrementWin();
-                state.addPoints(points);
+                stats.incrementWin();
+                stats.addPoints(points);
             }
             case DRAW -> {
                 appendToPane("DRAW");
-                state.incrementDraw();
+                stats.incrementDraw();
             }
             default -> {
                 appendToPane("LOST");
-                state.incrementLost();
+                stats.incrementLost();
             }
         }
-        totalGamesValueLabel.setText(String.valueOf(state.getTotalGamesPlayed()));
-        winValueLabel.setText(String.valueOf(state.getWinCount()));
-        lostValueLabel.setText(String.valueOf(state.getLostCount()));
-        drawValueLabel.setText(String.valueOf(state.getDrawCount()));
-        averagePointsValueLabel.setText(String.valueOf(state.getAveragePoints()));
-
+        updateStats();
         actualPointsValueLabel.setText(String.valueOf(data.getUserDailyPoints()));
         actualCoinsValueLabel.setText(String.valueOf(data.getUserCoins()));
     }
@@ -121,7 +119,8 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        unlimButtonGroup = new javax.swing.ButtonGroup();
+        strategyTypeButtonGroup = new javax.swing.ButtonGroup();
+        autoSrategyButtonGroup = new javax.swing.ButtonGroup();
         backgroundPanel = new BackgroundPanel();
         personPanel = new javax.swing.JPanel();
         personComboBox = new javax.swing.JComboBox<>();
@@ -154,6 +153,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         actualCoinsValueLabel = new javax.swing.JLabel();
         actualPointsLabel = new javax.swing.JLabel();
         actualPointsValueLabel = new javax.swing.JLabel();
+        resetStatsButton = new javax.swing.JButton();
         controlButtonsPanel = new javax.swing.JPanel();
         startButton = new javax.swing.JButton();
         hardStopButton = new javax.swing.JButton();
@@ -176,6 +176,11 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         optionsMenu = new javax.swing.JMenu();
         triviaMenu = new javax.swing.JMenu();
         anonymModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        strategyMenu = new javax.swing.JMenu();
+        passiveModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        maxUnlimOnlyCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        getOnTopRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        stayInTopRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         advancedMenu = new javax.swing.JMenu();
         ridesMenu = new javax.swing.JMenu();
         playRidesCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -386,6 +391,13 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         actualPointsValueLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         actualPointsValueLabel.setText("-");
 
+        resetStatsButton.setText("Reset");
+        resetStatsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resetStatsButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout statsPanelLayout = new javax.swing.GroupLayout(statsPanel);
         statsPanel.setLayout(statsPanelLayout);
         statsPanelLayout.setHorizontalGroup(
@@ -418,7 +430,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                                 .addComponent(lostValueLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statsPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGap(0, 42, Short.MAX_VALUE)
                         .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(62, 62, 62))))
             .addGroup(statsPanelLayout.createSequentialGroup()
@@ -437,13 +449,17 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(actualCoinsValueLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addGroup(statsPanelLayout.createSequentialGroup()
+                .addGap(119, 119, 119)
+                .addComponent(resetStatsButton)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         statsPanelLayout.setVerticalGroup(
             statsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(statsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(statsLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
                 .addGroup(statsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(totalGamesLabel)
                     .addComponent(totalGamesValueLabel))
@@ -475,7 +491,8 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 .addGroup(statsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(actualCoinsLabel)
                     .addComponent(actualCoinsValueLabel))
-                .addGap(33, 33, 33))
+                .addGap(10, 10, 10)
+                .addComponent(resetStatsButton))
         );
 
         javax.swing.GroupLayout infoPanelLayout = new javax.swing.GroupLayout(infoPanel);
@@ -568,7 +585,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         strategyModePanel.setPreferredSize(new java.awt.Dimension(225, 95));
         strategyModePanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        unlimButtonGroup.add(autoStrategyRadioButton);
+        strategyTypeButtonGroup.add(autoStrategyRadioButton);
         autoStrategyRadioButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         autoStrategyRadioButton.setForeground(new java.awt.Color(204, 204, 204));
         autoStrategyRadioButton.setSelected(true);
@@ -580,13 +597,13 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         });
         strategyModePanel.add(autoStrategyRadioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(18, 0, -1, 22));
 
-        unlimButtonGroup.add(manualStrategyRadioButton);
+        strategyTypeButtonGroup.add(manualStrategyRadioButton);
         manualStrategyRadioButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         manualStrategyRadioButton.setForeground(new java.awt.Color(204, 204, 204));
         manualStrategyRadioButton.setText("MANUAL");
         manualStrategyRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                strategyRadioButtonActionPerformed(evt);
+                manualStrategyRadioButtonActionPerformed(evt);
             }
         });
         strategyModePanel.add(manualStrategyRadioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(108, 0, -1, -1));
@@ -696,6 +713,48 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         state.setIsAnonymous(true);
         triviaMenu.add(anonymModeCheckBoxMenuItem);
 
+        strategyMenu.setText("Strategy");
+
+        passiveModeCheckBoxMenuItem.setSelected(true);
+        passiveModeCheckBoxMenuItem.setText("Passive mode");
+        state.setIsPassive(true);
+        passiveModeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                passiveModeCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        strategyMenu.add(passiveModeCheckBoxMenuItem);
+
+        maxUnlimOnlyCheckBoxMenuItem.setText("Max unlim only");
+        state.setIsMaxUnlimOnly(false);
+        maxUnlimOnlyCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                maxUnlimOnlyCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        strategyMenu.add(maxUnlimOnlyCheckBoxMenuItem);
+
+        autoSrategyButtonGroup.add(getOnTopRadioButtonMenuItem);
+        getOnTopRadioButtonMenuItem.setText("Get on TOP");
+        getOnTopRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                getOnTopRadioButtonMenuItemActionPerformed(evt);
+            }
+        });
+        strategyMenu.add(getOnTopRadioButtonMenuItem);
+
+        autoSrategyButtonGroup.add(stayInTopRadioButtonMenuItem);
+        stayInTopRadioButtonMenuItem.setSelected(true);
+        stayInTopRadioButtonMenuItem.setText("Stay in TOP");
+        stayInTopRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                stayInTopRadioButtonMenuItemActionPerformed(evt);
+            }
+        });
+        strategyMenu.add(stayInTopRadioButtonMenuItem);
+
+        triviaMenu.add(strategyMenu);
+
         optionsMenu.add(triviaMenu);
 
         advancedMenu.setText("Advanced");
@@ -792,7 +851,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 + "choose server and topic you want to play \n"
                 + "then click start button.\n"
                 + "\n\n"
-                + "v1.0.3.2-PVT\n"
+                + "v1.0.4.0-PVT\n"
                 + "[thevalidator]\n"
                 + "2023, April"
                 + "\n\nRunning on " + OSValidator.OS_NAME + "\n"
@@ -833,6 +892,9 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                     appendToPane("ERROR: NO PERSON(S)");
                     return;
                 }
+//                configureState();
+//                System.out.println(state.toString());
+//                System.out.println("======");
                 startTask();
             } else {
                 appendToPane("ERROR: NO REGISTERED USER KEY DATA");
@@ -963,7 +1025,45 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
     private void setNOSDelayMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setNOSDelayMenuItemActionPerformed
         // TODO add your handling code here:
+        appendToPane("NOT SUPPORTED YET");
     }//GEN-LAST:event_setNOSDelayMenuItemActionPerformed
+
+    private void stayInTopRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stayInTopRadioButtonMenuItemActionPerformed
+        setAutoStrategyMode();
+    }//GEN-LAST:event_stayInTopRadioButtonMenuItemActionPerformed
+
+    private void getOnTopRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getOnTopRadioButtonMenuItemActionPerformed
+        setAutoStrategyMode();
+    }//GEN-LAST:event_getOnTopRadioButtonMenuItemActionPerformed
+
+    private void manualStrategyRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_manualStrategyRadioButtonActionPerformed
+        strategyRadioButtonActionPerformed(evt);
+    }//GEN-LAST:event_manualStrategyRadioButtonActionPerformed
+
+    private void passiveModeCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passiveModeCheckBoxMenuItemActionPerformed
+        if (passiveModeCheckBoxMenuItem.isSelected()) {
+            appendToPane("PASSIVE MODE ON");
+            state.setIsPassive(true);
+        } else {
+            appendToPane("PASSIVE MODE OFF");
+            state.setIsPassive(false);
+        }
+    }//GEN-LAST:event_passiveModeCheckBoxMenuItemActionPerformed
+
+    private void maxUnlimOnlyCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maxUnlimOnlyCheckBoxMenuItemActionPerformed
+        if (maxUnlimOnlyCheckBoxMenuItem.isSelected()) {
+            appendToPane("BUY MAX UNLIM ONLY MODE ON");
+            state.setIsMaxUnlimOnly(true);
+        } else {
+            appendToPane("BUY MAX UNLIM ONLY MODE OFF");
+            state.setIsMaxUnlimOnly(false);
+        }
+    }//GEN-LAST:event_maxUnlimOnlyCheckBoxMenuItemActionPerformed
+
+    private void resetStatsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetStatsButtonActionPerformed
+        stats = new Statistic();
+        updateStats();
+    }//GEN-LAST:event_resetStatsButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1004,6 +1104,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JButton addPersonButton;
     private javax.swing.JMenu advancedMenu;
     private javax.swing.JCheckBoxMenuItem anonymModeCheckBoxMenuItem;
+    private javax.swing.ButtonGroup autoSrategyButtonGroup;
     private javax.swing.JRadioButton autoStrategyRadioButton;
     private javax.swing.JLabel averagePointsLabel;
     private javax.swing.JLabel averagePointsValueLabel;
@@ -1014,6 +1115,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JButton deletePersonButton;
     private javax.swing.JLabel drawLabel;
     private javax.swing.JLabel drawValueLabel;
+    private javax.swing.JRadioButtonMenuItem getOnTopRadioButtonMenuItem;
     private javax.swing.JButton hardStopButton;
     private javax.swing.JCheckBox headlessModeCheckBox;
     private javax.swing.JMenu helpMenu;
@@ -1029,19 +1131,25 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JLabel lostValueLabel;
     private javax.swing.JMenu mainMenu;
     private javax.swing.JRadioButton manualStrategyRadioButton;
+    private javax.swing.JCheckBoxMenuItem maxUnlimOnlyCheckBoxMenuItem;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenu optionsMenu;
+    private javax.swing.JCheckBoxMenuItem passiveModeCheckBoxMenuItem;
     private javax.swing.JComboBox<String> personComboBox;
     private javax.swing.JLabel personLabel;
     private javax.swing.JPanel personPanel;
     private javax.swing.JCheckBoxMenuItem playRidesCheckBoxMenuItem;
+    private javax.swing.JButton resetStatsButton;
     private javax.swing.JMenu ridesMenu;
     private javax.swing.JLabel serverLabel;
     private javax.swing.JMenuItem setNOSDelayMenuItem;
     private javax.swing.JButton startButton;
     private javax.swing.JLabel statsLabel;
     private javax.swing.JPanel statsPanel;
+    private javax.swing.JRadioButtonMenuItem stayInTopRadioButtonMenuItem;
+    private javax.swing.JMenu strategyMenu;
     private javax.swing.JPanel strategyModePanel;
+    private javax.swing.ButtonGroup strategyTypeButtonGroup;
     private javax.swing.JComboBox<String> topicComboBox;
     private javax.swing.JLabel topicLabel;
     private javax.swing.JLabel totalGamesLabel;
@@ -1049,7 +1157,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JMenu triviaMenu;
     private javax.swing.JLabel unlimApproxPointsLabel;
     private javax.swing.JLabel unlimApproxPointsValueLabel;
-    private javax.swing.ButtonGroup unlimButtonGroup;
     private javax.swing.JLabel unlimHoursLabel;
     private javax.swing.JComboBox<Integer> unlimHoursValueComboBox;
     private javax.swing.JLabel unlimMinutesLabel;
@@ -1097,16 +1204,20 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
     private void setStrategy() {
         boolean b;
-        if (unlimButtonGroup.isSelected(autoStrategyRadioButton.getModel())) {
+        if (strategyTypeButtonGroup.isSelected(autoStrategyRadioButton.getModel())) {
             b = false;
+            strategyMenu.setEnabled(true);
+            strategyMenu.setVisible(true);
             appendToPane("AUTO strategy enabled");
         } else {
             b = true;
+            strategyMenu.setEnabled(false);
+            strategyMenu.setVisible(false);
             appendToPane("MANUAL strategy enabled");
         }
 
-        state.setShouldStayInTop(!b); //!b
-        state.setShouldGetOnTop(false);
+        //state.setShouldStayInTop(!b);   //false
+        //state.setShouldGetOnTop(!b);    //false
         unlimHoursValueComboBox.setEnabled(b);
         unlimHoursValueComboBox.setVisible(b);
         unlimHoursLabel.setVisible(b);
@@ -1284,5 +1395,25 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
             state.setShouldStayInTop(true);
             state.setShouldGetOnTop(false);
         }
+    }
+
+    private void setAutoStrategyMode() {
+        if (autoSrategyButtonGroup.isSelected(stayInTopRadioButtonMenuItem.getModel())) {
+            state.setShouldStayInTop(true);
+            state.setShouldGetOnTop(false);
+            appendToPane("STAY IN TOP mode enabled");
+        } else {
+            state.setShouldStayInTop(false);
+            state.setShouldGetOnTop(true);
+            appendToPane("GET ON TOP mode enabled");
+        }
+    }
+
+    private void updateStats() {
+        totalGamesValueLabel.setText(String.valueOf(stats.getTotalGamesPlayed()));
+        winValueLabel.setText(String.valueOf(stats.getWinCount()));
+        lostValueLabel.setText(String.valueOf(stats.getLostCount()));
+        drawValueLabel.setText(String.valueOf(stats.getDrawCount()));
+        averagePointsValueLabel.setText(String.valueOf(stats.getAveragePoints()));
     }
 }
