@@ -346,12 +346,12 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
 
                     if (state.shouldGetOnTop() && pointsDiff == 0) {
                         int pointsAhead = userStats.getUserDailyPoints() - userStats.getSecondPlacePoints();
-                        if (pointsAhead > 10_000) {
+                        if (pointsAhead > 6_500) {
                             break;
                         }
                     }
 
-                    if (pointsDiff > -5_000) {
+                    if (pointsDiff > -6_500) {
 
                         Unlim unlimType = state.shouldStayInTop() ? (pointsDiff > 16_000 ? Unlim.MAX : Unlim.MID) : Unlim.MAX;
                         if (pointsDiff <= TriviaUserStatsData.AVERAGE_POINTS_PER_HOUR * hoursLeft
@@ -570,7 +570,7 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
         }
         WebDriverUtil.wait(driver, 10_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
         driver.findElement(By.xpath(getTriviaReturnToMainPageBtn())).click();
-        userStats.setUserCoins(userStats.getUserCoins() - option.getPrice());
+        userStats.setUserCoins(Math.ceil((userStats.getUserCoins() - option.getPrice()) * 100) / 100);
     }
 
     private void startAgainTriviaGame() {
