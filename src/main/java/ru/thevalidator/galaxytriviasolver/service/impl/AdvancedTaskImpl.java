@@ -76,18 +76,18 @@ public class AdvancedTaskImpl implements Task {
 
             } catch (Exception e) {
                 logger.error(ExceptionUtil.getFormattedDescription(e));
+                String name = ((GalaxyAdvancedRobotImpl) robot).getFileNameTimeStamp();
+                ((GalaxyAdvancedRobotImpl) robot).saveDataToFile(name + ".log", e);
                 if (e instanceof CanNotCreateWebdriverException) {
+                    observer.onUpdateRecieve("CRITICAL ERROR, THE APP WILL STOP");
                     observer.onUpdateRecieve(e.getMessage());
                     stop();
                     break;
                 } else {
                     observer.onUpdateRecieve("UNEXPECTED ERROR");
-                    String path = ((GalaxyAdvancedRobotImpl) robot).getFileNameTimeStamp();
-                    WebDriverUtil.savePageSourceToFile(driver, path + "_src.html");
-                    WebDriverUtil.takeScreenshot(driver, path + ".png");
-                    ((GalaxyAdvancedRobotImpl) robot).saveDataToFile(path + ".log", e);
+                    WebDriverUtil.savePageSourceToFile(driver, name + "_src.html");
+                    WebDriverUtil.takeScreenshot(driver, name + ".png");
                 }
-
             } finally {
                 terminate(driver);
                 if (isRunning()) {
