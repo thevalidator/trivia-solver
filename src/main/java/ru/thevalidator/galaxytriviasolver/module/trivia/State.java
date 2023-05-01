@@ -17,7 +17,6 @@ public class State {
 
     private TriviaArgument triviaArgs;
     private ChromeDriverArgument chromeArgs;
-    private final Statistic statistic;
     private int topicIndex;
     private Locale locale;
     private User user;
@@ -30,10 +29,6 @@ public class State {
     private boolean isMaxUnlimOnly;
     private int nosDelayTime = 5_200;
     private int unlimStrategyTime = 0;
-
-    public State() {
-        statistic = new Statistic();
-    }
 
     public TriviaArgument getTriviaArgs() {
         return triviaArgs;
@@ -128,42 +123,6 @@ public class State {
         this.locale = locale;
     }
 
-    public void incrementWin() {
-        statistic.winCount++;
-    }
-
-    public void incrementDraw() {
-        statistic.drawCount++;
-    }
-
-    public void incrementLost() {
-        statistic.lostCount++;
-    }
-
-    public void addPoints(int amount) {
-        statistic.pointCount += amount;
-    }
-
-    public int getWinCount() {
-        return statistic.winCount;
-    }
-
-    public int getDrawCount() {
-        return statistic.drawCount;
-    }
-
-    public int getLostCount() {
-        return statistic.lostCount;
-    }
-
-    public int getTotalGamesPlayed() {
-        return (statistic.winCount + statistic.lostCount + statistic.drawCount);
-    }
-
-    public int getAveragePoints() {
-        return (statistic.pointCount / getTotalGamesPlayed());
-    }
-
     public boolean isManualStrategy() {
         return isManualStrategy;
     }
@@ -186,22 +145,6 @@ public class State {
 
     public void setIsMaxUnlimOnly(boolean isMaxUnlimOnly) {
         this.isMaxUnlimOnly = isMaxUnlimOnly;
-    }
-
-    class Statistic {
-
-        private int winCount;
-        private int drawCount;
-        private int lostCount;
-        private int pointCount;
-
-        public Statistic() {
-            this.winCount = 0;
-            this.drawCount = 0;
-            this.lostCount = 0;
-            this.pointCount = 0;
-        }
-
     }
 
     @Override
