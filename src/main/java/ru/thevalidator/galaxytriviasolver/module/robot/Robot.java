@@ -31,6 +31,7 @@ import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElem
 import ru.thevalidator.galaxytriviasolver.exception.CanNotPlayException;
 import ru.thevalidator.galaxytriviasolver.exception.ExceptionUtil;
 import ru.thevalidator.galaxytriviasolver.exception.LoginErrorException;
+import ru.thevalidator.galaxytriviasolver.exception.LoginFailException;
 import ru.thevalidator.galaxytriviasolver.module.trivia.GameResult;
 import ru.thevalidator.galaxytriviasolver.module.trivia.State;
 import ru.thevalidator.galaxytriviasolver.module.trivia.TriviaUserStatsData;
@@ -97,26 +98,7 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
                     break;
                 }
             } catch (Exception e) {
-                String fileName = getFileNameTimeStamp() + "_login";
-                saveDataToFile(fileName + ".log", e);
-                WebDriverUtil.takeScreenshot(driver, fileName + ".png");
-
-                if (driver != null) {
-                    driver.quit();
-                }
-
-                if (i == maxAttempts) {
-                    informObservers("LOGIN ERROR: couldn't log in " + maxAttempts + " times in a row, task stopped");
-                    throw new LoginErrorException(e.getMessage());
-                } else {
-                    int minutesToWait = (2 * i) + ((i - 1) * 10);
-                    informObservers("LOGIN ERROR: try " + i + " was unsuccessfull, next try in " + minutesToWait
-                            + "\nreason: " + e.getMessage());
-                    try {
-                        TimeUnit.MINUTES.sleep(minutesToWait);
-                    } catch (InterruptedException ignored) {
-                    }
-                }
+                throw new LoginErrorException(e.getMessage());
             }
         }
     }
