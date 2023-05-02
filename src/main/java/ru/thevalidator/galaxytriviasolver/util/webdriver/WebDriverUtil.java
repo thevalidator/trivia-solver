@@ -13,6 +13,7 @@ import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.thevalidator.galaxytriviasolver.exception.CanNotCreateWebdriverException;
 import ru.thevalidator.galaxytriviasolver.options.webdriver.WebDriverArgument;
@@ -45,6 +46,10 @@ public interface WebDriverUtil {
             } catch (IOException ignoredException) {
             }
         }
+    }
+    
+    static boolean isTerminated(RemoteWebDriver driver) {
+        return driver.getSessionId() == null;
     }
 
 }
