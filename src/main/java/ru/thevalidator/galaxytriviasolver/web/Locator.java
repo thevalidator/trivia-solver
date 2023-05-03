@@ -130,5 +130,26 @@ public final class Locator {
         };
         return "//nav//span[text()='" + text + "']/..";
     }
+    
+    // RIDES
+    public static final String getGamesRidesBtn(Locale locale) {
+        String text;
+        text = switch (locale) {
+            case RU -> "Тачки";
+            case EN -> "Rides";
+            case ES -> "Carros";
+            default -> "Carros";
+        };
+        return "//div[@class='s__card__title']//div[text()='" + text + "']/../../../..";
+    }
+    
+    public static final String getRidesGameAttemptsCounter() {return "//div[@id='js-race-attempts-count']";}
+    public static final String getRidesStartRaceBtn() {return "//a[@id='js-button-start-race']";}
+    public static final String getRidesWaitOverlay() {return "//div[@id='waitOverlay']";}
+    public static final String getRidesNitroBtn() {return "//div[@id='nitroButton']";}
+    public static final String getRidesPopupCloseBtn() {return "//div[@id='js-msg-box-query']//button[contains(@class, 'overlay-close-button')]";}
+    public static final String getRidesResultsDiv() {return "//div[@style='display: block;' and contains(@class, 'overlay_cars_race')]";}
+    public static final String getRidesRaceAgainBtnLink() {return "//div[@style='display: block;']/span/div/div/a[1]";}
+    public static final String getRidesRaceAgainBtn() {return getRidesRaceAgainBtnLink() + "/div[1]";}
 
 }
