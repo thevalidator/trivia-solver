@@ -3,9 +3,8 @@
  */
 package ru.thevalidator.galaxytriviasolver.module.robot.impl;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -80,7 +79,10 @@ public class GalaxyAdvancedRobotImpl extends Robot implements GalaxyAdvancedRobo
                 WebElement raceAgainBtnLink = driver.findElement(By.xpath(Locator.getRidesRaceAgainBtnLink()));
 
                 if (raceAgainBtnLink.getAttribute("action") != null) {
-                    driver.findElement(By.xpath(Locator.getRidesRaceAgainBtn())).click();
+                    JavascriptExecutor js = (JavascriptExecutor) driver;
+                    WebElement element = driver.findElement(By.xpath(Locator.getRidesRaceAgainBtn()));
+                    js.executeScript("arguments[0].scrollIntoView();", element);
+                    element.click();
                     continue;
                 }
                 break;
