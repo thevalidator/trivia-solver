@@ -186,7 +186,8 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         advancedMenu = new javax.swing.JMenu();
         ridesMenu = new javax.swing.JMenu();
         playRidesCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        setNOSDelayMenuItem = new javax.swing.JMenuItem();
+        setNosDelayMenuItem = new javax.swing.JMenuItem();
+        showNosDelayMenuItem = new javax.swing.JMenuItem();
         humanImitationCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
@@ -790,13 +791,21 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         });
         ridesMenu.add(playRidesCheckBoxMenuItem);
 
-        setNOSDelayMenuItem.setText("NOS delay");
-        setNOSDelayMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        setNosDelayMenuItem.setText("Set NOS delay");
+        setNosDelayMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                setNOSDelayMenuItemActionPerformed(evt);
+                setNosDelayMenuItemActionPerformed(evt);
             }
         });
-        ridesMenu.add(setNOSDelayMenuItem);
+        ridesMenu.add(setNosDelayMenuItem);
+
+        showNosDelayMenuItem.setText("Show NOS delay");
+        showNosDelayMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showNosDelayMenuItemActionPerformed(evt);
+            }
+        });
+        ridesMenu.add(showNosDelayMenuItem);
 
         advancedMenu.add(ridesMenu);
 
@@ -1042,10 +1051,9 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         }
     }//GEN-LAST:event_playRidesCheckBoxMenuItemActionPerformed
 
-    private void setNOSDelayMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setNOSDelayMenuItemActionPerformed
-        // TODO add your handling code here:
-        appendToPane("NOT SUPPORTED YET");
-    }//GEN-LAST:event_setNOSDelayMenuItemActionPerformed
+    private void showNosDelayMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showNosDelayMenuItemActionPerformed
+        appendToPane("NOS delay: " + state.getNosDelayTime() + " ms");
+    }//GEN-LAST:event_showNosDelayMenuItemActionPerformed
 
     private void stayInTopRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stayInTopRadioButtonMenuItemActionPerformed
         setAutoStrategyMode();
@@ -1094,6 +1102,22 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         appendToPane("Not supported yet");
     }//GEN-LAST:event_setPointsDeltaMenuItemActionPerformed
 
+    private void setNosDelayMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setNosDelayMenuItemActionPerformed
+        // TODO add your handling code here:
+        String m = JOptionPane.showInputDialog("Type new NOS delay value (3100-7600)");
+        try {
+            int newNOSValue = Integer.parseInt(m);
+            if (newNOSValue > 3100 && newNOSValue < 7600) {
+                this.state.setNosDelayTime(newNOSValue);
+                appendToPane("New NOS delay: " + m + " ms");
+            } else {
+                throw new IllegalArgumentException();
+            }
+        } catch (Exception e) {
+            appendToPane("incorrect NOS delay value");
+        }
+    }//GEN-LAST:event_setNosDelayMenuItemActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1116,7 +1140,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 //        System.out.println("> ori " + chromeArgs.hasRemoteAllowOriginsOption());
 //        System.out.println("> cus " + chromeArgs.getWebdriverCustomPath());
 //        System.out.println("> hed " + chromeArgs.isHeadlessMode());
-
         java.awt.EventQueue.invokeLater(() -> {
             UIManager.put("Button.arc", 15);
             FlatDarkLaf.setup();
@@ -1171,8 +1194,9 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JButton resetStatsButton;
     private javax.swing.JMenu ridesMenu;
     private javax.swing.JLabel serverLabel;
-    private javax.swing.JMenuItem setNOSDelayMenuItem;
+    private javax.swing.JMenuItem setNosDelayMenuItem;
     private javax.swing.JMenuItem setPointsDeltaMenuItem;
+    private javax.swing.JMenuItem showNosDelayMenuItem;
     private javax.swing.JButton startButton;
     private javax.swing.JLabel statsLabel;
     private javax.swing.JPanel statsPanel;

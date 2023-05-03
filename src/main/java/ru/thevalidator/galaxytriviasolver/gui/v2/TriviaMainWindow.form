@@ -152,12 +152,20 @@
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="playRidesCheckBoxMenuItemActionPerformed"/>
                       </Events>
                     </MenuItem>
-                    <MenuItem class="javax.swing.JMenuItem" name="setNOSDelayMenuItem">
+                    <MenuItem class="javax.swing.JMenuItem" name="setNosDelayMenuItem">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="NOS delay"/>
+                        <Property name="text" type="java.lang.String" value="Set NOS delay"/>
                       </Properties>
                       <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="setNOSDelayMenuItemActionPerformed"/>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="setNosDelayMenuItemActionPerformed"/>
+                      </Events>
+                    </MenuItem>
+                    <MenuItem class="javax.swing.JMenuItem" name="showNosDelayMenuItem">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Show NOS delay"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="showNosDelayMenuItemActionPerformed"/>
                       </Events>
                     </MenuItem>
                   </SubComponents>
