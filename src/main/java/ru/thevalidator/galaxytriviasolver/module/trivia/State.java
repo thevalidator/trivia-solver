@@ -27,6 +27,8 @@ public class State {
     private boolean isPassive;
     private boolean isManualStrategy;
     private boolean isMaxUnlimOnly;
+    private boolean hasPointsDelta;
+    private int pointsDelta = 10_000;
     private int nosDelayTime = 5_200;
     private int unlimStrategyTime = 0;
 
@@ -145,6 +147,22 @@ public class State {
 
     public void setIsMaxUnlimOnly(boolean isMaxUnlimOnly) {
         this.isMaxUnlimOnly = isMaxUnlimOnly;
+    }
+
+    public boolean hasPointsDelta() {
+        return hasPointsDelta;
+    }
+
+    public void setHasPointsDelta(boolean hasPointsDelta) {
+        this.hasPointsDelta = hasPointsDelta;
+    }
+
+    public int getPointsDelta() {
+        return pointsDelta;
+    }
+
+    public void setPointsDelta(int pointsDelta) {
+        this.pointsDelta = pointsDelta;
     }
 
     @Override
