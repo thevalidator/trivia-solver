@@ -31,7 +31,6 @@ import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElem
 import ru.thevalidator.galaxytriviasolver.exception.CanNotPlayException;
 import ru.thevalidator.galaxytriviasolver.exception.ExceptionUtil;
 import ru.thevalidator.galaxytriviasolver.exception.LoginErrorException;
-import ru.thevalidator.galaxytriviasolver.exception.LoginFailException;
 import ru.thevalidator.galaxytriviasolver.module.trivia.GameResult;
 import ru.thevalidator.galaxytriviasolver.module.trivia.State;
 import ru.thevalidator.galaxytriviasolver.module.trivia.TriviaUserStatsData;
@@ -167,56 +166,74 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
         closePopup(1_500);
         WebDriverUtil.wait(driver, 15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
         String attempts = WebDriverUtil.wait(driver, 10_000).until(visibilityOfElementLocated(By.xpath(getTriviaEnergyCount()))).getText();
-        if (!attempts.equals("0")) {
-            WebElement anonSwitcher = driver.findElement(By.xpath(getTriviaAnonymousToggle()));//wait(15_000).until(presenceOfElementLocated(By.xpath(getTriviaAnonymousToggle())));
-            switchAnonToggle(anonSwitcher);
-            driver.findElement(By.xpath(getTriviaStartBtn(state.getLocale()))).click();
-            driver.switchTo().defaultContent();
-            closePopup(1_500);
-            WebDriverUtil.wait(driver, 15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
-            List<WebElement> topics = WebDriverUtil.wait(driver, 10_000).until(visibilityOfAllElementsLocatedBy(By.xpath(getTriviaTopicDiv())));
-            String selectedTopic = state.getLocale().getTopics()[state.getTopicIndex()];
-            WebElement topic;
-            if (state.getTopicIndex() != 0) {
-                topic = getTopic(selectedTopic, topics);
-            } else {
-                int randomIndex = random.nextInt(topics.size());
-                topic = topics.get(randomIndex);
-                informObservers("TRIVIA: selected topic - '" + state.getLocale().getTopics()[randomIndex + 1] + "'");
-            }
-            topic.click();
-            return true;
-        } else {
-//            if (state.shouldGetOnTop() || state.shouldStayInTop()) {
-//                if (pointsDiff > -5_000) {
-//
-//                    Unlim unlimType = Unlim.MAX;
-//                    if (pointsDiff <= TriviaUserStatsData.AVERAGE_POINTS_PER_HOUR * hoursLeft
-//                            && userStats.isUnlimAvailable(unlimType, (int) Math.ceil(hoursLeft / unlimType.getHours()))) {
-//
-//                        informObservers("BUYING UNLIM TO REACH THE TARGET!");
-//                        buyUnlimOption(unlimType);
-//                        try {
-//                            startTriviaGame();
-//                            continue;
-//                        } catch (CanNotPlayException ex) {
-//                            takeScreenshot(getFileNameTimeStamp() + "_continueAfterUnlim.png");
-//                            logger.error(ex.getMessage());
-//                        }
-//                    } else {
-//                        String message = "Top list target is UNREACHABLE!" + pointsDiff
-//                                + " hour left: " + hoursLeft
-//                                + " coins: " + userStats.getUserCoins();
-//                        logger.error(message);
-//                        informObservers("Top list target is UNREACHABLE!");
-//                        wait(15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
-//                        break;
+
+        if (attempts.equals("0")) {
+            if (state.isManualStrategy() && state.getUnlimStrategyTime() > 0) {
+                informObservers("NOT SUPPORTED ON STARTUP");
+                return false;
+//                int unlimTime = state.getUnlimStrategyTime();
+//                int maxUnlimCount = unlimTime / UnlimUtil.getUnlimMinutesValue(Unlim.MAX);
+//                if (maxUnlimCount > 0) {
+//                    if (strategyRequireToBuyUnlim(unlimTime, Unlim.MAX)) {
+//                        continue;
 //                    }
 //                }
-//            }
-            informObservers("TRIVIA: no attempts available");
-            return false;
+//
+//                int midUnlimCount = unlimTime / UnlimUtil.getUnlimMinutesValue(Unlim.MID);
+//                if (midUnlimCount > 0) {
+//                    if (strategyRequireToBuyUnlim(unlimTime, Unlim.MID)) {
+//                        continue;
+//                    }
+//                }
+//
+//                int minUnlimCount = unlimTime / UnlimUtil.getUnlimMinutesValue(Unlim.MIN);
+//                if (minUnlimCount > 0) {
+//                    if (strategyRequireToBuyUnlim(unlimTime, Unlim.MIN)) {
+//                        continue;
+//                    }
+//                }
+            } else if (state.shouldGetOnTop() || state.shouldStayInTop()) {
+                if (state.shouldGetOnTop()) {
+                    int diff = userStats.getFirstPlacePoints() - userStats.getUserDailyPoints();
+                    if (diff != 0 && diff > 0) {
+                        //TODO: check time left
+                        buyUnlimOption(Unlim.MAX);
+                    } else {
+                        return false;
+                    }
+                } else if (state.shouldStayInTop()) {
+                    int diff = userStats.getUserDailyPoints() - userStats.getTenthPlacePoints();
+                    if (diff < 5_000) {
+                        //TODO: check time left
+                        buyUnlimOption(Unlim.MAX);
+                    } else {
+                        return false;
+                    }
+                }
+            } else {
+                informObservers("TRIVIA: no attempts available");
+                return false;
+            }
         }
+
+        WebElement anonSwitcher = driver.findElement(By.xpath(getTriviaAnonymousToggle()));//wait(15_000).until(presenceOfElementLocated(By.xpath(getTriviaAnonymousToggle())));
+        switchAnonToggle(anonSwitcher);
+        driver.findElement(By.xpath(getTriviaStartBtn(state.getLocale()))).click();
+        driver.switchTo().defaultContent();
+        closePopup(1_500);
+        WebDriverUtil.wait(driver, 15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
+        List<WebElement> topics = WebDriverUtil.wait(driver, 10_000).until(visibilityOfAllElementsLocatedBy(By.xpath(getTriviaTopicDiv())));
+        String selectedTopic = state.getLocale().getTopics()[state.getTopicIndex()];
+        WebElement topic;
+        if (state.getTopicIndex() != 0) {
+            topic = getTopic(selectedTopic, topics);
+        } else {
+            int randomIndex = random.nextInt(topics.size());
+            topic = topics.get(randomIndex);
+            informObservers("TRIVIA: selected topic - '" + state.getLocale().getTopics()[randomIndex + 1] + "'");
+        }
+        topic.click();
+        return true;
     }
 
     @Override
