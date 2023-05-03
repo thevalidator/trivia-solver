@@ -151,6 +151,9 @@
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="playRidesCheckBoxMenuItemActionPerformed"/>
                       </Events>
+                      <AuxValues>
+                        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="state.setShouldPlayRides(state.getTriviaArgs().hasPlayRidesOption());"/>
+                      </AuxValues>
                     </MenuItem>
                     <MenuItem class="javax.swing.JMenuItem" name="setNosDelayMenuItem">
                       <Properties>

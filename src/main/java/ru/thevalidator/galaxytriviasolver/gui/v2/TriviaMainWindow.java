@@ -784,6 +784,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
         playRidesCheckBoxMenuItem.setSelected(state.getTriviaArgs().hasPlayRidesOption());
         playRidesCheckBoxMenuItem.setText("Play rides");
+        state.setShouldPlayRides(state.getTriviaArgs().hasPlayRidesOption());
         playRidesCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 playRidesCheckBoxMenuItemActionPerformed(evt);
