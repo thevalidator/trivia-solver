@@ -3,7 +3,6 @@
  */
 package ru.thevalidator.galaxytriviasolver.service.impl;
 
-import java.net.SocketException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.logging.log4j.LogManager;
