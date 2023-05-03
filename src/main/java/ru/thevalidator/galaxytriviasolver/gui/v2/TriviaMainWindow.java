@@ -181,6 +181,8 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         maxUnlimOnlyCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         getOnTopRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         stayInTopRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        usePointsDeltaCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        setPointsDeltaMenuItem = new javax.swing.JMenuItem();
         advancedMenu = new javax.swing.JMenu();
         ridesMenu = new javax.swing.JMenu();
         playRidesCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -753,6 +755,23 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         });
         strategyMenu.add(stayInTopRadioButtonMenuItem);
 
+        usePointsDeltaCheckBoxMenuItem.setSelected(true);
+        usePointsDeltaCheckBoxMenuItem.setText("Use points delta");
+        usePointsDeltaCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                usePointsDeltaCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        strategyMenu.add(usePointsDeltaCheckBoxMenuItem);
+
+        setPointsDeltaMenuItem.setText("Set points delta");
+        setPointsDeltaMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                setPointsDeltaMenuItemActionPerformed(evt);
+            }
+        });
+        strategyMenu.add(setPointsDeltaMenuItem);
+
         triviaMenu.add(strategyMenu);
 
         optionsMenu.add(triviaMenu);
@@ -1065,6 +1084,16 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         updateStats();
     }//GEN-LAST:event_resetStatsButtonActionPerformed
 
+    private void usePointsDeltaCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_usePointsDeltaCheckBoxMenuItemActionPerformed
+        // TODO add your handling code here:
+        appendToPane("Not supported yet");
+    }//GEN-LAST:event_usePointsDeltaCheckBoxMenuItemActionPerformed
+
+    private void setPointsDeltaMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setPointsDeltaMenuItemActionPerformed
+        // TODO add your handling code here:
+        appendToPane("Not supported yet");
+    }//GEN-LAST:event_setPointsDeltaMenuItemActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1143,6 +1172,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JMenu ridesMenu;
     private javax.swing.JLabel serverLabel;
     private javax.swing.JMenuItem setNOSDelayMenuItem;
+    private javax.swing.JMenuItem setPointsDeltaMenuItem;
     private javax.swing.JButton startButton;
     private javax.swing.JLabel statsLabel;
     private javax.swing.JPanel statsPanel;
@@ -1163,6 +1193,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JComboBox<Integer> unlimMinutesValueComboBox;
     private javax.swing.JLabel unlimTotalPriceLabel;
     private javax.swing.JLabel unlimTotalPriceValueLabel;
+    private javax.swing.JCheckBoxMenuItem usePointsDeltaCheckBoxMenuItem;
     private javax.swing.JLabel winLabel;
     private javax.swing.JLabel winValueLabel;
     // End of variables declaration//GEN-END:variables

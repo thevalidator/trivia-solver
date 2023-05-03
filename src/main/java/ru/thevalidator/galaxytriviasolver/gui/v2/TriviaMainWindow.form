@@ -104,6 +104,23 @@
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="stayInTopRadioButtonMenuItemActionPerformed"/>
                       </Events>
                     </MenuItem>
+                    <MenuItem class="javax.swing.JCheckBoxMenuItem" name="usePointsDeltaCheckBoxMenuItem">
+                      <Properties>
+                        <Property name="selected" type="boolean" value="true"/>
+                        <Property name="text" type="java.lang.String" value="Use points delta"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="usePointsDeltaCheckBoxMenuItemActionPerformed"/>
+                      </Events>
+                    </MenuItem>
+                    <MenuItem class="javax.swing.JMenuItem" name="setPointsDeltaMenuItem">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Set points delta"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="setPointsDeltaMenuItemActionPerformed"/>
+                      </Events>
+                    </MenuItem>
                   </SubComponents>
                 </Menu>
               </SubComponents>
