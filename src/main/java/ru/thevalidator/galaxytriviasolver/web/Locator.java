@@ -150,6 +150,5 @@ public final class Locator {
     public static final String getRidesPopupCloseBtn() {return "//div[@id='js-msg-box-query']//button[contains(@class, 'overlay-close-button')]";}
     public static final String getRidesResultsDiv() {return "//div[@style='display: block;' and contains(@class, 'overlay_cars_race')]";}
     public static final String getRidesRaceAgainBtnLink() {return "//div[@style='display: block;']/span/div/div/a[1]";}
-    public static final String getRidesRaceAgainBtn() {return getRidesRaceAgainBtnLink() + "/div[1]";}
-
+    public static final String getRidesRaceAgainBtn() {return getRidesRaceAgainBtnLink() + "/div[@class='button__wrapper']";}
 }
