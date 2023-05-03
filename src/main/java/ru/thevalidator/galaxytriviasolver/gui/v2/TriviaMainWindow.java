@@ -880,7 +880,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 + "choose server and topic you want to play \n"
                 + "then click start button.\n"
                 + "\n\n"
-                + "v1.0.4.1-PVT\n"
+                + "v1.0.5.0-PVT\n"
                 + "[thevalidator]\n"
                 + "2023, May"
                 + "\n\nRunning on " + OSValidator.OS_NAME + "\n"
