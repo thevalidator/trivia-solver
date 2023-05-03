@@ -15,6 +15,7 @@ public final class Locator {
     public static final String getBaseCookiesCloseBtn() {return "//div[@class='cookies-tip']/i";}
     public static final String getBaseHaveAccountBtn() {return "//div[@class='start__buttons']//a[@class='mdc-button mdc-button--black-secondary']";}
     public static final String getBaseRecoveryCodeField() {return "//input[@type='password']";}
+    public static final String getBaseLoginFailPopuDiv() {return "//div[@id='content']";}
     
     public static final String getBaseAuthUserContent() {return "//div[@class='auth-user']//div[@class='app-content mdc-drawer-app-content']";}
     public static final String getBaseUserBalance() {return "//span[@id='drawer_balance']";} //a[@class='mdc-list-item drawer__current-user__balance']//span[@id='drawer_balance']

@@ -12,6 +12,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import ru.thevalidator.galaxytriviasolver.exception.CanNotCreateWebdriverException;
 import ru.thevalidator.galaxytriviasolver.exception.ExceptionUtil;
 import ru.thevalidator.galaxytriviasolver.exception.LoginErrorException;
+import ru.thevalidator.galaxytriviasolver.exception.LoginFailException;
 import ru.thevalidator.galaxytriviasolver.module.robot.GalaxyAdvancedRobot;
 import ru.thevalidator.galaxytriviasolver.module.robot.impl.GalaxyAdvancedRobotImpl;
 import ru.thevalidator.galaxytriviasolver.module.trivia.State;
@@ -31,6 +32,7 @@ public class AdvancedTaskImpl implements Task {
     private GalaxyAdvancedRobot robot;
     private State state;
     private final Solver solver;
+    private boolean isLoggedIn;
 
     public AdvancedTaskImpl(Observer observer, Solver solver) {
         this.observer = observer;
@@ -55,9 +57,9 @@ public class AdvancedTaskImpl implements Task {
             try {
                 driver = driverUtil.createWebDriver(state.getChromeArgs());
                 ((GalaxyAdvancedRobotImpl) robot).setDriver(driver);
-
+                isLoggedIn = false;
                 robot.login();
-
+                isLoggedIn = true;
                 robot.openMail();
                 robot.openGames();
                 robot.selectTriviaGame();
@@ -86,6 +88,11 @@ public class AdvancedTaskImpl implements Task {
                 ((GalaxyAdvancedRobotImpl) robot).saveDataToFile(name + ".log", e);
                 observer.onUpdateRecieve("CRITICAL ERROR, THE APP WILL STOP");
                 observer.onUpdateRecieve(e.getMessage());
+                stop();
+                break;
+            } catch (LoginFailException e) {
+                logger.error(ExceptionUtil.getFormattedDescription(e));
+                observer.onUpdateRecieve("LOGIN FAIL! Reason: " + e.getMessage());
                 stop();
                 break;
             } catch (LoginErrorException e) {
@@ -153,10 +160,13 @@ public class AdvancedTaskImpl implements Task {
 
     private void terminate(WebDriver driver) {
         if (driver != null && !WebDriverUtil.isTerminated((RemoteWebDriver) driver)) {
-            robot.logoff();
+            if (isLoggedIn) {
+                isLoggedIn = false;
+                robot.logoff();
+            }
             try {
                 TimeUnit.SECONDS.sleep(2);
-            } catch (InterruptedException e) {
+            } catch (InterruptedException ignored) {
             }
             driver.quit();
         }

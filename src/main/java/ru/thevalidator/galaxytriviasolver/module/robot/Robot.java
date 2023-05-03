@@ -28,9 +28,11 @@ import static org.openqa.selenium.support.ui.ExpectedConditions.presenceOfElemen
 import static org.openqa.selenium.support.ui.ExpectedConditions.textToBe;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfAllElementsLocatedBy;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.thevalidator.galaxytriviasolver.exception.CanNotPlayException;
 import ru.thevalidator.galaxytriviasolver.exception.ExceptionUtil;
 import ru.thevalidator.galaxytriviasolver.exception.LoginErrorException;
+import ru.thevalidator.galaxytriviasolver.exception.LoginFailException;
 import ru.thevalidator.galaxytriviasolver.module.trivia.GameResult;
 import ru.thevalidator.galaxytriviasolver.module.trivia.State;
 import ru.thevalidator.galaxytriviasolver.module.trivia.TriviaUserStatsData;
@@ -78,38 +80,46 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
     }
 
     @Override
-    public void login() throws LoginErrorException {
-        int maxAttempts = 15;
-        for (int i = 1; i <= maxAttempts; i++) {
+    public void login() throws LoginErrorException, LoginFailException {
             try {
                 openURL();
                 imitateHumanActivityDelay(6);
 
+                WebDriverWait loginWait = WebDriverUtil.wait(driver, 60_000);
                 //wait(60_000).until(visibilityOfElementLocated(By.xpath(getBaseCookiesCloseBtn()))).click();
-                WebDriverUtil.wait(driver, 60_000).until(elementToBeClickable(By.xpath(getBaseCookiesCloseBtn()))).click();
-                WebDriverUtil.wait(driver, 60_000).until(elementToBeClickable(By.xpath(getBaseHaveAccountBtn()))).click();
+                loginWait.until(elementToBeClickable(By.xpath(getBaseCookiesCloseBtn()))).click();
+                loginWait.until(elementToBeClickable(By.xpath(getBaseHaveAccountBtn()))).click();
 
                 driver.findElement(By.xpath(getBaseRecoveryCodeField())).sendKeys(state.getUser().getCode());
                 driver.findElement(By.xpath(getBaseFooterAcceptBtn())).click();
                 TimeUnit.SECONDS.sleep(2);
-                if (WebDriverUtil.wait(driver, 60_000).until(presenceOfElementLocated(By.xpath(getBaseAuthUserContent()))).isDisplayed()) {
+                if (loginWait.until(presenceOfElementLocated(By.xpath(getBaseAuthUserContent()))).isDisplayed()) {
                     informObservers("logged in successfully");
-                    break;
+                } else {
+                    WebDriverWait wait = WebDriverUtil.wait(driver, 10_000);
+                    wait.until(frameToBeAvailableAndSwitchToIt(By.xpath(getBasePopupIframe())));
+                    WebElement elem = wait.until(visibilityOfElementLocated(By.xpath(getBaseLoginFailPopuDiv())));
+                    String reason = elem.getText();
+                    throw new LoginFailException(reason);
                 }
             } catch (Exception e) {
-                throw new LoginErrorException(e.getMessage());
+                if (e instanceof LoginFailException loginFailException) {
+                    throw loginFailException;
+                } else {
+                    throw new LoginErrorException(e.getMessage());
+                }
             }
-        }
     }
 
     @Override
     public void openMail() {
         closePopup(2_500);
-        WebDriverUtil.wait(driver, 15_000).until(elementToBeClickable(By.xpath(getBaseMenuMailBtn(state.getLocale())))).click();
+        WebDriverWait wait = WebDriverUtil.wait(driver, 15_000);
+        wait.until(elementToBeClickable(By.xpath(getBaseMenuMailBtn(state.getLocale())))).click();
         closePopup(2_500);
-        WebDriverUtil.wait(driver, 15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
+        wait.until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
         try {
-            WebDriverUtil.wait(driver, 15_000).until(visibilityOfElementLocated(By.xpath(getNotificationsBtn()))).click();
+            wait.until(visibilityOfElementLocated(By.xpath(getNotificationsBtn()))).click();
             TimeUnit.SECONDS.sleep(3);
         } catch (Exception e) {
             driver.switchTo().defaultContent();
@@ -155,8 +165,9 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
     @Override
     public void selectTriviaGame() {
         closePopup(4_500);
-        WebDriverUtil.wait(driver, 15_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
-        WebDriverUtil.wait(driver, 15_000).until(visibilityOfElementLocated(By.xpath(getGamesTriviaBtn(state.getLocale())))).click();
+        WebDriverWait wait = WebDriverUtil.wait(driver, 15_000);
+        wait.until(frameToBeAvailableAndSwitchToIt(By.xpath(getBaseContentIframe())));
+        wait.until(visibilityOfElementLocated(By.xpath(getGamesTriviaBtn(state.getLocale())))).click();
         informObservers("opening Trivia");
         updateTriviaUsersData();
     }
