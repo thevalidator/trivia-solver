@@ -27,6 +27,9 @@ public class TriviaArgument {
     
     @Parameter(names = { "-i", "--imitation" }, description = "Human imitation ON")
     private boolean hasHumanImitation;
+    
+    @Parameter(names = { "-u", "--utility" }, description = "Show in tray only")
+    private boolean isUtilityMode;
 
     public boolean hasDebugOption() {
         return hasDebugOption;
@@ -54,6 +57,10 @@ public class TriviaArgument {
 
     public void setHasHumanImitation(boolean hasHumanImitation) {
         this.hasHumanImitation = hasHumanImitation;
+    }
+
+    public boolean isUtilityMode() {
+        return isUtilityMode;
     }
     
 }

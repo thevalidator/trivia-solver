@@ -5,15 +5,25 @@ package ru.thevalidator.galaxytriviasolver.gui.v2;
 
 import com.beust.jcommander.JCommander;
 import com.formdev.flatlaf.FlatDarkLaf;
+import java.awt.AWTException;
 import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
 import java.awt.Toolkit;
+import java.awt.TrayIcon;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.swing.BorderFactory;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -67,6 +77,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private Task task;
     private SwingWorker worker;
     private final DateTimeFormatter formatter;
+    private boolean isUtilityMode = false;
 
     public TriviaMainWindow(TriviaArgument triviaArgs, ChromeDriverArgument chromeArgs) {
         formatter = new DateTimeFormatterForLogConsole();
@@ -81,6 +92,9 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         setLocale();
         setStrategy();
         checkSubscriptionStatus();
+        if (triviaArgs.isUtilityMode()) {
+            setUtilityAppMode();
+        }
     }
 
     @Override
@@ -196,9 +210,13 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         setTitle("Trivia solver");
         setMinimumSize(new java.awt.Dimension(750, 422));
         setResizable(false);
+        setType(isUtilityMode ? Window.Type.UTILITY : Window.Type.NORMAL);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
+            }
+            public void windowIconified(java.awt.event.WindowEvent evt) {
+                formWindowIconified(evt);
             }
         });
 
@@ -1119,6 +1137,13 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         }
     }//GEN-LAST:event_setNosDelayMenuItemActionPerformed
 
+    private void formWindowIconified(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowIconified
+        if (isUtilityMode && OSValidator.IS_WINDOWS) {
+            this.setVisible(false);
+        }
+        this.setState(ICONIFIED);
+    }//GEN-LAST:event_formWindowIconified
+
     /**
      * @param args the command line arguments
      */
@@ -1471,5 +1496,67 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         lostValueLabel.setText(String.valueOf(stats.getLostCount()));
         drawValueLabel.setText(String.valueOf(stats.getDrawCount()));
         averagePointsValueLabel.setText(String.valueOf(stats.getAveragePoints()));
+    }
+
+    private void setUtilityAppMode() {
+        isUtilityMode = true;
+        addTrayIcon();
+    }
+
+    private void addTrayIcon() {
+        if (isUtilityMode && SystemTray.isSupported()) {
+            JFrame w = this;
+            final PopupMenu popup = new PopupMenu();
+            final TrayIcon trayIcon = new TrayIcon(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/tray.png")));
+            final SystemTray tray = SystemTray.getSystemTray();
+
+            MenuItem exitItem = new MenuItem("Exit");
+            exitItem.addActionListener((ActionEvent e) -> {
+                tray.remove(trayIcon);
+                System.exit(0);
+            });
+
+            popup.add(exitItem);
+
+            trayIcon.setPopupMenu(popup);
+
+            trayIcon.addMouseListener(new MouseListener() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getButton() == MouseEvent.BUTTON2) {
+                        w.setVisible(true);
+                        w.setState(NORMAL);
+                        w.toFront();
+                    } else if (e.getButton() == MouseEvent.BUTTON1) {
+                        w.setVisible(false);
+                    }
+                }
+
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    //throw new UnsupportedOperationException("Not supported yet.");
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    //throw new UnsupportedOperationException("Not supported yet.");
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    //throw new UnsupportedOperationException("Not supported yet.");
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    //throw new UnsupportedOperationException("Not supported yet.");
+                }
+            });
+            try {
+                tray.add(trayIcon);
+            } catch (AWTException e) {
+                logger.error("Tray icon could not be added: {}", e.getMessage());
+            }
+        }
     }
 }
