@@ -81,34 +81,34 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
 
     @Override
     public void login() throws LoginErrorException, LoginFailException {
-            try {
-                openURL();
-                imitateHumanActivityDelay(6);
+        try {
+            openURL();
+            imitateHumanActivityDelay(6);
 
-                WebDriverWait loginWait = WebDriverUtil.wait(driver, 60_000);
-                //wait(60_000).until(visibilityOfElementLocated(By.xpath(getBaseCookiesCloseBtn()))).click();
-                loginWait.until(elementToBeClickable(By.xpath(getBaseCookiesCloseBtn()))).click();
-                loginWait.until(elementToBeClickable(By.xpath(getBaseHaveAccountBtn()))).click();
+            WebDriverWait loginWait = WebDriverUtil.wait(driver, 60_000);
+            //wait(60_000).until(visibilityOfElementLocated(By.xpath(getBaseCookiesCloseBtn()))).click();
+            loginWait.until(elementToBeClickable(By.xpath(getBaseCookiesCloseBtn()))).click();
+            loginWait.until(elementToBeClickable(By.xpath(getBaseHaveAccountBtn()))).click();
 
-                driver.findElement(By.xpath(getBaseRecoveryCodeField())).sendKeys(state.getUser().getCode());
-                driver.findElement(By.xpath(getBaseFooterAcceptBtn())).click();
-                TimeUnit.SECONDS.sleep(2);
-                if (loginWait.until(presenceOfElementLocated(By.xpath(getBaseAuthUserContent()))).isDisplayed()) {
-                    informObservers("logged in successfully");
-                } else {
-                    WebDriverWait wait = WebDriverUtil.wait(driver, 10_000);
-                    wait.until(frameToBeAvailableAndSwitchToIt(By.xpath(getBasePopupIframe())));
-                    WebElement elem = wait.until(visibilityOfElementLocated(By.xpath(getBaseLoginFailPopuDiv())));
-                    String reason = elem.getText();
-                    throw new LoginFailException(reason);
-                }
-            } catch (Exception e) {
-                if (e instanceof LoginFailException loginFailException) {
-                    throw loginFailException;
-                } else {
-                    throw new LoginErrorException(e.getMessage());
-                }
+            driver.findElement(By.xpath(getBaseRecoveryCodeField())).sendKeys(state.getUser().getCode());
+            driver.findElement(By.xpath(getBaseFooterAcceptBtn())).click();
+            TimeUnit.SECONDS.sleep(2);
+            if (loginWait.until(presenceOfElementLocated(By.xpath(getBaseAuthUserContent()))).isDisplayed()) {
+                informObservers("logged in successfully");
+            } else {
+                WebDriverWait wait = WebDriverUtil.wait(driver, 10_000);
+                wait.until(frameToBeAvailableAndSwitchToIt(By.xpath(getBasePopupIframe())));
+                WebElement elem = wait.until(visibilityOfElementLocated(By.xpath(getBaseLoginFailPopuDiv())));
+                String reason = elem.getText();
+                throw new LoginFailException(reason);
             }
+        } catch (Exception e) {
+            if (e instanceof LoginFailException loginFailException) {
+                throw loginFailException;
+            } else {
+                throw new LoginErrorException(e.getMessage());
+            }
+        }
     }
 
     @Override
@@ -289,9 +289,6 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
                         driver.switchTo().frame(driver.findElement(By.xpath(getTriviaGameResultsFrame())));
                         driver.findElement(By.xpath(getTriviaReturnToMainPageBtn())).click();
                         updateTriviaUsersData();
-                        informObservers("1st: " + userStats.getFirstPlacePoints()
-                                + " 10th: " + userStats.getTenthPlacePoints()
-                                + " YOU: " + userStats.getUserDailyPoints());
                         driver.switchTo().frame(driver.findElement(By.xpath(getTriviaGameMainFrame())));
                         driver.switchTo().defaultContent();
 
@@ -336,10 +333,6 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
                             ? TriviaUserStatsData.ONE_DAY_TIME_IN_SECONDS - currentTimeInSeconds + TriviaUserStatsData.START_TIME_IN_SECONDS
                             : TriviaUserStatsData.START_TIME_IN_SECONDS - currentTimeInSeconds;
                     int hoursLeft = Math.round(timeLeftInSeconds / 3_600F);
-
-                    informObservers("1st: " + userStats.getFirstPlacePoints()
-                            + " 10th: " + userStats.getTenthPlacePoints()
-                            + " YOU: " + userStats.getUserDailyPoints());
 
                     informObservers("Diff: " + pointsDiff
                             + " hours left: " + hoursLeft
@@ -410,7 +403,8 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
         String statusMessage = driver.findElement(By.xpath(getTriviaEnergyTimer())).getText();
         int timeInSeconds = Integer.parseInt(statusMessage.substring(0, statusMessage.indexOf(" ")));
         if (statusMessage.contains("мин") || statusMessage.contains("min")) {
-            timeInSeconds = timeInSeconds * 60;
+            int addMinutes = random.nextInt(3) + 1;
+            timeInSeconds = (timeInSeconds + addMinutes) * 60;
         }
 
         return timeInSeconds;
@@ -533,7 +527,7 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
                 closePopup(2_000);
                 WebDriverUtil.wait(driver, 6_000).until(frameToBeAvailableAndSwitchToIt(By.xpath(getTriviaGameProcessFrame())));
             }
-            WebDriverUtil.wait(driver, 45_000).until(not(textToBe(By.xpath(getTriviaQuestionHeader()), questionText)));
+            WebDriverUtil.wait(driver, 65_000).until(not(textToBe(By.xpath(getTriviaQuestionHeader()), questionText)));
         }
     }
 
