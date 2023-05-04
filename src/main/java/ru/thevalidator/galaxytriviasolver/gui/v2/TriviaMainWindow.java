@@ -109,17 +109,22 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 appendToPane("WIN (+" + points + ")");
                 stats.incrementWin();
                 stats.addPoints(points);
+                winValueLabel.setText(String.valueOf(stats.getWinCount()));
             }
             case DRAW -> {
                 appendToPane("DRAW");
                 stats.incrementDraw();
+                drawValueLabel.setText(String.valueOf(stats.getDrawCount()));
             }
             default -> {
                 appendToPane("LOST");
                 stats.incrementLost();
+                lostValueLabel.setText(String.valueOf(stats.getLostCount()));
             }
         }
-        updateStats();
+        
+        totalGamesValueLabel.setText(String.valueOf(stats.getTotalGamesPlayed()));
+        averagePointsValueLabel.setText(String.valueOf(stats.getAveragePoints()));
         actualPointsValueLabel.setText(String.valueOf(data.getUserDailyPoints()));
         actualCoinsValueLabel.setText(String.valueOf(data.getUserCoins()));
     }
