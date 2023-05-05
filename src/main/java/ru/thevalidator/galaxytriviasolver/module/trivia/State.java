@@ -28,6 +28,7 @@ public class State {
     private boolean isManualStrategy;
     private boolean isMaxUnlimOnly;
     private boolean hasPointsDelta;
+    private boolean hasHumanImitation;
     private int pointsDelta = 10_000;
     private int nosDelayTime = 5_200;
     private int unlimStrategyTime = 0;
@@ -163,6 +164,14 @@ public class State {
 
     public void setPointsDelta(int pointsDelta) {
         this.pointsDelta = pointsDelta;
+    }
+
+    public boolean hasHumanImitation() {
+        return hasHumanImitation;
+    }
+
+    public void setHasHumanImitation(boolean hasHumanImitation) {
+        this.hasHumanImitation = hasHumanImitation;
     }
 
     @Override
