@@ -432,40 +432,32 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 .addContainerGap()
                 .addGroup(statsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(statsPanelLayout.createSequentialGroup()
-                        .addGroup(statsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(statsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(statsPanelLayout.createSequentialGroup()
-                                .addComponent(winLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(winValueLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statsPanelLayout.createSequentialGroup()
-                                .addComponent(drawLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(drawValueLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(statsPanelLayout.createSequentialGroup()
-                                .addComponent(totalGamesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(totalGamesValueLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statsPanelLayout.createSequentialGroup()
-                                .addComponent(averagePointsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(averagePointsValueLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(statsPanelLayout.createSequentialGroup()
-                                .addComponent(lostLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lostValueLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(statsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addContainerGap())
+                    .addGroup(statsPanelLayout.createSequentialGroup()
+                        .addComponent(winLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(winValueLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statsPanelLayout.createSequentialGroup()
-                        .addGap(0, 42, Short.MAX_VALUE)
+                        .addComponent(drawLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(drawValueLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(statsPanelLayout.createSequentialGroup()
+                        .addComponent(totalGamesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(totalGamesValueLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statsPanelLayout.createSequentialGroup()
+                        .addComponent(averagePointsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(averagePointsValueLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(statsPanelLayout.createSequentialGroup()
+                        .addComponent(lostLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lostValueLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statsPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(62, 62, 62))))
-            .addGroup(statsPanelLayout.createSequentialGroup()
-                .addGap(50, 50, 50)
-                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(statsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(56, 56, 56))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statsPanelLayout.createSequentialGroup()
                         .addComponent(actualPointsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -473,19 +465,22 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                     .addGroup(statsPanelLayout.createSequentialGroup()
                         .addComponent(actualCoinsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(actualCoinsValueLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addComponent(actualCoinsValueLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(statsPanelLayout.createSequentialGroup()
+                        .addGap(44, 44, 44)
+                        .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(60, 60, 60))))
             .addGroup(statsPanelLayout.createSequentialGroup()
-                .addGap(119, 119, 119)
+                .addGap(118, 118, 118)
                 .addComponent(resetStatsButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         statsPanelLayout.setVerticalGroup(
             statsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(statsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(statsLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(statsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(totalGamesLabel)
                     .addComponent(totalGamesValueLabel))
@@ -517,8 +512,9 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 .addGroup(statsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(actualCoinsLabel)
                     .addComponent(actualCoinsValueLabel))
-                .addGap(10, 10, 10)
-                .addComponent(resetStatsButton))
+                .addGap(18, 18, 18)
+                .addComponent(resetStatsButton)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout infoPanelLayout = new javax.swing.GroupLayout(infoPanel);
@@ -694,10 +690,8 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
         backgroundPanel.add(strategyModePanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(367, 43, -1, -1));
 
-        headlessModeCheckBox.setSelected(state.getChromeArgs().isHeadlessMode());
         headlessModeCheckBox.setText("headless");
-        headlessModeCheckBox.setEnabled(!state.getChromeArgs().isHeadlessMode());
-        headlessModeCheckBox.setVisible(!state.getChromeArgs().isHeadlessMode());
+        state.getChromeArgs().setIsHeadlessMode(headlessModeCheckBox.isSelected());
         headlessModeCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 headlessModeCheckBoxActionPerformed(evt);
@@ -743,7 +737,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
         passiveModeCheckBoxMenuItem.setSelected(true);
         passiveModeCheckBoxMenuItem.setText("Passive mode");
-        state.setIsPassive(true);
+        state.setIsPassive(passiveModeCheckBoxMenuItem.isSelected());
         passiveModeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 passiveModeCheckBoxMenuItemActionPerformed(evt);
@@ -771,6 +765,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
         autoSrategyButtonGroup.add(stayInTopRadioButtonMenuItem);
         stayInTopRadioButtonMenuItem.setSelected(true);
+        state.setShouldStayInTop(stayInTopRadioButtonMenuItem.isSelected());
         stayInTopRadioButtonMenuItem.setText("Stay in TOP");
         stayInTopRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -801,13 +796,11 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         optionsMenu.add(triviaMenu);
 
         advancedMenu.setText("Advanced");
-        advancedMenu.setEnabled(state.getTriviaArgs().hasAdvancedSettingsOption());
 
         ridesMenu.setText("Rides");
 
-        playRidesCheckBoxMenuItem.setSelected(state.getTriviaArgs().hasPlayRidesOption());
         playRidesCheckBoxMenuItem.setText("Play rides");
-        state.setShouldPlayRides(state.getTriviaArgs().hasPlayRidesOption());
+        state.setShouldPlayRides(playRidesCheckBoxMenuItem.isSelected());
         playRidesCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 playRidesCheckBoxMenuItemActionPerformed(evt);
@@ -833,7 +826,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
         advancedMenu.add(ridesMenu);
 
-        humanImitationCheckBoxMenuItem.setSelected(state.getTriviaArgs().hasHumanImitation());
         humanImitationCheckBoxMenuItem.setText("Human imitation");
         humanImitationCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -841,8 +833,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
             }
         });
         advancedMenu.add(humanImitationCheckBoxMenuItem);
-
-        advancedMenu.setVisible(state.getTriviaArgs().hasAdvancedSettingsOption());
 
         optionsMenu.add(advancedMenu);
 
@@ -1471,15 +1461,16 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         state.setTopicIndex(topicIndex);
         if (manualStrategyRadioButton.isSelected()) {
             state.setIsManualStrategy(true);
-            state.setShouldStayInTop(false);
-            state.setShouldGetOnTop(false);
+//            state.setShouldStayInTop(false);
+//            state.setShouldGetOnTop(false);
             int hours = Integer.parseInt(String.valueOf(unlimHoursValueComboBox.getSelectedItem()));
             int minutes = Integer.parseInt(String.valueOf(unlimMinutesValueComboBox.getSelectedItem()));
             state.setUnlimStrategyTime(hours * 60 + minutes);
         } else {
             state.setIsManualStrategy(false);
-            state.setShouldStayInTop(true);
-            state.setShouldGetOnTop(false);
+            setAutoStrategyMode();
+//            state.setShouldStayInTop(true);
+//            state.setShouldGetOnTop(false);
         }
     }
 
