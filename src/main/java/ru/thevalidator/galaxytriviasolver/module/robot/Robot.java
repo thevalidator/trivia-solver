@@ -187,6 +187,7 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
                         buyUnlimOption(Unlim.MAX);
                     } else {
                         informObservers("not enough coins to buy unlim!");
+                        return false;
                     }
                 } else {
                     informObservers("TOP list target is OK");
