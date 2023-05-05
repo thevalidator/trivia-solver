@@ -1364,7 +1364,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
             configureState();
 
             if (task == null) {
-                Solver solver = new SolverImpl();//SolverRestImpl(new Connector(PERSONAL_CODE));
+                Solver solver = new SolverImpl();
                 task = new AdvancedTaskImpl(this, solver);
             }
             task.setState(state);
