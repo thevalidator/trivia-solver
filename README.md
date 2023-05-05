@@ -15,6 +15,10 @@
 * [Troubleshooting](#troubleshooting)
 * [Known bugs](#known-bugs)
 * [Video demonstration](#video-demonstration)
+* [Guide](#guide)
+    * [Run](#run)
+    * [Additional arguments](#additional-arguments)
+    * [Strategy mode](#strategy-mode)
 * [License](#license)
 
 <!-- END_TOC -->
@@ -50,15 +54,18 @@ You may also download the archive with compiled app from the [release's page](ht
 
 ## App usage
 - Be sure that you've already played at least once the Trivia game in Galaxy
-- For Windows users: the app icon will be in the tray.
+
 
 + **Quick start**
-	1) Check if the status is "GREEN" (*Menu -> Status*)
-	2) Add your account (*Account -> Add account*)
-	3) Choose server (*Options -> Server*)
-	4) Choose topic (*Main window -> topic*)
-	5) Press `START` button
-	6) To stop the app you have two options:
+	1) Get the personal key
+	2) Put the personal key file into the app folder
+	3) Run `TriviaSolver.exe`
+	4) Be sure to see the message in the console: `status: THE KEY IS ACTIVE`
+	5) Add new person with the button `+` 
+	6) Select the language server
+	7) Select the topic
+	8) Press “GO” button
+	9) There are two options to stop the app:
 		+ Hard stop - the app immediately stops its work. 
 		+ Soft stop - the app finishes Trivia game round and then stops. (work not good at the moment).
 ------------
@@ -78,23 +85,73 @@ You may also download the archive with compiled app from the [release's page](ht
 
 - **message ERROR: NO USER KEY DATA** 
 	- Ask me about demo user  key. The app works using connection with the external server for getting correct answer. The user key is needed for getting response from the server.
-- **status "BLACK"** 
-	- No connection with the external server. Check your internet connection. 
-- **status "RED"** 
-	- The external server didn't find user key in the database. Contact me.
-- **status "YELLOW"** 
-	- Demo period is expired, the app will continue to work, but will choose random answers in the Trivia game.
+- **message "CRITICAL ERROR, THE APP WILL STOP"** 
+	- The webdriver couldn't start. Update Chrome browser or use custom webdriver by using argument on app start. 
 
 ## Known bugs
 
 - when headless mode is off it doesn't work if menu sidebar is hidden (this happens on small screen resolutions)
-- soft stop button doesn't work correct in some cases
 
 
 ## Video demonstration
 
 https://user-images.githubusercontent.com/53190369/232238176-b0d68ae6-627e-48db-b5df-290b6b5b6423.mp4
 
+
+
+# Guide
+
+### Run
+
+- Windows
+    1) Unzip the archive with the app
+    2) Be sure the Google Chrome browser is already installed
+    3) Put the personal key into the app folder
+    4) Run `TriviaSolver.exe`
+- Linux/MacOS
+    1) Install [Java 17](https://adoptium.net/temurin/releases/) (JRE) or higher
+    2) Unzip the archive with the app
+    3) Be sure the Google Chrome browser is already installed
+    4) Put the personal key into the app folder
+    5) Run terminal from the app folder and use the command: `java -jar TriviaSolver.jar`
+
+### Additional arguments
+
+- *Browser args*
+    - `-o`, `--origin` - browser option
+    - `-w path`, `--webdriver path` - use custom webdriver, path - path to the driver
+
+### App main window
+
+<img width="602" alt="main" src="https://user-images.githubusercontent.com/53190369/236533441-c1c6b5a0-58b8-4489-8e0e-6c3ebd3443d0.png">
+
+
+1. Menu
+2. Add / remove person
+3. Select person menu (stores 20 persons)
+4. Select language server menu
+5. Select topic menu
+6. Strategy type menu
+7. Start / Stop buttons
+8. Log console
+9. Stats
+
+## Strategy mode
+
+- ##### AutoAuto
+
+	- You just need to start the app and it will do the rest. Use this mode to run the app 24 on 7.
+
+	- Passive mode works only in auto mode. The app won’t buy unlim in this mode everytime it detects the person is out of TOP list. But it will buy unlim for sure in future if there is no any chance to get in to the top list.
+
+- ##### Manual
+
+	- Select this mode if:
+    	- you don’t need to buy unlim 
+    	- you want to buy the certain amount of unlims
+
+	- If you don’t want to buy unlim just set the time to zero.
+Or you may set the time for unlim play and the app will buy it.
 
 ## License
 - GNU General Public License v3.0
