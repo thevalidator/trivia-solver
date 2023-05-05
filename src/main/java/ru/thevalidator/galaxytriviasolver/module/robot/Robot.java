@@ -403,7 +403,7 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
         String statusMessage = driver.findElement(By.xpath(getTriviaEnergyTimer())).getText();
         int timeInSeconds = Integer.parseInt(statusMessage.substring(0, statusMessage.indexOf(" ")));
         if (statusMessage.contains("мин") || statusMessage.contains("min")) {
-            int addMinutes = random.nextInt(3) + 1;
+            int addMinutes = random.nextInt(3) + 2;
             timeInSeconds = (timeInSeconds + addMinutes) * 60;
         }
 
