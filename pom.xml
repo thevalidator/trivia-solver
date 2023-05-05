@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.thevalidator</groupId>
     <artifactId>galaxy-trivia-solver</artifactId>
-    <version>1.0.2.1-GCS</version>
+    <version>1.0.5.0-GCS</version>
     <packaging>jar</packaging>
     <url>https://github.com/thevalidator/trivia-solver</url>
     
@@ -20,7 +20,7 @@
                     <plugin>
                         <groupId>com.akathist.maven.plugins.launch4j</groupId>
                         <artifactId>launch4j-maven-plugin</artifactId>
-                        <version>2.1.2</version>
+                        <version>2.3.3</version>
                         <executions>
                             <execution>
                                 <phase>package</phase>
@@ -42,20 +42,24 @@
                                     </classPath>
                                     <jre>
                                         <!--<path>${java.home}</path>-->
-                                        <path>jre</path>
-                                        <bundledJre64Bit>true</bundledJre64Bit>
-                                        <bundledJreAsFallback>false</bundledJreAsFallback>
+                                        <path>data/jre</path>
+                                        <requiresJdk>false</requiresJdk>
+                                        <requires64Bit>true</requires64Bit>
                                         <minVersion></minVersion>
                                         <maxVersion></maxVersion>
-                                        <jdkPreference>jdkOnly</jdkPreference>
-                                        <runtimeBits>64/32</runtimeBits>
                                     </jre>
-                                    <versionInfo>
-                                        <fileVersion>1.0.2.0</fileVersion>
+                                    <splash>
+                                        <file>splash.bmp</file>
+                                        <waitForWindow>true</waitForWindow>
+                                        <timeout>10</timeout>
+                                        <timeoutErr>true</timeoutErr>
+                                    </splash>
+                                    <versionInfo>                                        
+                                        <fileVersion>1.0.5.0</fileVersion>
                                         <txtFileVersion>${project.version}</txtFileVersion>
                                         <fileDescription>Trivia solver app</fileDescription>
-                                        <copyright>Thevalidator 2022</copyright>
-                                        <productVersion>1.0.2.0</productVersion>
+                                        <copyright>thevalidator 2023</copyright>
+                                        <productVersion>1.0.5.0</productVersion>
                                         <txtProductVersion>${project.version}</txtProductVersion>
                                         <productName>Trivia solver</productName>
                                         <companyName></companyName>
@@ -64,6 +68,14 @@
                                         <trademarks></trademarks>
                                         <language>ENGLISH</language>
                                     </versionInfo>
+                                    <messages>
+                                        <startupErr>Startup error found</startupErr>
+                                        <jreNotFoundErr>Error! No JRE found</jreNotFoundErr>
+                                        <jreVersionErr>JRE version error</jreVersionErr>
+                                        <launcherErr>Launcher error found</launcherErr>
+                                        <!-- Used by console header only. -->
+                                        <instanceAlreadyExistsMsg>Instatnce already exists</instanceAlreadyExistsMsg>
+                                    </messages>
                                 </configuration>
                             </execution>
                         </executions>
@@ -165,7 +177,7 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-manager</artifactId>
-            <version>4.8.3</version>
+            <version>${selenium.version}</version>
         </dependency>
         
         <dependency>
@@ -207,6 +219,12 @@
             <version>3.1.0</version>
             <type>jar</type>
         </dependency>
+        
+        <dependency>
+            <groupId>com.beust</groupId>
+            <artifactId>jcommander</artifactId>
+            <version>1.82</version>
+        </dependency>
     </dependencies>
     
     <build>
@@ -233,6 +251,17 @@
                 <configuration>
                     <argLine>-Dfile.encoding=UTF-8</argLine>
                     <!--<argLine>-Dconsole.encoding=UTF-8</argLine>-->
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <excludes>
+                        <exclude>ru/thevalidator/galaxytriviasolver/module/trivia/solver/impl/SolverImpl.class</exclude>
+                        <exclude>bkgnd.jpg</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>

@@ -1,12 +1,12 @@
 /*
  * Copyright (C) 2023 thevalidator
  */
-package ru.thevalidator.galaxytriviasolver.identity.uuid;
+package ru.thevalidator.galaxytriviasolver.util.identity.uuid;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import static ru.thevalidator.galaxytriviasolver.identity.os.OSValidator.*;
+import static ru.thevalidator.galaxytriviasolver.util.identity.os.OSValidator.*;
 
 /**
  * @author thevalidator <the.validator@yandex.ru>

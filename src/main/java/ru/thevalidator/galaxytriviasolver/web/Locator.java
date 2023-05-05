@@ -15,6 +15,7 @@ public final class Locator {
     public static final String getBaseCookiesCloseBtn() {return "//div[@class='cookies-tip']/i";}
     public static final String getBaseHaveAccountBtn() {return "//div[@class='start__buttons']//a[@class='mdc-button mdc-button--black-secondary']";}
     public static final String getBaseRecoveryCodeField() {return "//input[@type='password']";}
+    public static final String getBaseLoginFailPopuDiv() {return "//div[@id='content']";}
     
     public static final String getBaseAuthUserContent() {return "//div[@class='auth-user']//div[@class='app-content mdc-drawer-app-content']";}
     public static final String getBaseUserBalance() {return "//span[@id='drawer_balance']";} //a[@class='mdc-list-item drawer__current-user__balance']//span[@id='drawer_balance']
@@ -130,5 +131,25 @@ public final class Locator {
         };
         return "//nav//span[text()='" + text + "']/..";
     }
-
+    
+    // RIDES
+    public static final String getGamesRidesBtn(Locale locale) {
+        String text;
+        text = switch (locale) {
+            case RU -> "Тачки";
+            case EN -> "Rides";
+            case ES -> "Carros";
+            default -> "Carros";
+        };
+        return "//div[@class='s__card__title']//div[text()='" + text + "']/../../../..";
+    }
+    
+    public static final String getRidesGameAttemptsCounter() {return "//div[@id='js-race-attempts-count']";}
+    public static final String getRidesStartRaceBtn() {return "//a[@id='js-button-start-race']";}
+    public static final String getRidesWaitOverlay() {return "//div[@id='waitOverlay']";}
+    public static final String getRidesNitroBtn() {return "//div[@id='nitroButton']";}
+    public static final String getRidesPopupCloseBtn() {return "//div[@id='js-msg-box-query']//button[contains(@class, 'overlay-close-button')]";}
+    public static final String getRidesResultsDiv() {return "//div[@style='display: block;' and contains(@class, 'overlay_cars_race')]";}
+    public static final String getRidesRaceAgainBtnLink() {return "//div[@style='display: block;']/span/div/div/a[1]";}
+    public static final String getRidesRaceAgainBtn() {return getRidesRaceAgainBtnLink() + "/div[@class='button__wrapper']";}
 }

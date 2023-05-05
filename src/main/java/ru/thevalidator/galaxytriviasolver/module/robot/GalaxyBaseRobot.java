@@ -2,9 +2,10 @@
  * Copyright (C) 2022 thevalidator
  */
 
-package ru.thevalidator.galaxytriviasolver.module.base;
+package ru.thevalidator.galaxytriviasolver.module.robot;
 
 import ru.thevalidator.galaxytriviasolver.exception.LoginErrorException;
+import ru.thevalidator.galaxytriviasolver.exception.LoginFailException;
 import ru.thevalidator.galaxytriviasolver.module.trivia.TriviaRobot;
 
 /**
@@ -12,7 +13,7 @@ import ru.thevalidator.galaxytriviasolver.module.trivia.TriviaRobot;
  */
 public interface GalaxyBaseRobot extends TriviaRobot {
     
-    void login() throws LoginErrorException;
+    void login() throws LoginErrorException, LoginFailException;
     void openMail();
     void openGames();
     void logoff();

@@ -9,7 +9,7 @@ package ru.thevalidator.galaxytriviasolver.exception;
  */
 public class ExceptionUtil {
     
-    public static String getFormattedDescription(Exception e) {
+    public static String getFormattedDescription(Throwable e) {
         StringBuilder sb = new StringBuilder();
         sb.append(e.getMessage()).append("\n");
         for (StackTraceElement el : e.getStackTrace()) {

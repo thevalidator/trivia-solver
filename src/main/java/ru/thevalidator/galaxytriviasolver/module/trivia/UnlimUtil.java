@@ -8,10 +8,18 @@ package ru.thevalidator.galaxytriviasolver.module.trivia;
  */
 public class UnlimUtil {
     
-    public static final int MAX_UNLIM_MINUTES = (int) (Unlim.MAX.getHours() * 60);
-    public static final int MID_UNLIM_MINUTES = (int) (Unlim.MID.getHours() * 60);
-    public static final int MIN_UNLIM_MINUTES = (int) (Unlim.MIN.getHours() * 60);
+    private static final int MAX_UNLIM_MINUTES = (int) (Unlim.MAX.getHours() * 60);
+    private static final int MID_UNLIM_MINUTES = (int) (Unlim.MID.getHours() * 60);
+    private static final int MIN_UNLIM_MINUTES = (int) (Unlim.MIN.getHours() * 60);
     public static final int AVERAGE_POINTS_PER_ROUND = 135;
+    
+    public static int getUnlimMinutesValue (Unlim type) {
+        return (int) (switch (type) {
+            case MAX -> MAX_UNLIM_MINUTES;
+            case MID -> MID_UNLIM_MINUTES;
+            default -> MIN_UNLIM_MINUTES;
+        });
+    }
 
     public static double getPrice(int unlimTime) {
 

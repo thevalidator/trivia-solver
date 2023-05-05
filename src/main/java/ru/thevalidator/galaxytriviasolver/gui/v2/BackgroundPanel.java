@@ -34,7 +34,7 @@ public class BackgroundPanel extends JPanel {
     private BufferedImage loadImage() {
         BufferedImage img = null;
         try {
-            img = ImageIO.read(getClass().getClassLoader().getResource("bkgnd.jpg"));
+            img = ImageIO.read(getClass().getClassLoader().getResource("bkgnd_.jpg"));
         } catch (IOException ex) {
             logger.error(ExceptionUtil.getFormattedDescription(ex));
         }

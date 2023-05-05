@@ -3,17 +3,28 @@
  */
 package ru.thevalidator.galaxytriviasolver.gui.v2;
 
+import com.beust.jcommander.JCommander;
 import com.formdev.flatlaf.FlatDarkLaf;
+import java.awt.AWTException;
 import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
 import java.awt.Toolkit;
+import java.awt.TrayIcon;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import javax.swing.BorderFactory;
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -26,24 +37,29 @@ import javax.swing.text.BadLocationException;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.WebDriver;
 import ru.thevalidator.galaxytriviasolver.account.User;
 import ru.thevalidator.galaxytriviasolver.account.UserStorage;
 import ru.thevalidator.galaxytriviasolver.exception.ExceptionUtil;
-import ru.thevalidator.galaxytriviasolver.identity.Identifier;
-import ru.thevalidator.galaxytriviasolver.identity.os.OSValidator;
-import ru.thevalidator.galaxytriviasolver.identity.uuid.UUIDUtil;
-import ru.thevalidator.galaxytriviasolver.module.Option;
+import ru.thevalidator.galaxytriviasolver.gui.statistic.Statistic;
+import ru.thevalidator.galaxytriviasolver.util.identity.Identifier;
+import ru.thevalidator.galaxytriviasolver.util.identity.os.OSValidator;
+import ru.thevalidator.galaxytriviasolver.util.identity.uuid.UUIDUtil;
+import ru.thevalidator.galaxytriviasolver.options.TriviaArgument;
 import ru.thevalidator.galaxytriviasolver.module.trivia.GameResult;
 import static ru.thevalidator.galaxytriviasolver.module.trivia.GameResult.DRAW;
 import static ru.thevalidator.galaxytriviasolver.module.trivia.GameResult.WIN;
 import ru.thevalidator.galaxytriviasolver.module.trivia.State;
 import ru.thevalidator.galaxytriviasolver.module.trivia.TriviaUserStatsData;
 import ru.thevalidator.galaxytriviasolver.module.trivia.UnlimUtil;
+import ru.thevalidator.galaxytriviasolver.module.trivia.solver.Solver;
+import ru.thevalidator.galaxytriviasolver.module.trivia.solver.impl.SolverRestImpl;
 import ru.thevalidator.galaxytriviasolver.notification.Observer;
+import ru.thevalidator.galaxytriviasolver.options.ChromeDriverArgument;
 import ru.thevalidator.galaxytriviasolver.remote.Connector;
-import ru.thevalidator.galaxytriviasolver.service.impl.SimpleTaskImpl;
 import ru.thevalidator.galaxytriviasolver.service.Task;
+import ru.thevalidator.galaxytriviasolver.service.impl.SimpleTaskImpl;
+import ru.thevalidator.galaxytriviasolver.util.formatter.DateTimeFormatter;
+import ru.thevalidator.galaxytriviasolver.util.formatter.impl.DateTimeFormatterForLogConsole;
 import ru.thevalidator.galaxytriviasolver.web.Locale;
 
 /**
@@ -52,28 +68,34 @@ import ru.thevalidator.galaxytriviasolver.web.Locale;
  */
 public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
-    public static volatile WebDriver driver;
     public static final String PERSONAL_CODE = Identifier.readKey();
     private static final Logger logger = LogManager.getLogger(TriviaMainWindow.class);
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm.ss");
     private static final int MAX_LINES = 1_000;
 
-    private final Option options;
     private UserStorage userStorage;
+    private Statistic stats;
     private final State state;
     private Task task;
     private SwingWorker worker;
+    private final DateTimeFormatter formatter;
+    private boolean isUtilityMode = false;
 
-    public TriviaMainWindow(Option options) {
+    public TriviaMainWindow(TriviaArgument triviaArgs, ChromeDriverArgument chromeArgs) {
+        formatter = new DateTimeFormatterForLogConsole();
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/trivia.png")));
-        this.options = options;
         this.userStorage = new UserStorage();
-        this.state = new State();
-        this.task = null;
+        stats = new Statistic();
+        state = new State();
+        state.setTriviaArgs(triviaArgs);
+        state.setChromeArgs(chromeArgs);
+        task = null;
         initComponents();
         setLocale();
         setStrategy();
         checkSubscriptionStatus();
+        if (triviaArgs.isUtilityMode()) {
+            setUtilityAppMode();
+        }
     }
 
     @Override
@@ -86,24 +108,24 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         switch (result) {
             case WIN -> {
                 appendToPane("WIN (+" + points + ")");
-                state.incrementWin();
-                state.addPoints(points);
+                stats.incrementWin();
+                stats.addPoints(points);
+                winValueLabel.setText(String.valueOf(stats.getWinCount()));
             }
             case DRAW -> {
                 appendToPane("DRAW");
-                state.incrementDraw();
+                stats.incrementDraw();
+                drawValueLabel.setText(String.valueOf(stats.getDrawCount()));
             }
             default -> {
                 appendToPane("LOST");
-                state.incrementLost();
+                stats.incrementLost();
+                lostValueLabel.setText(String.valueOf(stats.getLostCount()));
             }
         }
-        totalGamesValueLabel.setText(String.valueOf(state.getTotalGamesPlayed()));
-        winValueLabel.setText(String.valueOf(state.getWinCount()));
-        lostValueLabel.setText(String.valueOf(state.getLostCount()));
-        drawValueLabel.setText(String.valueOf(state.getDrawCount()));
-        averagePointsValueLabel.setText(String.valueOf(state.getAveragePoints()));
-
+        
+        totalGamesValueLabel.setText(String.valueOf(stats.getTotalGamesPlayed()));
+        averagePointsValueLabel.setText(String.valueOf(stats.getAveragePoints()));
         actualPointsValueLabel.setText(String.valueOf(data.getUserDailyPoints()));
         actualCoinsValueLabel.setText(String.valueOf(data.getUserCoins()));
     }
@@ -117,7 +139,8 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        unlimButtonGroup = new javax.swing.ButtonGroup();
+        strategyTypeButtonGroup = new javax.swing.ButtonGroup();
+        autoSrategyButtonGroup = new javax.swing.ButtonGroup();
         backgroundPanel = new BackgroundPanel();
         personPanel = new javax.swing.JPanel();
         personComboBox = new javax.swing.JComboBox<>();
@@ -150,6 +173,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         actualCoinsValueLabel = new javax.swing.JLabel();
         actualPointsLabel = new javax.swing.JLabel();
         actualPointsValueLabel = new javax.swing.JLabel();
+        resetStatsButton = new javax.swing.JButton();
         controlButtonsPanel = new javax.swing.JPanel();
         startButton = new javax.swing.JButton();
         hardStopButton = new javax.swing.JButton();
@@ -169,18 +193,36 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         mainMenu = new javax.swing.JMenu();
         checkStatusMenuItem = new javax.swing.JMenuItem();
         codeMenuItem = new javax.swing.JMenuItem();
-        personMenu = new javax.swing.JMenu();
-        manageMenuItem = new javax.swing.JMenuItem();
+        optionsMenu = new javax.swing.JMenu();
+        triviaMenu = new javax.swing.JMenu();
+        anonymModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        strategyMenu = new javax.swing.JMenu();
+        passiveModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        maxUnlimOnlyCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        getOnTopRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        stayInTopRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        usePointsDeltaCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        setPointsDeltaMenuItem = new javax.swing.JMenuItem();
+        advancedMenu = new javax.swing.JMenu();
+        ridesMenu = new javax.swing.JMenu();
+        playRidesCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        setNosDelayMenuItem = new javax.swing.JMenuItem();
+        showNosDelayMenuItem = new javax.swing.JMenuItem();
+        humanImitationCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Trivia solver");
+        setTitle("Trivia solver [GalaxyChatSoft edition]");
         setMinimumSize(new java.awt.Dimension(750, 422));
         setResizable(false);
+        setType(isUtilityMode ? Window.Type.UTILITY : Window.Type.NORMAL);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
+            }
+            public void windowIconified(java.awt.event.WindowEvent evt) {
+                formWindowIconified(evt);
             }
         });
 
@@ -376,48 +418,53 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         actualPointsValueLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         actualPointsValueLabel.setText("-");
 
+        resetStatsButton.setText("Reset");
+        resetStatsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resetStatsButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout statsPanelLayout = new javax.swing.GroupLayout(statsPanel);
         statsPanel.setLayout(statsPanelLayout);
         statsPanelLayout.setHorizontalGroup(
             statsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(statsPanelLayout.createSequentialGroup()
+                .addGap(119, 119, 119)
+                .addComponent(resetStatsButton)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(statsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(statsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(statsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(statsPanelLayout.createSequentialGroup()
-                        .addGroup(statsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(statsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(statsPanelLayout.createSequentialGroup()
-                                .addComponent(winLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(winValueLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statsPanelLayout.createSequentialGroup()
-                                .addComponent(drawLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(drawValueLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(statsPanelLayout.createSequentialGroup()
-                                .addComponent(totalGamesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(totalGamesValueLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statsPanelLayout.createSequentialGroup()
-                                .addComponent(averagePointsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(averagePointsValueLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(statsPanelLayout.createSequentialGroup()
-                                .addComponent(lostLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lostValueLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addContainerGap())
+                        .addComponent(winLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(winValueLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statsPanelLayout.createSequentialGroup()
+                        .addComponent(drawLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(drawValueLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(statsPanelLayout.createSequentialGroup()
+                        .addComponent(totalGamesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(totalGamesValueLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statsPanelLayout.createSequentialGroup()
+                        .addComponent(averagePointsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(averagePointsValueLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(statsPanelLayout.createSequentialGroup()
+                        .addComponent(lostLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lostValueLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statsPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(62, 62, 62))))
-            .addGroup(statsPanelLayout.createSequentialGroup()
-                .addGap(50, 50, 50)
-                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(statsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(56, 56, 56))
+                    .addGroup(statsPanelLayout.createSequentialGroup()
+                        .addGap(44, 44, 44)
+                        .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(54, 54, 54))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statsPanelLayout.createSequentialGroup()
                         .addComponent(actualPointsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -433,7 +480,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
             .addGroup(statsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(statsLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(statsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(totalGamesLabel)
                     .addComponent(totalGamesValueLabel))
@@ -465,7 +512,8 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 .addGroup(statsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(actualCoinsLabel)
                     .addComponent(actualCoinsValueLabel))
-                .addGap(33, 33, 33))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(resetStatsButton))
         );
 
         javax.swing.GroupLayout infoPanelLayout = new javax.swing.GroupLayout(infoPanel);
@@ -558,7 +606,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         strategyModePanel.setPreferredSize(new java.awt.Dimension(225, 95));
         strategyModePanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        unlimButtonGroup.add(autoStrategyRadioButton);
+        strategyTypeButtonGroup.add(autoStrategyRadioButton);
         autoStrategyRadioButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         autoStrategyRadioButton.setForeground(new java.awt.Color(204, 204, 204));
         autoStrategyRadioButton.setSelected(true);
@@ -570,13 +618,13 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         });
         strategyModePanel.add(autoStrategyRadioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(18, 0, -1, 22));
 
-        unlimButtonGroup.add(manualStrategyRadioButton);
+        strategyTypeButtonGroup.add(manualStrategyRadioButton);
         manualStrategyRadioButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         manualStrategyRadioButton.setForeground(new java.awt.Color(204, 204, 204));
         manualStrategyRadioButton.setText("MANUAL");
         manualStrategyRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                strategyRadioButtonActionPerformed(evt);
+                manualStrategyRadioButtonActionPerformed(evt);
             }
         });
         strategyModePanel.add(manualStrategyRadioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(108, 0, -1, -1));
@@ -641,18 +689,16 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
         backgroundPanel.add(strategyModePanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(367, 43, -1, -1));
 
-        headlessModeCheckBox.setSelected(true);
+        headlessModeCheckBox.setSelected(state.getChromeArgs().isHeadlessMode());
         headlessModeCheckBox.setText("headless");
-        headlessModeCheckBox.setEnabled(options.isIsHeadlessModeAvailable());
-        headlessModeCheckBox.setVisible(options.isIsHeadlessModeAvailable());
-
-        state.setIsHeadless(true);
+        headlessModeCheckBox.setEnabled(!state.getChromeArgs().isHeadlessMode());
+        headlessModeCheckBox.setVisible(!state.getChromeArgs().isHeadlessMode());
         headlessModeCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 headlessModeCheckBoxActionPerformed(evt);
             }
         });
-        backgroundPanel.add(headlessModeCheckBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(384, 10, 85, -1));
+        backgroundPanel.add(headlessModeCheckBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(384, 17, 85, -1));
 
         mainMenu.setText("Menu");
 
@@ -674,20 +720,131 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
         menuBar.add(mainMenu);
 
-        personMenu.setText("Person");
-        personMenu.setEnabled(false);
-        personMenu.setVisible(false);
+        optionsMenu.setText("Options");
 
-        manageMenuItem.setText("Manage");
-        manageMenuItem.setToolTipText("");
-        manageMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        triviaMenu.setText("Trivia");
+
+        anonymModeCheckBoxMenuItem.setSelected(true);
+        anonymModeCheckBoxMenuItem.setText("Play anonymous");
+        anonymModeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                manageMenuItemActionPerformed(evt);
+                anonymModeCheckBoxMenuItemActionPerformed(evt);
             }
         });
-        personMenu.add(manageMenuItem);
+        state.setIsAnonymous(true);
+        triviaMenu.add(anonymModeCheckBoxMenuItem);
 
-        menuBar.add(personMenu);
+        strategyMenu.setText("Strategy");
+
+        passiveModeCheckBoxMenuItem.setSelected(true);
+        passiveModeCheckBoxMenuItem.setText("Passive mode");
+        state.setIsPassive(true);
+        passiveModeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                passiveModeCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        strategyMenu.add(passiveModeCheckBoxMenuItem);
+
+        maxUnlimOnlyCheckBoxMenuItem.setText("Max unlim only");
+        state.setIsMaxUnlimOnly(false);
+        maxUnlimOnlyCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                maxUnlimOnlyCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        strategyMenu.add(maxUnlimOnlyCheckBoxMenuItem);
+
+        autoSrategyButtonGroup.add(getOnTopRadioButtonMenuItem);
+        getOnTopRadioButtonMenuItem.setText("Get on TOP");
+        getOnTopRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                getOnTopRadioButtonMenuItemActionPerformed(evt);
+            }
+        });
+        strategyMenu.add(getOnTopRadioButtonMenuItem);
+
+        autoSrategyButtonGroup.add(stayInTopRadioButtonMenuItem);
+        stayInTopRadioButtonMenuItem.setSelected(true);
+        stayInTopRadioButtonMenuItem.setText("Stay in TOP");
+        stayInTopRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                stayInTopRadioButtonMenuItemActionPerformed(evt);
+            }
+        });
+        strategyMenu.add(stayInTopRadioButtonMenuItem);
+
+        usePointsDeltaCheckBoxMenuItem.setSelected(true);
+        usePointsDeltaCheckBoxMenuItem.setText("Use points delta");
+        usePointsDeltaCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                usePointsDeltaCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        strategyMenu.add(usePointsDeltaCheckBoxMenuItem);
+
+        setPointsDeltaMenuItem.setText("Set points delta");
+        setPointsDeltaMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                setPointsDeltaMenuItemActionPerformed(evt);
+            }
+        });
+        strategyMenu.add(setPointsDeltaMenuItem);
+
+        strategyMenu.setEnabled(false);
+        strategyMenu.setVisible(false);
+
+        triviaMenu.add(strategyMenu);
+
+        optionsMenu.add(triviaMenu);
+
+        advancedMenu.setText("Advanced");
+        advancedMenu.setEnabled(false);
+
+        ridesMenu.setText("Rides");
+
+        playRidesCheckBoxMenuItem.setSelected(false);
+        playRidesCheckBoxMenuItem.setText("Play rides");
+        state.setShouldPlayRides(false);
+        playRidesCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                playRidesCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        ridesMenu.add(playRidesCheckBoxMenuItem);
+
+        setNosDelayMenuItem.setText("Set NOS delay");
+        setNosDelayMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                setNosDelayMenuItemActionPerformed(evt);
+            }
+        });
+        ridesMenu.add(setNosDelayMenuItem);
+
+        showNosDelayMenuItem.setText("Show NOS delay");
+        showNosDelayMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showNosDelayMenuItemActionPerformed(evt);
+            }
+        });
+        ridesMenu.add(showNosDelayMenuItem);
+
+        advancedMenu.add(ridesMenu);
+
+        humanImitationCheckBoxMenuItem.setSelected(state.getTriviaArgs().hasHumanImitation());
+        humanImitationCheckBoxMenuItem.setText("Human imitation");
+        humanImitationCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                humanImitationCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        advancedMenu.add(humanImitationCheckBoxMenuItem);
+
+        advancedMenu.setVisible(false);
+
+        optionsMenu.add(advancedMenu);
+
+        menuBar.add(optionsMenu);
 
         helpMenu.setText("Help");
 
@@ -736,24 +893,8 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         Component component = new JLabel();
         JScrollPane jScrollPane = new JScrollPane(component);
         jScrollPane.setBorder(BorderFactory.createEmptyBorder());
-        JTextArea jTextArea = new JTextArea(
-                "\n"
-                + "Galaxy Trivia solver helps you to win in the \n"
-                + "Trivia game and get into the daily top 10 list.\n\n"
-                + "For use select person (add new if no persons), \n"
-                + "choose server and topic you want to play \n"
-                + "then click start button.\n"
-                + "\n\n"
-                + "v1.0.2.1-GCS\n"
-                + "[thevalidator]\n"
-                + "2023, April"
-                + "\n\nRunning on " + OSValidator.OS_NAME + "\n"
-                + "Powered by Java");
-        jTextArea.setColumns(30);
-        jTextArea.setLineWrap(true);
-        jTextArea.setRows(16);
-        jTextArea.setEditable(false);
-        jScrollPane.setViewportView(jTextArea);
+        JEditorPane jtp = new AboutPanel();
+        jScrollPane.setViewportView(jtp);
         JLabel header = new JLabel();
         header.setText("Trivia solver (\"Galaxy Chat Soft\" edition)");
         header.setFont(new java.awt.Font("Segoe UI", 1, 14));
@@ -764,10 +905,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     }//GEN-LAST:event_aboutMenuItemActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        if (driver != null) {
-            driver.quit();
-        }
-        if (worker != null && !worker.isCancelled()) {
+        if (worker != null && !worker.isDone()) {
             worker.cancel(true);
         }
     }//GEN-LAST:event_formWindowClosing
@@ -781,54 +919,41 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     }//GEN-LAST:event_checkStatusMenuItemActionPerformed
 
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
-        if (task == null || !task.isActive()) {
+        if (task == null || !task.isRunning()) {
             if (!PERSONAL_CODE.equals(Identifier.ERROR_KEY)) {
                 if (userStorage.getUsers().isEmpty()) {
                     appendToPane("ERROR: NO PERSON(S)");
                     return;
                 }
-                personComboBox.setEnabled(false);
-                topicComboBox.setEnabled(false);
-                //strategyBlockEnable(false);
                 startTask();
             } else {
                 appendToPane("ERROR: NO REGISTERED USER KEY DATA");
             }
-            //hardStopButton.setEnabled(true);
         } else {
+            appendToPane("Will stop after finishing playing");
             stopTask();
         }
     }//GEN-LAST:event_startButtonActionPerformed
 
     private void hardStopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hardStopButtonActionPerformed
-        // TODO add your handling code here:
-        setStartButtonStatus(0);
-        if (worker != null && !worker.isCancelled()) {
-            //hardStopButton.setEnabled(false);
+        if (worker != null && !worker.isDone()) {
+            task.interrupt();
+            worker.cancel(true);
 
             personComboBox.setEnabled(true);
             topicComboBox.setEnabled(true);
-            worker.cancel(true);
-
         }
-        //appendToPane("STOPPED - " + Thread.currentThread().getName());
-        setStartButtonStatus(-1);
     }//GEN-LAST:event_hardStopButtonActionPerformed
 
     private void headlessModeCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_headlessModeCheckBoxActionPerformed
         if (headlessModeCheckBox.isSelected()) {
-            state.setIsHeadless(true);
+            state.getChromeArgs().setIsHeadlessMode(true);
             appendToPane("HEADLESS MODE ON");
         } else {
-            state.setIsHeadless(false);
+            state.getChromeArgs().setIsHeadlessMode(false);
             appendToPane("HEADLESS MODE OFF");
         }
     }//GEN-LAST:event_headlessModeCheckBoxActionPerformed
-
-    private void manageMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_manageMenuItemActionPerformed
-        // TODO add your handling code here:
-        throw new UnsupportedOperationException("Not supported yet");
-    }//GEN-LAST:event_manageMenuItemActionPerformed
 
     private void deletePersonButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deletePersonButtonActionPerformed
         JPanel panel = new JPanel(new GridLayout(0, 1));
@@ -898,23 +1023,116 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         showPersonalCode();
     }//GEN-LAST:event_codeMenuItemActionPerformed
 
+    private void anonymModeCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_anonymModeCheckBoxMenuItemActionPerformed
+        if (anonymModeCheckBoxMenuItem.isSelected()) {
+            appendToPane("ANONYMOUS MODE ON");
+            state.setIsAnonymous(true);
+        } else {
+            appendToPane("ANONYMOUS MODE OFF");
+            state.setIsAnonymous(false);
+        }
+    }//GEN-LAST:event_anonymModeCheckBoxMenuItemActionPerformed
+
+    private void humanImitationCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_humanImitationCheckBoxMenuItemActionPerformed
+        if (humanImitationCheckBoxMenuItem.isSelected()) {
+            appendToPane("HUMAN IMITATION MODE ON");
+            state.setIsAnonymous(true);
+        } else {
+            appendToPane("HUMAN IMITATION MODE OFF");
+            state.setIsAnonymous(false);
+        }
+    }//GEN-LAST:event_humanImitationCheckBoxMenuItemActionPerformed
+
+    private void playRidesCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playRidesCheckBoxMenuItemActionPerformed
+        if (playRidesCheckBoxMenuItem.isSelected()) {
+            appendToPane("PLAY RIDES MODE ON");
+            state.setShouldPlayRides(true);
+        } else {
+            appendToPane("PLAY RIDES MODE OFF");
+            state.setShouldPlayRides(false);
+        }
+    }//GEN-LAST:event_playRidesCheckBoxMenuItemActionPerformed
+
+    private void showNosDelayMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showNosDelayMenuItemActionPerformed
+        appendToPane("NOS delay: " + state.getNosDelayTime() + " ms");
+    }//GEN-LAST:event_showNosDelayMenuItemActionPerformed
+
+    private void stayInTopRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stayInTopRadioButtonMenuItemActionPerformed
+        setAutoStrategyMode();
+    }//GEN-LAST:event_stayInTopRadioButtonMenuItemActionPerformed
+
+    private void getOnTopRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getOnTopRadioButtonMenuItemActionPerformed
+        setAutoStrategyMode();
+    }//GEN-LAST:event_getOnTopRadioButtonMenuItemActionPerformed
+
+    private void manualStrategyRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_manualStrategyRadioButtonActionPerformed
+        strategyRadioButtonActionPerformed(evt);
+    }//GEN-LAST:event_manualStrategyRadioButtonActionPerformed
+
+    private void passiveModeCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passiveModeCheckBoxMenuItemActionPerformed
+        if (passiveModeCheckBoxMenuItem.isSelected()) {
+            appendToPane("PASSIVE MODE ON");
+            state.setIsPassive(true);
+        } else {
+            appendToPane("PASSIVE MODE OFF");
+            state.setIsPassive(false);
+        }
+    }//GEN-LAST:event_passiveModeCheckBoxMenuItemActionPerformed
+
+    private void maxUnlimOnlyCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maxUnlimOnlyCheckBoxMenuItemActionPerformed
+        if (maxUnlimOnlyCheckBoxMenuItem.isSelected()) {
+            appendToPane("BUY MAX UNLIM ONLY MODE ON");
+            state.setIsMaxUnlimOnly(true);
+        } else {
+            appendToPane("BUY MAX UNLIM ONLY MODE OFF");
+            state.setIsMaxUnlimOnly(false);
+        }
+    }//GEN-LAST:event_maxUnlimOnlyCheckBoxMenuItemActionPerformed
+
+    private void resetStatsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetStatsButtonActionPerformed
+        stats = new Statistic();
+        updateStats();
+    }//GEN-LAST:event_resetStatsButtonActionPerformed
+
+    private void usePointsDeltaCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_usePointsDeltaCheckBoxMenuItemActionPerformed
+        // TODO add your handling code here:
+        appendToPane("Not supported in this version");
+    }//GEN-LAST:event_usePointsDeltaCheckBoxMenuItemActionPerformed
+
+    private void setPointsDeltaMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setPointsDeltaMenuItemActionPerformed
+        // TODO add your handling code here:
+        appendToPane("Not supported in this version");
+    }//GEN-LAST:event_setPointsDeltaMenuItemActionPerformed
+
+    private void setNosDelayMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setNosDelayMenuItemActionPerformed
+        // TODO add your handling code here:
+        appendToPane("Not supported in this version");
+    }//GEN-LAST:event_setNosDelayMenuItemActionPerformed
+
+    private void formWindowIconified(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowIconified
+        if (isUtilityMode && OSValidator.IS_WINDOWS) {
+            this.setVisible(false);
+        }
+        this.setState(ICONIFIED);
+    }//GEN-LAST:event_formWindowIconified
+
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        boolean isHeadlessModeAvailable = false;
-        if (args != null && args.length > 0) {
-            for (String a: args) {
-                if (a.equals("-h")) {
-                    isHeadlessModeAvailable = true;
-                }
-            }
-        }
-        Option options = new Option(isHeadlessModeAvailable);
+
+        TriviaArgument triviaArgs = new TriviaArgument();
+        ChromeDriverArgument chromeArgs = new ChromeDriverArgument();
+        JCommander commander = JCommander.newBuilder()
+                .addObject(triviaArgs)
+                .addObject(chromeArgs)
+                .build();
+        commander.parse(args);
+
         java.awt.EventQueue.invokeLater(() -> {
             UIManager.put("Button.arc", 15);
             FlatDarkLaf.setup();
-            new TriviaMainWindow(options).setVisible(true);
+            new TriviaMainWindow(triviaArgs, chromeArgs).setVisible(true);
         });
     }
 
@@ -925,6 +1143,9 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JLabel actualPointsLabel;
     private javax.swing.JLabel actualPointsValueLabel;
     private javax.swing.JButton addPersonButton;
+    private javax.swing.JMenu advancedMenu;
+    private javax.swing.JCheckBoxMenuItem anonymModeCheckBoxMenuItem;
+    private javax.swing.ButtonGroup autoSrategyButtonGroup;
     private javax.swing.JRadioButton autoStrategyRadioButton;
     private javax.swing.JLabel averagePointsLabel;
     private javax.swing.JLabel averagePointsValueLabel;
@@ -935,9 +1156,11 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JButton deletePersonButton;
     private javax.swing.JLabel drawLabel;
     private javax.swing.JLabel drawValueLabel;
+    private javax.swing.JRadioButtonMenuItem getOnTopRadioButtonMenuItem;
     private javax.swing.JButton hardStopButton;
     private javax.swing.JCheckBox headlessModeCheckBox;
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JCheckBoxMenuItem humanImitationCheckBoxMenuItem;
     private javax.swing.JPanel infoPanel;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
@@ -948,38 +1171,49 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JLabel lostLabel;
     private javax.swing.JLabel lostValueLabel;
     private javax.swing.JMenu mainMenu;
-    private javax.swing.JMenuItem manageMenuItem;
     private javax.swing.JRadioButton manualStrategyRadioButton;
+    private javax.swing.JCheckBoxMenuItem maxUnlimOnlyCheckBoxMenuItem;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JMenu optionsMenu;
+    private javax.swing.JCheckBoxMenuItem passiveModeCheckBoxMenuItem;
     private javax.swing.JComboBox<String> personComboBox;
     private javax.swing.JLabel personLabel;
-    private javax.swing.JMenu personMenu;
     private javax.swing.JPanel personPanel;
+    private javax.swing.JCheckBoxMenuItem playRidesCheckBoxMenuItem;
+    private javax.swing.JButton resetStatsButton;
+    private javax.swing.JMenu ridesMenu;
     private javax.swing.JLabel serverLabel;
+    private javax.swing.JMenuItem setNosDelayMenuItem;
+    private javax.swing.JMenuItem setPointsDeltaMenuItem;
+    private javax.swing.JMenuItem showNosDelayMenuItem;
     private javax.swing.JButton startButton;
     private javax.swing.JLabel statsLabel;
     private javax.swing.JPanel statsPanel;
+    private javax.swing.JRadioButtonMenuItem stayInTopRadioButtonMenuItem;
+    private javax.swing.JMenu strategyMenu;
     private javax.swing.JPanel strategyModePanel;
+    private javax.swing.ButtonGroup strategyTypeButtonGroup;
     private javax.swing.JComboBox<String> topicComboBox;
     private javax.swing.JLabel topicLabel;
     private javax.swing.JLabel totalGamesLabel;
     private javax.swing.JLabel totalGamesValueLabel;
+    private javax.swing.JMenu triviaMenu;
     private javax.swing.JLabel unlimApproxPointsLabel;
     private javax.swing.JLabel unlimApproxPointsValueLabel;
-    private javax.swing.ButtonGroup unlimButtonGroup;
     private javax.swing.JLabel unlimHoursLabel;
     private javax.swing.JComboBox<Integer> unlimHoursValueComboBox;
     private javax.swing.JLabel unlimMinutesLabel;
     private javax.swing.JComboBox<Integer> unlimMinutesValueComboBox;
     private javax.swing.JLabel unlimTotalPriceLabel;
     private javax.swing.JLabel unlimTotalPriceValueLabel;
+    private javax.swing.JCheckBoxMenuItem usePointsDeltaCheckBoxMenuItem;
     private javax.swing.JLabel winLabel;
     private javax.swing.JLabel winValueLabel;
     // End of variables declaration//GEN-END:variables
 
     public void appendToPane(String msg) {
         try {
-            String timestamp = LocalDateTime.now().format(formatter);
+            String timestamp = formatter.getFormattedDateTime(LocalDateTime.now());
             String line = "[" + timestamp + "] - " + msg + "\n";
             cleanConsole();
             logTextArea.append(line);
@@ -1014,16 +1248,18 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
     private void setStrategy() {
         boolean b;
-        if (unlimButtonGroup.isSelected(autoStrategyRadioButton.getModel())) {
+        if (strategyTypeButtonGroup.isSelected(autoStrategyRadioButton.getModel())) {
             b = false;
+            strategyMenu.setEnabled(true);
+            strategyMenu.setVisible(true);
             appendToPane("AUTO strategy enabled");
         } else {
             b = true;
+            strategyMenu.setEnabled(false);
+            strategyMenu.setVisible(false);
             appendToPane("MANUAL strategy enabled");
         }
 
-        state.setShouldStayInTop(!b); //!b
-        state.setShouldGetOnTop(false);
         unlimHoursValueComboBox.setEnabled(b);
         unlimHoursValueComboBox.setVisible(b);
         unlimHoursLabel.setVisible(b);
@@ -1079,53 +1315,55 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     }
 
     private void startTask() {
-        setStartButtonStatus(0);
-        User user = userStorage.getUser(personComboBox.getSelectedIndex());
-        int topicIndex = topicComboBox.getSelectedIndex();
-        state.setUser(user);
-        state.setTopicIndex(topicIndex);
-        if (manualStrategyRadioButton.isSelected()) {
-            state.setIsManualStrategy(true);
-            state.setShouldStayInTop(false);
-            state.setShouldGetOnTop(false);
-            int hours = Integer.parseInt(String.valueOf(unlimHoursValueComboBox.getSelectedItem()));
-            int minutes = Integer.parseInt(String.valueOf(unlimMinutesValueComboBox.getSelectedItem()));
-            state.setUnlimStrategyTime(hours * 60 + minutes);
-        } else {
-            state.setIsManualStrategy(false);
-            state.setShouldStayInTop(true);
-            state.setShouldGetOnTop(false);
+        try {
+            setStartButtonStatus(1);
+            configureState();
+
+            if (task == null) {
+                Solver solver = new SolverRestImpl(new Connector(PERSONAL_CODE));
+                task = new SimpleTaskImpl(this, solver);
+            }
+            task.setState(state);
+
+            worker = new SwingWorker<Void, Void>() {
+                @Override
+                protected Void doInBackground() throws Exception {
+                    try {
+                        task.run();
+
+                    } catch (Exception e) {
+                        appendToPane(e.getMessage());
+                        logger.error(ExceptionUtil.getFormattedDescription(e));
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void done() {
+                    appendToPane("STOPPED");
+                    setStartButtonStatus(-1);
+                }
+            };
+            worker.execute();
+        } catch (Throwable e) {
+            appendToPane("Internal error, can't start the app!");
+            logger.error(ExceptionUtil.getFormattedDescription(e));
+            setStartButtonStatus(-1);
         }
 
-        if (task == null) {
-            task = new SimpleTaskImpl(state, this);
-        }
-
-        worker = new SwingWorker<Void, Void>() {
-            @Override
-            protected Void doInBackground() throws Exception {
-                task.setIsActive(true);
-                task.run();
-
-                return null;
-            }
-
-            @Override
-            protected void done() {
-                task.hardStopAction();
-            }
-        };
-        worker.execute();
     }
 
     private void stopTask() {
         setStartButtonStatus(0);
-        task.setIsActive(false);
+        task.stop();
     }
 
     public void setStartButtonStatus(int status) {
         switch (status) {
             case 1 -> {
+                personComboBox.setEnabled(false);
+                topicComboBox.setEnabled(false);
+                languageServerComboBox.setEnabled(false);
                 strategyBlockEnable(false);
                 hardStopButton.setEnabled(true);
                 hardStopButton.setVisible(true);
@@ -1134,6 +1372,9 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 startButton.setText("STOP");
             }
             case -1 -> {
+                personComboBox.setEnabled(true);
+                topicComboBox.setEnabled(true);
+                languageServerComboBox.setEnabled(true);
                 strategyBlockEnable(true);
                 hardStopButton.setEnabled(false);
                 hardStopButton.setVisible(false);
@@ -1156,7 +1397,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         unlimHoursValueComboBox.setEnabled(b);
         unlimMinutesValueComboBox.setEnabled(b);
     }
-    
+
     private void showPersonalCode() {
         try {
             String key = UUIDUtil.getUUID();
@@ -1176,6 +1417,107 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         } catch (HeadlessException | IOException | InterruptedException e) {
             appendToPane("ERROR: can't get the personal user code");
             ExceptionUtil.getFormattedDescription(e);
+        }
+    }
+
+    private void configureState() {
+        User user = userStorage.getUser(personComboBox.getSelectedIndex());
+        int topicIndex = topicComboBox.getSelectedIndex();
+        state.setUser(user);
+        state.setTopicIndex(topicIndex);
+        if (manualStrategyRadioButton.isSelected()) {
+            state.setIsManualStrategy(true);
+            state.setShouldStayInTop(false);
+            state.setShouldGetOnTop(false);
+            int hours = Integer.parseInt(String.valueOf(unlimHoursValueComboBox.getSelectedItem()));
+            int minutes = Integer.parseInt(String.valueOf(unlimMinutesValueComboBox.getSelectedItem()));
+            state.setUnlimStrategyTime(hours * 60 + minutes);
+        } else {
+            state.setIsManualStrategy(false);
+            state.setShouldStayInTop(true);
+            state.setShouldGetOnTop(false);
+        }
+    }
+
+    private void setAutoStrategyMode() {
+        if (autoSrategyButtonGroup.isSelected(stayInTopRadioButtonMenuItem.getModel())) {
+            state.setShouldStayInTop(true);
+            state.setShouldGetOnTop(false);
+            appendToPane("STAY IN TOP mode enabled");
+        } else {
+            state.setShouldStayInTop(false);
+            state.setShouldGetOnTop(true);
+            appendToPane("GET ON TOP mode enabled");
+        }
+    }
+
+    private void updateStats() {
+        totalGamesValueLabel.setText(String.valueOf(stats.getTotalGamesPlayed()));
+        winValueLabel.setText(String.valueOf(stats.getWinCount()));
+        lostValueLabel.setText(String.valueOf(stats.getLostCount()));
+        drawValueLabel.setText(String.valueOf(stats.getDrawCount()));
+        averagePointsValueLabel.setText(String.valueOf(stats.getAveragePoints()));
+    }
+
+    private void setUtilityAppMode() {
+        isUtilityMode = true;
+        addTrayIcon();
+    }
+
+    private void addTrayIcon() {
+        if (isUtilityMode && SystemTray.isSupported()) {
+            JFrame w = this;
+            final PopupMenu popup = new PopupMenu();
+            final TrayIcon trayIcon = new TrayIcon(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/tray.png")));
+            final SystemTray tray = SystemTray.getSystemTray();
+
+            MenuItem exitItem = new MenuItem("Exit");
+            exitItem.addActionListener((ActionEvent e) -> {
+                tray.remove(trayIcon);
+                System.exit(0);
+            });
+
+            popup.add(exitItem);
+
+            trayIcon.setPopupMenu(popup);
+
+            trayIcon.addMouseListener(new MouseListener() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getButton() == MouseEvent.BUTTON2) {
+                        w.setVisible(true);
+                        w.setState(NORMAL);
+                        w.toFront();
+                    } else if (e.getButton() == MouseEvent.BUTTON1) {
+                        w.setVisible(false);
+                    }
+                }
+
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    //throw new UnsupportedOperationException("Not supported yet.");
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    //throw new UnsupportedOperationException("Not supported yet.");
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    //throw new UnsupportedOperationException("Not supported yet.");
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    //throw new UnsupportedOperationException("Not supported yet.");
+                }
+            });
+            try {
+                tray.add(trayIcon);
+            } catch (AWTException e) {
+                logger.error("Tray icon could not be added: {}", e.getMessage());
+            }
         }
     }
 }

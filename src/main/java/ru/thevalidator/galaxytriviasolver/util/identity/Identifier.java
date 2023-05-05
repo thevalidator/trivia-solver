@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2022 thevalidator
  */
-package ru.thevalidator.galaxytriviasolver.identity;
+package ru.thevalidator.galaxytriviasolver.util.identity;
 
 import java.io.IOException;
 import java.nio.file.Files;

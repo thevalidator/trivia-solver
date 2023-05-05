@@ -1,113 +1,164 @@
 /*
- * Copyright (C) 2022 thevalidator
+ * Copyright (C) 2023 thevalidator
  */
 package ru.thevalidator.galaxytriviasolver.service.impl;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import ru.thevalidator.galaxytriviasolver.exception.CanNotCreateWebdriverException;
+import ru.thevalidator.galaxytriviasolver.exception.ExceptionUtil;
 import ru.thevalidator.galaxytriviasolver.exception.LoginErrorException;
-import ru.thevalidator.galaxytriviasolver.exception.TokenNotFoundErrorException;
-import ru.thevalidator.galaxytriviasolver.gui.v2.TriviaMainWindow;
-import ru.thevalidator.galaxytriviasolver.module.base.GalaxyBaseRobot;
-import ru.thevalidator.galaxytriviasolver.module.base.impl.GalaxyBaseRobotImpl;
+import ru.thevalidator.galaxytriviasolver.exception.LoginFailException;
+import ru.thevalidator.galaxytriviasolver.module.robot.impl.GalaxyBaseRobotImpl;
 import ru.thevalidator.galaxytriviasolver.module.trivia.State;
+import ru.thevalidator.galaxytriviasolver.module.trivia.solver.Solver;
+import ru.thevalidator.galaxytriviasolver.notification.Observer;
 import ru.thevalidator.galaxytriviasolver.service.Task;
+import ru.thevalidator.galaxytriviasolver.util.webdriver.WebDriverUtil;
+import ru.thevalidator.galaxytriviasolver.util.webdriver.impl.ChromeWebDriverUtilImpl;
 
-/**
- * @author thevalidator <the.validator@yandex.ru>
- */
-public class SimpleTaskImpl implements Runnable, Task {
+public class SimpleTaskImpl implements Task {
 
     private static final Logger logger = LogManager.getLogger(SimpleTaskImpl.class);
-    private static final int TIME_TO_SLEEP_IN_SECONDS = 60;
-    public static volatile boolean isActive = false;
-    private final State state;
-    private final TriviaMainWindow window;
-    private GalaxyBaseRobot robot;
+    private static final int TIME_TO_SLEEP_IN_SECONDS = 120;
+    private final AtomicBoolean isRunning = new AtomicBoolean(false);
+    private Thread worker;
+    private final Observer observer;
+    private GalaxyBaseRobotImpl robot;
+    private State state;
+    private final Solver solver;
 
-    public SimpleTaskImpl(State state, TriviaMainWindow window) {
-        this.state = state;
-        this.window = window;
-        this.robot = new GalaxyBaseRobotImpl(state, this);
-        isActive = false;
-    }
-
-    @Override
-    public boolean isActive() {
-        return isActive;
-    }
-
-    @Override
-    public void setIsActive(boolean value) {
-        synchronized (this) {
-            isActive = value;
-        }
-    }
-    
-    @Override
-    public void hardStopAction() {
-        isActive = false;
-        robot.terminate();
-        ((GalaxyBaseRobotImpl) robot).unregisterObserver(window);
-        window.setStartButtonStatus(-1);
+    public SimpleTaskImpl(Observer observer, Solver solver) {
+        this.observer = observer;
+        this.solver = solver;
     }
 
     @Override
     public void run() {
-        window.setStartButtonStatus(1);
-        window.appendToPane("STARTED");
-        //GalaxyBaseRobot robot = new GalaxyBaseRobotImpl(state);
-        ((GalaxyBaseRobotImpl) robot).registerObserver(window);
-        int sleepTimeInSeconds = TIME_TO_SLEEP_IN_SECONDS;
-        
-//        for (int i = 0; i < 10; i++) {
-//            try {
-//                TimeUnit.SECONDS.sleep(i);
-//            } catch (InterruptedException ex) {
-//                java.util.logging.Logger.getLogger(SimpleTaskImpl.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
-        
-        while (isActive) {
+        observer.onUpdateRecieve("STARTED");
+        worker = Thread.currentThread();
+        isRunning.set(true);
+        WebDriverUtil driverUtil = new ChromeWebDriverUtilImpl();
+        WebDriver driver = null;
+
+        robot = new GalaxyBaseRobotImpl(solver, this, driver, state);
+        ((GalaxyBaseRobotImpl) robot).registerObserver(observer);
+
+        int sleepTimeInSeconds = 60;
+        int loginFailCount = 0;
+        int maxLoginAttempts = 15;
+        while (isRunning()) {
             try {
+                driver = driverUtil.createWebDriver(state.getChromeArgs());
+                ((GalaxyBaseRobotImpl) robot).setDriver(driver);
                 robot.login();
-                robot.openMail();
+
+                if (state.getTriviaArgs().hasCheckMailOption()) {
+                    robot.openMail();
+                }
+
                 robot.openGames();
                 robot.selectTriviaGame();
+
+                //play Trivia
                 if (robot.startTriviaGame()) {
                     robot.playTriviaGame();
                 }
-                sleepTimeInSeconds = robot.getSleepTime();
+
+                if (isRunning()) {
+                    sleepTimeInSeconds = robot.getSleepTime();
+                }
+
+                if (state.getTriviaArgs().hasLogOffOption()) {
+                    robot.logoff();
+                    try {
+                        TimeUnit.SECONDS.sleep(2);
+                    } catch (InterruptedException ignored) {
+                    }
+                }
+            } catch (CanNotCreateWebdriverException e) {
+                logger.error(ExceptionUtil.getFormattedDescription(e));
+                String name = ((GalaxyBaseRobotImpl) robot).getFileNameTimeStamp() + "_CRITICAL";
+                ((GalaxyBaseRobotImpl) robot).saveDataToFile(name + ".log", e);
+                observer.onUpdateRecieve("CRITICAL ERROR, THE APP WILL STOP");
+                observer.onUpdateRecieve(e.getMessage());
+                stop();
+                break;
+            } catch (LoginFailException e) {
+                logger.error(ExceptionUtil.getFormattedDescription(e));
+                observer.onUpdateRecieve("LOGIN FAIL! Reason: " + e.getMessage());
+                stop();
+                break;
+            } catch (LoginErrorException e) {
+                logger.error(ExceptionUtil.getFormattedDescription(e));
+                String fileName = ((GalaxyBaseRobotImpl) robot).getFileNameTimeStamp() + "_login";
+                ((GalaxyBaseRobotImpl) robot).saveDataToFile(fileName + ".log", e);
+                WebDriverUtil.takeScreenshot(driver, fileName + ".png");
+                if (++loginFailCount == maxLoginAttempts) {
+                    observer.onUpdateRecieve("LOGIN FAIL! couldn't log in " + maxLoginAttempts + " times in a row, stopping the app");
+                    stop();
+                    break;
+                } else {
+                    int minutesToWait = (2 * loginFailCount) + ((loginFailCount - 1) * 10);
+                    observer.onUpdateRecieve("LOGIN ERROR: try " + loginFailCount + " was unsuccessfull, next try in " + minutesToWait
+                            + " mins\nreason: " + e.getMessage());
+                    sleepTimeInSeconds = minutesToWait * 60;
+                }
             } catch (Exception e) {
-                //window.appendToPane("ERROR\n>>>>\n" + ExceptionUtil.getFormattedDescription(e) + "\n<<<<\n");
-                logger.error(e.getMessage());
-                String filename = ((GalaxyBaseRobotImpl) robot).getFileNameTimeStamp();
-                ((GalaxyBaseRobotImpl) robot).takeScreenshot(filename + ".png");
-                ((GalaxyBaseRobotImpl) robot).saveDataToFile(filename, e);
-                ((GalaxyBaseRobotImpl) robot).savePageSourceToFile(filename);
-                if ((e instanceof LoginErrorException) || (e instanceof TokenNotFoundErrorException)) {
-                    window.appendToPane("ERROR: " + e.getMessage());
-                    isActive = false;
+                logger.error(ExceptionUtil.getFormattedDescription(e));
+                String name = ((GalaxyBaseRobotImpl) robot).getFileNameTimeStamp();
+                ((GalaxyBaseRobotImpl) robot).saveDataToFile(name + ".log", e);
+                observer.onUpdateRecieve("UNEXPECTED ERROR");
+                if (!WebDriverUtil.isTerminated((RemoteWebDriver) driver)) {
+                    WebDriverUtil.savePageSourceToFile(driver, name + "_src.html");
+                    WebDriverUtil.takeScreenshot(driver, name + ".png");
                 }
             } finally {
-                robot.terminate();
-                if (isActive) {
+                terminate(driver);
+                if (isRunning()) {
                     try {
-                        int time = 120 + sleepTimeInSeconds;
+                        int time = sleepTimeInSeconds;
                         sleepTimeInSeconds = TIME_TO_SLEEP_IN_SECONDS;
                         String message = time >= 60 ? (String.valueOf(time / 60) + " min") : (String.valueOf(time) + " sec");
-                        window.appendToPane("SLEEPING " + message);
+                        observer.onUpdateRecieve("SLEEPING " + message);
                         TimeUnit.SECONDS.sleep(time);
-                    } catch (InterruptedException ex) {
-                        //return;
+                    } catch (InterruptedException ignored) {
                     }
                 } else {
-                    ((GalaxyBaseRobotImpl) robot).unregisterObserver(window);
-                    window.setStartButtonStatus(-1);
-                    window.appendToPane("STOPPED - " + Thread.currentThread().getName());
+                    ((GalaxyBaseRobotImpl) robot).unregisterObserver(observer);
                 }
             }
+        }
+    }
+
+    @Override
+    public void stop() {
+        isRunning.set(false);
+    }
+
+    @Override
+    public void interrupt() {
+        isRunning.set(false);
+        worker.interrupt();
+    }
+
+    @Override
+    public boolean isRunning() {
+        return isRunning.get();
+    }
+
+    @Override
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    private void terminate(WebDriver driver) {
+        if (driver != null && !WebDriverUtil.isTerminated((RemoteWebDriver) driver)) {
+            driver.quit();
         }
     }
 

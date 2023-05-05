@@ -26,8 +26,8 @@ public class TriviaUserStatsData {
         this.firstPlacePoints = 0;
     }
 
-    public boolean isUnlimAvailable(Unlim type, int times) {
-        return (userCoins - (type.getPrice() * times)) > 0;
+    public boolean isUnlimAvailable(Unlim type) {
+        return (userCoins - type.getPrice()) > 0;
     }
 
     public int getUserDailyPoints() {
@@ -68,6 +68,10 @@ public class TriviaUserStatsData {
 
     public void setSecondPlacePoints(int secondPlacePoints) {
         this.secondPlacePoints = secondPlacePoints;
+    }
+    
+    public int getDiffWithLast() {
+        return this.tenthPlacePoints - this.userDailyPoints;
     }
 
 }
