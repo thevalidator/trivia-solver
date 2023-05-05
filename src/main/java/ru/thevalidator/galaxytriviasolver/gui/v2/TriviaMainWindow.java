@@ -23,6 +23,7 @@ import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.swing.BorderFactory;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -889,25 +890,8 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         Component component = new JLabel();
         JScrollPane jScrollPane = new JScrollPane(component);
         jScrollPane.setBorder(BorderFactory.createEmptyBorder());
-        JTextArea jTextArea = new JTextArea(
-                "\n"
-                + "Galaxy Trivia solver helps you to win in the \n"
-                + "Trivia game and get into the daily top 10 list.\n\n"
-                + "For use select person (add new if no persons), \n"
-                + "choose server and topic you want to play \n"
-                + "then click start button.\n"
-                + "\n\n"
-                + "v1.0.5.0-PVT\n"
-                + "[thevalidator]\n"
-                + "2023, May"
-                + "\n\nRunning on " + OSValidator.OS_NAME + "\n"
-                + "Powered by Java\n"
-                + "Photo by Andrew Kliatskyi on Unsplash.com");
-        jTextArea.setColumns(30);
-        jTextArea.setLineWrap(true);
-        jTextArea.setRows(16);
-        jTextArea.setEditable(false);
-        jScrollPane.setViewportView(jTextArea);
+        JEditorPane content = new AboutWindowPanel();
+        jScrollPane.setViewportView(content);
         JLabel header = new JLabel();
         header.setText("Trivia solver");
         header.setFont(new java.awt.Font("Segoe UI", 1, 14));
