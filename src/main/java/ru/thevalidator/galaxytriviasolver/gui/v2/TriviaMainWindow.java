@@ -1044,17 +1044,11 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     }//GEN-LAST:event_humanImitationCheckBoxMenuItemActionPerformed
 
     private void playRidesCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playRidesCheckBoxMenuItemActionPerformed
-        if (playRidesCheckBoxMenuItem.isSelected()) {
-            appendToPane("PLAY RIDES MODE ON");
-            state.setShouldPlayRides(true);
-        } else {
-            appendToPane("PLAY RIDES MODE OFF");
-            state.setShouldPlayRides(false);
-        }
+        appendToPane("Not supported in this version");
     }//GEN-LAST:event_playRidesCheckBoxMenuItemActionPerformed
 
     private void showNosDelayMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showNosDelayMenuItemActionPerformed
-        appendToPane("NOS delay: " + state.getNosDelayTime() + " ms");
+        appendToPane("Not supported in this version");
     }//GEN-LAST:event_showNosDelayMenuItemActionPerformed
 
     private void stayInTopRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stayInTopRadioButtonMenuItemActionPerformed
