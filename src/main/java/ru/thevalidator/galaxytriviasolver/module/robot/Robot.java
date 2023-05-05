@@ -63,7 +63,6 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
     private final TriviaUserStatsData userStats;
     protected final State state;
     private final DateTimeFormatter formatter;
-    protected final boolean hasHumanImitationMode;
 
     public Robot(Solver solver, Task task, WebDriver driver, State state) {
         this.solver = solver;
@@ -72,7 +71,6 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
         this.state = state;
         this.userStats = new TriviaUserStatsData();
         formatter = new DateTimeFormatterForName();
-        hasHumanImitationMode = state.getTriviaArgs().hasHumanImitation();
     }
 
     public void setDriver(WebDriver driver) {
@@ -605,7 +603,7 @@ public abstract class Robot extends Informer implements GalaxyBaseRobot {
     }
 
     private void imitateHumanActivityDelay(int delay) throws InterruptedException {
-        if (hasHumanImitationMode) {
+        if (state.hasHumanImitation()) {
             sleepRandomPeriod(delay);
         }
     }
