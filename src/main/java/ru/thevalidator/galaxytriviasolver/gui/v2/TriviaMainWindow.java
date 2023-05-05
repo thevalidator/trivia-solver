@@ -196,10 +196,12 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         triviaMenu = new javax.swing.JMenu();
         anonymModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         strategyMenu = new javax.swing.JMenu();
+        stayInTopRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        getOnTopRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        jSeparator4 = new javax.swing.JPopupMenu.Separator();
         passiveModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         maxUnlimOnlyCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        getOnTopRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
-        stayInTopRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        jSeparator5 = new javax.swing.JPopupMenu.Separator();
         usePointsDeltaCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         setPointsDeltaMenuItem = new javax.swing.JMenuItem();
         advancedMenu = new javax.swing.JMenu();
@@ -735,6 +737,27 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
 
         strategyMenu.setText("Strategy");
 
+        autoSrategyButtonGroup.add(stayInTopRadioButtonMenuItem);
+        stayInTopRadioButtonMenuItem.setSelected(true);
+        state.setShouldStayInTop(stayInTopRadioButtonMenuItem.isSelected());
+        stayInTopRadioButtonMenuItem.setText("Stay in TOP");
+        stayInTopRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                stayInTopRadioButtonMenuItemActionPerformed(evt);
+            }
+        });
+        strategyMenu.add(stayInTopRadioButtonMenuItem);
+
+        autoSrategyButtonGroup.add(getOnTopRadioButtonMenuItem);
+        getOnTopRadioButtonMenuItem.setText("Get on TOP");
+        getOnTopRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                getOnTopRadioButtonMenuItemActionPerformed(evt);
+            }
+        });
+        strategyMenu.add(getOnTopRadioButtonMenuItem);
+        strategyMenu.add(jSeparator4);
+
         passiveModeCheckBoxMenuItem.setSelected(true);
         passiveModeCheckBoxMenuItem.setText("Passive mode");
         state.setIsPassive(passiveModeCheckBoxMenuItem.isSelected());
@@ -753,26 +776,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
             }
         });
         strategyMenu.add(maxUnlimOnlyCheckBoxMenuItem);
-
-        autoSrategyButtonGroup.add(getOnTopRadioButtonMenuItem);
-        getOnTopRadioButtonMenuItem.setText("Get on TOP");
-        getOnTopRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                getOnTopRadioButtonMenuItemActionPerformed(evt);
-            }
-        });
-        strategyMenu.add(getOnTopRadioButtonMenuItem);
-
-        autoSrategyButtonGroup.add(stayInTopRadioButtonMenuItem);
-        stayInTopRadioButtonMenuItem.setSelected(true);
-        state.setShouldStayInTop(stayInTopRadioButtonMenuItem.isSelected());
-        stayInTopRadioButtonMenuItem.setText("Stay in TOP");
-        stayInTopRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                stayInTopRadioButtonMenuItemActionPerformed(evt);
-            }
-        });
-        strategyMenu.add(stayInTopRadioButtonMenuItem);
+        strategyMenu.add(jSeparator5);
 
         usePointsDeltaCheckBoxMenuItem.setSelected(true);
         usePointsDeltaCheckBoxMenuItem.setText("Use points delta");
@@ -1196,6 +1200,8 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JPanel infoPanel;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JPopupMenu.Separator jSeparator4;
+    private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JComboBox<String> languageServerComboBox;
     private javax.swing.JLabel logLabel;
     private javax.swing.JScrollPane logScrollPane;
