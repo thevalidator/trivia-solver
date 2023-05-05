@@ -196,8 +196,8 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         optionsMenu = new javax.swing.JMenu();
         triviaMenu = new javax.swing.JMenu();
         anonymModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        strategyMenu = new javax.swing.JMenu();
         passiveModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        strategyMenu = new javax.swing.JMenu();
         maxUnlimOnlyCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         getOnTopRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         stayInTopRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
@@ -734,8 +734,6 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         state.setIsAnonymous(true);
         triviaMenu.add(anonymModeCheckBoxMenuItem);
 
-        strategyMenu.setText("Strategy");
-
         passiveModeCheckBoxMenuItem.setSelected(true);
         passiveModeCheckBoxMenuItem.setText("Passive mode");
         state.setIsPassive(true);
@@ -744,7 +742,9 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 passiveModeCheckBoxMenuItemActionPerformed(evt);
             }
         });
-        strategyMenu.add(passiveModeCheckBoxMenuItem);
+        triviaMenu.add(passiveModeCheckBoxMenuItem);
+
+        strategyMenu.setText("Strategy");
 
         maxUnlimOnlyCheckBoxMenuItem.setText("Max unlim only");
         state.setIsMaxUnlimOnly(false);
@@ -1244,13 +1244,9 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         boolean b;
         if (strategyTypeButtonGroup.isSelected(autoStrategyRadioButton.getModel())) {
             b = false;
-            strategyMenu.setEnabled(true);
-            strategyMenu.setVisible(true);
             appendToPane("AUTO strategy enabled");
         } else {
             b = true;
-            strategyMenu.setEnabled(false);
-            strategyMenu.setVisible(false);
             appendToPane("MANUAL strategy enabled");
         }
 

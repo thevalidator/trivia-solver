@@ -53,6 +53,18 @@
                     <AuxValue name="JavaCodeGenerator_ListenersCodePost" type="java.lang.String" value="state.setIsAnonymous(true);"/>
                   </AuxValues>
                 </MenuItem>
+                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="passiveModeCheckBoxMenuItem">
+                  <Properties>
+                    <Property name="selected" type="boolean" value="true"/>
+                    <Property name="text" type="java.lang.String" value="Passive mode"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="passiveModeCheckBoxMenuItemActionPerformed"/>
+                  </Events>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="state.setIsPassive(true);"/>
+                  </AuxValues>
+                </MenuItem>
                 <Menu class="javax.swing.JMenu" name="strategyMenu">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Strategy"/>
@@ -61,18 +73,6 @@
                     <AuxValue name="JavaCodeGenerator_LayoutCodePost" type="java.lang.String" value="strategyMenu.setEnabled(false);&#xa;strategyMenu.setVisible(false);"/>
                   </AuxValues>
                   <SubComponents>
-                    <MenuItem class="javax.swing.JCheckBoxMenuItem" name="passiveModeCheckBoxMenuItem">
-                      <Properties>
-                        <Property name="selected" type="boolean" value="true"/>
-                        <Property name="text" type="java.lang.String" value="Passive mode"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="passiveModeCheckBoxMenuItemActionPerformed"/>
-                      </Events>
-                      <AuxValues>
-                        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="state.setIsPassive(true);"/>
-                      </AuxValues>
-                    </MenuItem>
                     <MenuItem class="javax.swing.JCheckBoxMenuItem" name="maxUnlimOnlyCheckBoxMenuItem">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Max unlim only"/>
