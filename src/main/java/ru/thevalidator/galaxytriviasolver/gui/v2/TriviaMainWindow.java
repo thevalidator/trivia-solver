@@ -197,6 +197,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         triviaMenu = new javax.swing.JMenu();
         anonymModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         passiveModeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        stayOnlineCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         strategyMenu = new javax.swing.JMenu();
         maxUnlimOnlyCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         getOnTopRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
@@ -731,18 +732,28 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
                 anonymModeCheckBoxMenuItemActionPerformed(evt);
             }
         });
-        state.setIsAnonymous(true);
+        state.setIsAnonymous(anonymModeCheckBoxMenuItem.isSelected());
         triviaMenu.add(anonymModeCheckBoxMenuItem);
 
         passiveModeCheckBoxMenuItem.setSelected(true);
         passiveModeCheckBoxMenuItem.setText("Passive mode");
-        state.setIsPassive(true);
+        state.setIsPassive(passiveModeCheckBoxMenuItem.isSelected());
         passiveModeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 passiveModeCheckBoxMenuItemActionPerformed(evt);
             }
         });
         triviaMenu.add(passiveModeCheckBoxMenuItem);
+
+        stayOnlineCheckBoxMenuItem.setSelected(true);
+        stayOnlineCheckBoxMenuItem.setText("Stay online");
+        state.setShouldStayOnline(stayOnlineCheckBoxMenuItem.isSelected());
+        stayOnlineCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                stayOnlineCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        triviaMenu.add(stayOnlineCheckBoxMenuItem);
 
         strategyMenu.setText("Strategy");
 
@@ -1110,6 +1121,16 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
         this.setState(ICONIFIED);
     }//GEN-LAST:event_formWindowIconified
 
+    private void stayOnlineCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stayOnlineCheckBoxMenuItemActionPerformed
+        if (stayOnlineCheckBoxMenuItem.isSelected()) {
+            appendToPane("STAY ONLINE MODE ON");
+            state.setShouldStayOnline(true);
+        } else {
+            appendToPane("STAY ONLINE MODE OFF");
+            state.setShouldStayOnline(false);
+        }
+    }//GEN-LAST:event_stayOnlineCheckBoxMenuItemActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1184,6 +1205,7 @@ public class TriviaMainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JLabel statsLabel;
     private javax.swing.JPanel statsPanel;
     private javax.swing.JRadioButtonMenuItem stayInTopRadioButtonMenuItem;
+    private javax.swing.JCheckBoxMenuItem stayOnlineCheckBoxMenuItem;
     private javax.swing.JMenu strategyMenu;
     private javax.swing.JPanel strategyModePanel;
     private javax.swing.ButtonGroup strategyTypeButtonGroup;

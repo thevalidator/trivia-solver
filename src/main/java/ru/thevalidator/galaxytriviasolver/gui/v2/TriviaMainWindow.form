@@ -50,7 +50,7 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="anonymModeCheckBoxMenuItemActionPerformed"/>
                   </Events>
                   <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_ListenersCodePost" type="java.lang.String" value="state.setIsAnonymous(true);"/>
+                    <AuxValue name="JavaCodeGenerator_ListenersCodePost" type="java.lang.String" value="state.setIsAnonymous(anonymModeCheckBoxMenuItem.isSelected());"/>
                   </AuxValues>
                 </MenuItem>
                 <MenuItem class="javax.swing.JCheckBoxMenuItem" name="passiveModeCheckBoxMenuItem">
@@ -62,7 +62,19 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="passiveModeCheckBoxMenuItemActionPerformed"/>
                   </Events>
                   <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="state.setIsPassive(true);"/>
+                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="state.setIsPassive(passiveModeCheckBoxMenuItem.isSelected());"/>
+                  </AuxValues>
+                </MenuItem>
+                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="stayOnlineCheckBoxMenuItem">
+                  <Properties>
+                    <Property name="selected" type="boolean" value="true"/>
+                    <Property name="text" type="java.lang.String" value="Stay online"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="stayOnlineCheckBoxMenuItemActionPerformed"/>
+                  </Events>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="state.setShouldStayOnline(stayOnlineCheckBoxMenuItem.isSelected());"/>
                   </AuxValues>
                 </MenuItem>
                 <Menu class="javax.swing.JMenu" name="strategyMenu">
