@@ -3,6 +3,7 @@
  */
 package ru.thevalidator.galaxytriviasolver.service.impl;
 
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.logging.log4j.LogManager;
@@ -73,6 +74,18 @@ public class SimpleTaskImpl implements Task {
                     sleepTimeInSeconds = robot.getSleepTime();
                 }
 
+                if (state.shouldStayOnline()) {
+                    try {
+                        int minutes = sleepTimeInSeconds / 60;
+                        if (minutes > 6) {
+                            int stayOnlineMinutes = minutes / 3 + new Random().nextInt(minutes / 2);
+                            TimeUnit.MINUTES.sleep(stayOnlineMinutes);
+                            sleepTimeInSeconds = (minutes - stayOnlineMinutes + 1) * 60;
+                        }
+                    } catch (InterruptedException ignored) {
+                    }
+                }
+                
                 if (state.getTriviaArgs().hasLogOffOption()) {
                     robot.logoff();
                     try {
@@ -80,6 +93,7 @@ public class SimpleTaskImpl implements Task {
                     } catch (InterruptedException ignored) {
                     }
                 }
+                
             } catch (CanNotCreateWebdriverException e) {
                 logger.error(ExceptionUtil.getFormattedDescription(e));
                 String name = ((GalaxyBaseRobotImpl) robot).getFileNameTimeStamp() + "_CRITICAL";
