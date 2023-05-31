@@ -30,7 +30,7 @@ public class AboutPanel extends JEditorPane {
                 + "<a href=\"\">"
                 + "Actual version and instructions"
                 + "</a><br/><br/>"
-                + "v1.0.5.0-GCS<br/>[thevalidator]<br/>2023, May"
+                + "v1.0.5.1-GCS<br/>[thevalidator]<br/>2023, May"
                 + "</p>"
                 + "<p>Running on " + OSValidator.OS_NAME + "<br/>"
                 + "Powered by Java</p>");
