@@ -28,6 +28,7 @@ public class State {
     private boolean isManualStrategy;
     private boolean isMaxUnlimOnly;
     private boolean hasPointsDelta;
+    private boolean shouldStayOnline;
     private int pointsDelta = 10_000;
     private int nosDelayTime = 5_200;
     private int unlimStrategyTime = 0;
@@ -165,6 +166,14 @@ public class State {
         this.pointsDelta = pointsDelta;
     }
 
+    public boolean shouldStayOnline() {
+        return shouldStayOnline;
+    }
+
+    public void setShouldStayOnline(boolean shouldLoggOff) {
+        this.shouldStayOnline = shouldLoggOff;
+    }
+
     @Override
     public String toString() {
         return "State{" 
@@ -176,6 +185,7 @@ public class State {
                 + ", \nisAnonymous=" + isAnonymous 
                 + ", \nshouldStayInTop=" + shouldStayInTop 
                 + ", \nshouldGetOnTop=" + shouldGetOnTop 
+                + ", \nshouldStayOnline=" + shouldStayOnline 
                 + ", \nshouldPlayRides=" + shouldPlayRides 
                 + ", \nisPassive=" + isPassive 
                 + ", \nisManualStrategy=" + isManualStrategy 
